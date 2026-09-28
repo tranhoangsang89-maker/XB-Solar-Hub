@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Giá Tự Động Điện Mặt Trời - Solar 24h</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <img src="Logo Solar 24h.png" alt="Solar 24h Logo">
+            </div>
+            <div class="slogan">
+                <span>Chuyên nghiệp – Tận tâm – Dẫn đầu miền Tây</span>
+            </div>
+            <div class="hotline">
+                <a href="tel:0909363579" class="btn-call"><i class="fa-solid fa-phone-volume"></i> 0909 363 579</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content container">
+        
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-text">
+                <h1>Dự Toán Điện Mặt Trời <span class="highlight">Chỉ Trong 30 Giây</span></h1>
+                <p>Nhập thông tin nhu cầu của bạn để nhận ngay bảng bóc tách vật tư chi tiết, phương án trả góp và thời gian hoàn vốn.</p>
+            </div>
+        </section>
+
+        <!-- Input Section -->
+        <section class="calculator-card">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tab-1">
+                    <i class="fa-solid fa-bolt"></i> Theo Hóa Đơn Tiền Điện
+                </button>
+                <button class="tab-btn" data-tab="tab-2">
+                    <i class="fa-solid fa-sliders"></i> Tùy Chỉnh Công Suất
+                </button>
+            </div>
+
+            <!-- Tab Content 1 -->
+            <div class="tab-content active" id="tab-1">
+                <div class="grid-inputs">
+                    <div class="input-group">
+                        <label for="monthly-bill">Nhập số tiền điện trả hàng tháng (VNĐ):</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="monthly-bill" placeholder="Ví dụ: 1500000">
+                            <span class="unit">VNĐ</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="panel-type-1">Loại tấm pin:</label>
+                        <select id="panel-type-1">
+                            <option value="AE_Solar_580W">Tấm Pin AE Solar 580W Mono</option>
+                            <option value="AE_Solar_730W">Tấm Pin AE Solar 730W Mono</option>
+                            <option value="TCL_Solar_620W">Tấm Pin TCL Solar 620W</option>
+                            <option value="TCL_Solar_650W">Tấm Pin TCL Solar 650W</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="roof-type-1">Loại mái thi công:</label>
+                        <select id="roof-type-1">
+                            <option value="ton">Lắp áp mái (Mái Tôn)</option>
+                            <option value="ngoi">Lắp áp mái (Mái Ngói)</option>
+                            <option value="bang">Lắp dàn khung sắt (Mái Bằng)</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="calc-btn-1" class="btn-primary">Nhận Báo Giá Ngay</button>
+            </div>
+
+            <!-- Tab Content 2 -->
+            <div class="tab-content" id="tab-2">
+                <div class="grid-inputs grid-4">
+                    <div class="input-group">
+                        <label for="kwp-input">Công suất cần lắp (kWp):</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="kwp-input" min="2" max="100" step="0.1" value="5">
+                            <span class="unit">kWp</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="kwh-input">Dung lượng Pin lưu trữ (kWh):</label>
+                        <select id="kwh-input">
+                            <option value="0">Không lưu trữ (Hòa lưới)</option>
+                            <option value="2.5">2.5 kWh (BSB)</option>
+                            <option value="5">5 kWh (BSB)</option>
+                            <option value="10">10 kWh (LS Battery)</option>
+                            <option value="16">16 kWh (LS / Deye)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="panel-type-2">Loại tấm pin:</label>
+                        <select id="panel-type-2">
+                            <option value="AE_Solar_580W">Tấm Pin AE Solar 580W Mono</option>
+                            <option value="AE_Solar_730W">Tấm Pin AE Solar 730W Mono</option>
+                            <option value="TCL_Solar_620W">Tấm Pin TCL Solar 620W</option>
+                            <option value="TCL_Solar_650W">Tấm Pin TCL Solar 650W</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="roof-type">Loại mái thi công:</label>
+                        <select id="roof-type">
+                            <option value="ton">Lắp áp mái (Mái Tôn)</option>
+                            <option value="ngoi">Lắp áp mái (Mái Ngói)</option>
+                            <option value="bang">Lắp dàn khung sắt (Mái Bằng)</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="calc-btn-2" class="btn-primary">Tính Toán Khối Lượng</button>
+            </div>
+        </section>
+
+        <!-- Result Dashboard (Hidden by default) -->
+        <section id="dashboard" class="dashboard hidden">
+            
+            <div id="export-area">
+                <div class="company-header-pdf">
+                    <img src="Logo Solar 24h.png" alt="Logo" class="pdf-logo" id="pdf-logo-img">
+                    <div class="pdf-company-info">
+                        <h3>CÔNG TY TNHH TMDV SOLAR 24H</h3>
+                        <p>Khu phố Long Hòa A, Phường Đạo Thạnh, Tỉnh Đồng Tháp</p>
+                        <p>Hotline: 0909.363.579</p>
+                        <p>Mã Số Thuế: 1201633082</p>
+                    </div>
+                </div>
+                
+                <h3 class="package-name" id="result-package-name">Gói: SOLAR F1</h3>
+                <h2 class="dashboard-title" style="margin-top: 0; padding-top: 0; margin-bottom: 1.5rem; text-align: center; color: var(--primary-color);">BẢNG DỰ TOÁN CHI PHÍ LẮP ĐẶT</h2>
+                
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table class="quote-table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Danh Mục Vật Tư - Thiết Bị</th>
+                                <th>ĐVT</th>
+                                <th>SL</th>
+                                <th>Đơn Giá (VNĐ)</th>
+                                <th>Thành Tiền (VNĐ)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="quote-tbody">
+                            <!-- Rows injected via JS -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="5">TỔNG CỘNG CHI PHÍ:</td>
+                                <td id="total-price">0 VNĐ</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="quote-notes">
+                    <p><strong>Ghi chú:</strong> Đơn giá trên chỉ áp dụng cho toàn bộ đơn hàng.<br>
+                    <strong>Hiệu lực báo giá:</strong> 7 ngày kể từ ngày báo giá.<br>
+                    <strong>Thời gian lắp đặt:</strong> Theo thỏa thuận của khách hàng.<br>
+                    Chúng tôi rất mong được hợp tác cùng quý khách, mang điện năng lượng sạch đến cho quý khách sử dụng ổn định nhất!</p>
+                    <p class="quote-date" id="quote-date"></p>
+                </div>
+
+                <div class="cards-grid">
+                    <!-- Shinhan Bank Box -->
+                    <div class="info-card shinhan-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-building-columns"></i> Phương Án Lắp Solar 0 Đồng (Shinhan Bank)
+                        </div>
+                        <div class="card-body">
+                            <div class="fin-row">
+                                <span>Số tiền vay (Lãi 0.59%/tháng):</span>
+                                <strong id="loan-amount">0 VNĐ</strong>
+                            </div>
+                            <div class="fin-row">
+                                <span>Vốn trả trước:</span>
+                                <strong id="upfront-amount">0 VNĐ</strong>
+                            </div>
+                            <hr>
+                            <div class="fin-row highlight-row">
+                                <span>Trả góp (36 tháng):</span>
+                                <strong id="monthly-36">0 VNĐ/tháng</strong>
+                            </div>
+                            <div class="fin-row highlight-row">
+                                <span>Trả góp (48 tháng):</span>
+                                <strong id="monthly-48">0 VNĐ/tháng</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ROI Box -->
+                    <div class="info-card roi-card">
+                        <div class="card-header">
+                            <i class="fa-solid fa-chart-line"></i> Hiệu Quả Kinh Tế & Hoàn Vốn (ROI)
+                        </div>
+                        <div class="card-body">
+                            <div class="fin-row">
+                                <span>Sản lượng điện tạo ra:</span>
+                                <strong id="roi-output">0 kWh/tháng</strong>
+                            </div>
+                            <div class="fin-row">
+                                <span>Tiết kiệm (Tạm tính 3000đ/kWh):</span>
+                                <strong id="roi-saving">0 VNĐ/tháng</strong>
+                            </div>
+                            <hr>
+                            <div class="fin-row highlight-row success">
+                                <span>Thời gian hoàn vốn dự kiến:</span>
+                                <strong id="roi-years">0 Năm</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End export area -->
+
+            <!-- Actions -->
+            <div class="action-buttons">
+                <button id="btn-export-pdf" class="btn-secondary"><i class="fa-solid fa-file-pdf"></i> Tải Báo Giá PDF</button>
+                <button id="btn-show-modal" class="btn-primary pulse"><i class="fa-solid fa-user-check"></i> Đăng Ký Khảo Sát Miễn Phí</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Form -->
+    <div id="lead-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Đăng Ký Khảo Sát Tận Nơi Miễn Phí</h2>
+            <p>Vui lòng để lại thông tin, kỹ sư Solar 24h sẽ liên hệ và đến tận nơi khảo sát đo đạc cho bạn.</p>
+            <form id="lead-form">
+                <div class="form-group">
+                    <label>Họ và Tên *</label>
+                    <input type="text" id="lead-name" required placeholder="Nhập họ tên...">
+                </div>
+                <div class="form-group">
+                    <label>Số Điện Thoại / Zalo *</label>
+                    <input type="tel" id="lead-phone" required placeholder="Nhập số điện thoại...">
+                </div>
+                <div class="form-group">
+                    <label>Địa chỉ công trình</label>
+                    <textarea id="lead-address" rows="3" placeholder="Nhập địa chỉ..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary w-100">Gửi Thông Tin</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="image_data.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

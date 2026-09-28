@@ -1,0 +1,17 @@
+Đối với các hạng mục vật tư phụ trợ và thi công đang sử dụng các công thức tính toán dựa trên quy mô của hệ thống để đưa ra con số sát với thực tế nhất. Cụ thể như sau:
+
+***Tủ điện AC/DC Solar Mersen:
+-Hệ thống nhỏ hoặc vừa (từ 8 kWp trở xuống): Cố định ở mức 4.500.000đ/bộ.
+-Hệ thống lớn (trên 8 kWp): Cố định ở mức 6.500.000đ/bộ.
+
+***Hệ khung ray nhôm chuyên dụng:
+-Được tính theo số lượng tấm pin sử dụng.
+-Công thức: Số lượng tấm pin × 450.000đ/tấm. (Ví dụ: Hệ thống dùng 9 tấm pin sẽ là 9 × 450.000 = 4.050.000đ).
+
+***Cáp điện DC & Dây tiếp địa:
+-Được tính theo tổng công suất của hệ thống.
+-Công thức: Tổng công suất (kWp) × 650.000đ/kWp. (Ví dụ: Hệ thống 5.49 kWp thì tiền dây cáp là 5.49 × 650.000 = 3.568.500đ).
+
+***Nhân công lắp đặt trọn gói & Vận chuyển:
+-Cũng được tính theo tổng công suất của hệ thống.
+-Công thức: Tổng công suất (kWp) × 800.000đ/kWp. (Ví dụ: Hệ thống 5.49 kWp thì tiền nhân công là 5.49 × 800.000 = 4.392.000đ).
