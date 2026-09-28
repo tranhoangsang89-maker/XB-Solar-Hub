@@ -31,7 +31,26 @@ Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quy�
 - **Bảo vệ chống crash (Image Fallback):** Cấu hình thêm thuộc tính `imagePlaceholder` cho `htmlToImage`. Nếu trong quá trình chụp PDF có bất kỳ ảnh nào bị lỗi 404 (ví dụ lỗi mạng, lỗi load logo), hệ thống sẽ điền 1 pixel trong suốt thay vì ném ra lỗi `[object Event]` làm treo toàn bộ quy trình xuất PDF như trước.
 - **UI/UX Cover Page:** Đã căn chỉnh CSS (`white-space: nowrap`) trên trang bìa PDF để đảm bảo tiêu đề "BẢN VẼ THIẾT KẾ" không bao giờ bị rớt dòng lộn xộn.
 
-## 5. Nhiệm vụ tiếp theo (Next Steps cho Agent)
-- Kiểm tra tính đồng bộ state (trạng thái) từ các Component khác trong React truyền vào `SolarDesigner` nếu người dùng có yêu cầu thêm tính năng tương tác.
-- Tinh chỉnh các Component React còn lại (`BrandTrust.jsx`, `EpcProcess.jsx`, `ProjectShowcase.jsx`) để hoàn thiện luồng giao diện tổng thể của website XB Solar Hub.
-- Tự do sáng tạo và nâng cấp các hiệu ứng Animation/Micro-interactions trên React.
+## 5. Cập nhật Báo Giá & Tối ưu UI (Ngày 28/09/2026)
+- **Kiến trúc Bảng Dự Toán (BoM):** Chuyển đổi logic báo giá từ "Top-down" sang "Bottom-up". Tích hợp logic bóc tách vật tư chi tiết từ dự án cũ (bỏ tính năng trả góp Shinhan Bank).
+- **Trải nghiệm người dùng (UX):** 
+  - Cải tiến dropdown chọn Tỉnh/Thành phố thành dạng Searchable Combobox chuyên nghiệp.
+  - Xây dựng hệ thống Custom Dropdown tuỳ chỉnh vật tư (Tấm pin JA Solar/Jinko, Inverter/Pin lưu trữ Sungrow/Deye) ngay trong Bảng dự toán (QuoteModal). Cho phép thay đổi Tên, Đơn giá, Số lượng theo thời gian thực.
+- **Tích hợp hình ảnh trực quan:** Bổ sung ảnh minh hoạ thực tế cho toàn bộ vật tư (Tấm pin, Inverter, Pin lưu trữ, Tủ điện, Khung ray, Cáp điện, Nhân công). Ảnh hiển thị đẹp mắt cả trên giao diện Web và trong tệp PDF xuất ra.
+
+## 6. Hoàn thiện PDF Báo Giá & Khắc phục giao diện (Ngày 28/09/2026)
+- Tích hợp `jspdf-autotable` kết hợp tiền xử lý ảnh (`Blob` -> `Base64`) để nhúng hình ảnh sản phẩm vào trong bảng báo giá PDF một cách mượt mà.
+- Khắc phục triệt để lỗi tràn layout ngang trên Web do chèn thêm ảnh (cập nhật chiều rộng Modal lên `max-w-6xl` và co giãn input).
+- **Tối ưu không gian dọc PDF:** Tinh chỉnh line-height, cell padding và size ảnh xuống mức vừa vặn (`8`) để ép toàn bộ bảng vật tư, hiệu quả tài chính và điều khoản nằm gọn gàng, hoàn hảo trên đúng 1 trang A4 duy nhất, tránh tình trạng bị ngắt trang lở dở.
+
+## 7. Triển khai (Deployment) & Tích hợp (Ngày 28/09/2026)
+- **Kiểm định mã nguồn:** Chạy `npm run build` thành công, kiểm tra thư viện ổn định 100%.
+- **Upload mã nguồn:** Tự động hoá lệnh Git, Commit toàn bộ code sạch và Push lên Repository GitHub mới của người dùng (`tranhoangsang89-maker/XB-Solar-Hub`).
+- **Triển khai Vercel & AI Chatbot:** Hướng dẫn luồng deploy Vercel và cấu hình biến môi trường `VITE_GEMINI_API_KEY` (Sử dụng model Gemini Flash-Lite) trên Production, đảm bảo trợ lý ảo XBSolar luôn trực tuyến thông minh.
+- **SEO & Social Preview (Open Graph):** Bổ sung đầy đủ các thẻ meta OG và Twitter Cards vào `index.html`. Sử dụng URL ảnh tuyệt đối (`https://xbsolar-hub.vercel.app/og-meta-tags-xb.png`) để đảm bảo hình ảnh bìa và thông điệp marketing hiển thị chính xác khi chia sẻ link lên các MXH khó tính như Zalo, Facebook.
+
+## 8. Nhiệm vụ tiếp theo (Next Steps cho Agent tới)
+- Theo dõi sự ổn định của hệ thống trên môi trường Production (Vercel).
+- Tiếp nhận phản hồi từ khách hàng thực tế để tinh chỉnh thông số tài chính nếu cần.
+- Có thể phát triển thêm tính năng Đăng nhập/Lưu lịch sử báo giá cho Sale nếu XBSolar muốn mở rộng quy mô.
+
