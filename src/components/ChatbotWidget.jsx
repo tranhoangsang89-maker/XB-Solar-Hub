@@ -1,10 +1,10 @@
 // src/components/ChatbotWidget.jsx
-// AI Chatbot powered by Google Gemini API with local knowledge fallback
+// AI Chatbot powered by Google Gemini API with vision (image upload) support
 import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   MessageCircle, X, Send, Sun, Zap, Shield, FileText,
   HelpCircle, Building2, ChevronDown, Phone, RotateCcw,
-  Sparkles, WifiOff,
+  Sparkles, WifiOff, ImagePlus, XCircle,
 } from 'lucide-react';
 import { CHATBOT_KNOWLEDGE_BASE, DEFAULT_BOT_GREETING } from '../data/chatbotKnowledge';
 import { SYSTEM_COMBOS, STANDARD_ACCESSORIES, PROVINCES_PSH } from '../data/solarData';
@@ -14,7 +14,7 @@ const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const GEMINI_MODEL = 'gemini-flash-lite-latest';
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
-// ── System instruction (injected as systemInstruction) ────────────────────────
+// ── System instruction ────────────────────────────────────────────────────────
 const SYSTEM_INSTRUCTION = `Bạn là Trợ lý Kỹ thuật & Tư vấn Giải pháp cao cấp của Công ty Cổ phần XBSolar (xbsolar.vn).
 
 ## VAI TRÒ & PHONG CÁCH
@@ -22,6 +22,12 @@ const SYSTEM_INSTRUCTION = `Bạn là Trợ lý Kỹ thuật & Tư vấn Giải 
 - Trả lời súc tích, tối đa 250 từ mỗi lượt. Ưu tiên dùng danh sách gạch đầu dòng để dễ đọc.
 - Luôn chào hỏi lịch sự ở lượt đầu tiên.
 - Cuối mỗi câu trả lời kỹ thuật quan trọng, khéo léo mời khách để lại số điện thoại/Zalo hoặc gọi Hotline 08.9811.0068 để kỹ sư khảo sát và báo giá miễn phí tại nhà.
+
+## KHI NHẬN ĐƯỢC ẢNH TỪ KHÁCH
+- Nếu là **hóa đơn tiền điện**: Đọc số kWh tiêu thụ, số tiền, chu kỳ. Từ đó ước tính hệ thống phù hợp (công suất kWp, số tấm pin, giá sơ bộ, ROI).
+- Nếu là **mặt bằng / mái nhà**: Phân tích hướng mái, diện tích ước tính, loại mái (tôn/ngói/bê tông). Đề xuất số lượng tấm pin, cách bố trí, lưu ý kỹ thuật.
+- Nếu là **ảnh công trình hoặc thiết bị**: Nhận diện thiết bị, đánh giá tình trạng, đưa ra khuyến nghị.
+- Luôn nói rõ đây là **phân tích sơ bộ qua ảnh**, cần khảo sát thực tế để chính xác hơn.
 
 ## KIẾN THỨC SẢN PHẨM XB-ECO (HÒA LƯỚI ON-GRID)
 - **XB-ECO 3kW**: Inverter Sungrow SG3.0RS (1 pha), 5 tấm JA Solar JAM66D45 LB 610W, 3.05 kWp, cần 13m², giá 42 triệu. Phù hợp hóa đơn 1.5–2.5 triệu/tháng.
@@ -62,6 +68,25 @@ TP.HCM & Bình Dương: 4.6h/ngày | Tiền Giang, Long An: 4.7h/ngày | Tây Ni
 3. Không đưa ra con số tuyệt đối về tiết kiệm mà không biết tiêu thụ thực tế của khách.
 4. Luôn nhắc đến chính sách bảo hành và dịch vụ hậu mãi như một điểm mạnh cạnh tranh.`;
 
+// ── Image helper: File → base64 data URL ─────────────────────────────────────
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result); // data:image/jpeg;base64,....
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// Strip the "data:image/xxx;base64," prefix → raw base64 string
+function extractBase64(dataUrl) {
+  return dataUrl.split(',')[1];
+}
+
+function getMimeType(dataUrl) {
+  return dataUrl.match(/data:(image\/[^;]+);/)?.[1] || 'image/jpeg';
+}
+
 // ── Local fallback helpers ─────────────────────────────────────────────────────
 
 function normalize(str) {
@@ -95,10 +120,10 @@ function findAnswer(query) {
   return bestScore >= 1 ? bestMatch : null;
 }
 
-// ── Gemini API call ───────────────────────────────────────────────────────────
+// ── Gemini API call (supports vision) ─────────────────────────────────────────
 
 /**
- * Calls Gemini API with full conversation history.
+ * Calls Gemini API with full conversation history (may include image parts).
  * @param {Array<{role: string, parts: Array}>} history - Gemini-format history
  * @returns {Promise<string>} - Bot reply text
  */
@@ -116,7 +141,7 @@ async function callGeminiAPI(history) {
       generationConfig: {
         temperature: 0.7,
         topP: 0.9,
-        maxOutputTokens: 512,
+        maxOutputTokens: 600,
         candidateCount: 1,
       },
       safetySettings: [
@@ -171,15 +196,15 @@ function BotAnswer({ text }) {
 // ── Category icon map ─────────────────────────────────────────────────────────
 
 const CATEGORY_ICONS = {
-  KyThuat:   { icon: Zap,       color: 'text-amber-400',  bg: 'bg-amber-500/20'  },
-  AnToan:    { icon: Shield,    color: 'text-emerald-400', bg: 'bg-emerald-500/20' },
-  LapDat:    { icon: Sun,       color: 'text-blue-400',   bg: 'bg-blue-500/20'   },
-  ChinhSach: { icon: FileText,  color: 'text-purple-400', bg: 'bg-purple-500/20' },
-  PhapLy:    { icon: Building2, color: 'text-rose-400',   bg: 'bg-rose-500/20'   },
-  ThuongHieu:{ icon: HelpCircle,color: 'text-cyan-400',   bg: 'bg-cyan-500/20'   },
+  KyThuat:    { icon: Zap,        color: 'text-amber-400',  bg: 'bg-amber-500/20'  },
+  AnToan:     { icon: Shield,     color: 'text-emerald-400', bg: 'bg-emerald-500/20' },
+  LapDat:     { icon: Sun,        color: 'text-blue-400',   bg: 'bg-blue-500/20'   },
+  ChinhSach:  { icon: FileText,   color: 'text-purple-400', bg: 'bg-purple-500/20' },
+  PhapLy:     { icon: Building2,  color: 'text-rose-400',   bg: 'bg-rose-500/20'   },
+  ThuongHieu: { icon: HelpCircle, color: 'text-cyan-400',   bg: 'bg-cyan-500/20'   },
 };
 
-// ── Sub-components ────────────────────────────────────────────────────────────
+// ── MessageBubble (with image preview support) ────────────────────────────────
 
 function MessageBubble({ msg }) {
   const isBot = msg.role === 'bot';
@@ -197,7 +222,21 @@ function MessageBubble({ msg }) {
             : 'bg-gradient-to-br from-amber-500 to-amber-600 text-slate-900 font-semibold rounded-tr-sm'
         }`}
       >
-        {isBot ? <BotAnswer text={msg.text} /> : <p>{msg.text}</p>}
+        {/* Image previews (user side) */}
+        {msg.images && msg.images.length > 0 && (
+          <div className={`flex flex-wrap gap-1.5 mb-2 ${isBot ? '' : '-mx-1'}`}>
+            {msg.images.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt={`Ảnh ${i + 1}`}
+                className="h-24 w-auto max-w-[140px] object-cover rounded-lg border border-white/20 shadow"
+              />
+            ))}
+          </div>
+        )}
+
+        {isBot ? <BotAnswer text={msg.text} /> : msg.text ? <p>{msg.text}</p> : null}
 
         {/* Source badge */}
         {isBot && msg.source && (
@@ -205,6 +244,10 @@ function MessageBubble({ msg }) {
             {msg.source === 'gemini' ? (
               <span className="inline-flex items-center gap-1 text-[9px] text-amber-400/70 bg-amber-500/10 px-1.5 py-0.5 rounded-full border border-amber-500/20">
                 <Sparkles className="w-2.5 h-2.5" /> Gemini AI
+              </span>
+            ) : msg.source === 'vision' ? (
+              <span className="inline-flex items-center gap-1 text-[9px] text-purple-400/70 bg-purple-500/10 px-1.5 py-0.5 rounded-full border border-purple-500/20">
+                <ImagePlus className="w-2.5 h-2.5" /> Vision AI
               </span>
             ) : msg.source === 'fallback' ? (
               <span className="inline-flex items-center gap-1 text-[9px] text-blue-400/70 bg-blue-500/10 px-1.5 py-0.5 rounded-full border border-blue-500/20">
@@ -252,9 +295,36 @@ function TypingIndicator() {
               />
             ))}
           </div>
-          <span className="text-slate-400 text-[10px] font-medium">Đang suy nghĩ...</span>
+          <span className="text-slate-400 text-[10px] font-medium">Đang phân tích...</span>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ── Image preview strip (above input) ────────────────────────────────────────
+
+function ImagePreviewStrip({ previews, onRemove }) {
+  if (!previews.length) return null;
+  return (
+    <div className="px-3 pt-2 flex gap-2 flex-wrap">
+      {previews.map((src, i) => (
+        <div key={i} className="relative group">
+          <img
+            src={src}
+            alt={`Preview ${i + 1}`}
+            className="h-16 w-auto max-w-[100px] object-cover rounded-lg border border-amber-500/40 shadow"
+          />
+          <button
+            type="button"
+            onClick={() => onRemove(i)}
+            className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-500 rounded-full flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label="Xóa ảnh"
+          >
+            <X className="w-3 h-3 text-white" />
+          </button>
+        </div>
+      ))}
     </div>
   );
 }
@@ -262,21 +332,24 @@ function TypingIndicator() {
 // ── Main widget ───────────────────────────────────────────────────────────────
 
 export default function ChatbotWidget() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
+  const [isOpen, setIsOpen]           = useState(false);
+  const [messages, setMessages]       = useState([
     { id: 0, role: 'bot', text: DEFAULT_BOT_GREETING, source: null },
   ]);
-  // Gemini-format conversation history (excluding system instruction)
   const [geminiHistory, setGeminiHistory] = useState([]);
-  const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [hasNewMsg, setHasNewMsg] = useState(false);
+  const [inputValue, setInputValue]   = useState('');
+  const [isTyping, setIsTyping]       = useState(false);
+  const [hasNewMsg, setHasNewMsg]     = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
-  const [apiStatus, setApiStatus] = useState('unknown'); // 'ok' | 'fallback' | 'unknown'
+  const [apiStatus, setApiStatus]     = useState('unknown');
 
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
-  const scrollContainerRef = useRef(null);
+  // Image upload state
+  const [pendingImages, setPendingImages] = useState([]); // [{ dataUrl, file }]
+
+  const messagesEndRef      = useRef(null);
+  const inputRef            = useRef(null);
+  const scrollContainerRef  = useRef(null);
+  const fileInputRef        = useRef(null);
 
   const scrollToBottom = useCallback((smooth = true) => {
     messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' });
@@ -305,31 +378,76 @@ export default function ChatbotWidget() {
 
   const openChat = () => { setIsOpen(true); setHasNewMsg(false); };
 
-  // ── Core message send logic ─────────────────────────────────────────────────
-  const addUserMessage = useCallback(async (text) => {
-    if (!text.trim() || isTyping) return;
+  // ── Image picker handler ──────────────────────────────────────────────────
+  const handleImagePick = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const newImages = await Promise.all(
+      files.slice(0, 4).map(async (file) => {
+        const dataUrl = await fileToBase64(file);
+        return { dataUrl, file };
+      })
+    );
+    setPendingImages((prev) => [...prev, ...newImages].slice(0, 4)); // max 4
+    // Reset file input so same file can be re-selected
+    e.target.value = '';
+  };
+
+  const removeImage = (idx) => {
+    setPendingImages((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // ── Core message send logic ───────────────────────────────────────────────
+  const addUserMessage = useCallback(async (text, images = []) => {
+    const hasText   = text.trim().length > 0;
+    const hasImages = images.length > 0;
+    if ((!hasText && !hasImages) || isTyping) return;
 
     const userText = text.trim();
-    const userId = Date.now();
+    const userId   = Date.now();
 
-    // 1. Append user bubble
-    setMessages((prev) => [...prev, { id: userId, role: 'user', text: userText }]);
+    // 1. Append user bubble (with image previews)
+    setMessages((prev) => [
+      ...prev,
+      {
+        id:     userId,
+        role:   'user',
+        text:   userText,
+        images: images.map((img) => img.dataUrl),
+      },
+    ]);
     setInputValue('');
+    setPendingImages([]);
     setIsTyping(true);
 
-    // 2. Build new Gemini history entry
-    const newUserEntry = { role: 'user', parts: [{ text: userText }] };
-    const updatedHistory = [...geminiHistory, newUserEntry];
+    // 2. Build Gemini parts for this user turn
+    const parts = [];
+    if (userText) parts.push({ text: userText });
+    for (const img of images) {
+      parts.push({
+        inline_data: {
+          mime_type: getMimeType(img.dataUrl),
+          data:      extractBase64(img.dataUrl),
+        },
+      });
+    }
+    // Add image context hint if no text
+    if (!userText && hasImages) {
+      parts.unshift({
+        text: 'Anh/chị gửi lên ảnh này, em hãy phân tích và tư vấn giải pháp điện mặt trời phù hợp.',
+      });
+    }
+
+    const newUserEntry    = { role: 'user', parts };
+    const updatedHistory  = [...geminiHistory, newUserEntry];
 
     let botText = '';
-    let source = 'gemini';
+    let source  = hasImages ? 'vision' : 'gemini';
 
     try {
-      // 3a. Try Gemini API
       botText = await callGeminiAPI(updatedHistory);
       setApiStatus('ok');
-
-      // Append model reply to history for next turn
       setGeminiHistory([
         ...updatedHistory,
         { role: 'model', parts: [{ text: botText }] },
@@ -339,13 +457,14 @@ export default function ChatbotWidget() {
       setApiStatus('fallback');
       source = 'fallback';
 
-      // 3b. Local fallback
-      const match = findAnswer(userText);
-      botText = match
-        ? match.answer
-        : `Em chưa có thông tin chi tiết về vấn đề này.\nAnh/chị vui lòng liên hệ trực tiếp:\n📞 Hotline/Zalo: **08.9811.0068** — kỹ sư XBSolar sẽ hỗ trợ ngay!`;
-
-      // Don't push to Gemini history on fallback to keep it clean
+      if (hasImages) {
+        botText = `Em chưa thể phân tích ảnh do kết nối gián đoạn.\nAnh/chị vui lòng gọi trực tiếp:\n📞 Hotline/Zalo: **08.9811.0068** — kỹ sư XBSolar sẽ hỗ trợ ngay!`;
+      } else {
+        const match = findAnswer(userText);
+        botText = match
+          ? match.answer
+          : `Em chưa có thông tin chi tiết về vấn đề này.\nAnh/chị vui lòng liên hệ trực tiếp:\n📞 Hotline/Zalo: **08.9811.0068** — kỹ sư XBSolar sẽ hỗ trợ ngay!`;
+      }
       setGeminiHistory(updatedHistory);
     }
 
@@ -358,7 +477,7 @@ export default function ChatbotWidget() {
 
   const handleSend = (e) => {
     e?.preventDefault();
-    addUserMessage(inputValue);
+    addUserMessage(inputValue, pendingImages);
   };
 
   const handleChipClick = (entry) => {
@@ -369,6 +488,7 @@ export default function ChatbotWidget() {
     setMessages([{ id: 0, role: 'bot', text: DEFAULT_BOT_GREETING, source: null }]);
     setGeminiHistory([]);
     setInputValue('');
+    setPendingImages([]);
     setApiStatus('unknown');
   };
 
@@ -376,7 +496,7 @@ export default function ChatbotWidget() {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   };
 
-  // ── API status indicator ────────────────────────────────────────────────────
+  // ── API status indicator ──────────────────────────────────────────────────
   const StatusDot = () => {
     if (apiStatus === 'ok') return (
       <span className="flex items-center gap-1 text-[9px] text-emerald-400">
@@ -394,10 +514,12 @@ export default function ChatbotWidget() {
     );
   };
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+  const canSend = (inputValue.trim() || pendingImages.length > 0) && !isTyping;
+
+  // ── Render ────────────────────────────────────────────────────────────────
   return (
     <>
-      {/* ── Floating toggle button ─────────────────────────────────────────── */}
+      {/* ── Floating toggle button ──────────────────────────────────────────── */}
       <button
         onClick={isOpen ? () => setIsOpen(false) : openChat}
         className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-2xl
@@ -418,7 +540,7 @@ export default function ChatbotWidget() {
         )}
       </button>
 
-      {/* ── Chat window ───────────────────────────────────────────────────── */}
+      {/* ── Chat window ─────────────────────────────────────────────────────── */}
       <div
         className={`fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] sm:w-96
           flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-white/10
@@ -512,16 +634,56 @@ export default function ChatbotWidget() {
           </div>
         </div>
 
+        {/* Image preview strip */}
+        <ImagePreviewStrip previews={pendingImages.map((img) => img.dataUrl)} onRemove={removeImage} />
+
         {/* Input area */}
         <div className="bg-slate-800/95 border-t border-white/10 px-3 py-3 flex-shrink-0">
           <form onSubmit={handleSend} className="flex items-center gap-2">
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              id="chatbot-file-input"
+              onChange={handleImagePick}
+            />
+
+            {/* Upload image button */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isTyping || pendingImages.length >= 4}
+              title="Tải ảnh lên (hóa đơn, mái nhà...)"
+              className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 relative
+                ${pendingImages.length > 0
+                  ? 'bg-purple-600/80 hover:bg-purple-500/80 border border-purple-400/50 shadow-md shadow-purple-500/20'
+                  : 'bg-slate-700 hover:bg-slate-600 border border-slate-600 hover:border-slate-500'
+                }
+                ${(isTyping || pendingImages.length >= 4) ? 'opacity-40 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}
+              `}
+              id="chatbot-image-btn"
+              aria-label="Tải ảnh lên"
+            >
+              <ImagePlus className={`w-4 h-4 ${pendingImages.length > 0 ? 'text-purple-200' : 'text-slate-400'}`} />
+              {pendingImages.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-slate-800">
+                  {pendingImages.length}
+                </span>
+              )}
+            </button>
+
+            {/* Text input */}
             <input
               ref={inputRef}
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Hỏi về điện mặt trời..."
+              placeholder={pendingImages.length > 0 ? 'Mô tả thêm (tuỳ chọn)...' : 'Hỏi về điện mặt trời...'}
               className="flex-1 bg-slate-700/60 border border-slate-600 focus:border-amber-500
                 focus:ring-1 focus:ring-amber-500/30 rounded-xl px-4 py-2.5 text-sm text-white
                 placeholder-slate-500 outline-none transition-all duration-200 disabled:opacity-50"
@@ -529,22 +691,32 @@ export default function ChatbotWidget() {
               aria-label="Nhập câu hỏi"
               disabled={isTyping}
             />
+
+            {/* Send button */}
             <button
               type="submit"
-              disabled={!inputValue.trim() || isTyping}
+              disabled={!canSend}
               className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200
-                ${inputValue.trim() && !isTyping
+                ${canSend
                   ? 'bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 shadow-md shadow-amber-500/30 hover:scale-105 active:scale-95'
                   : 'bg-slate-700 cursor-not-allowed opacity-50'
                 }`}
               id="chatbot-send-btn"
               aria-label="Gửi"
             >
-              <Send className={`w-4 h-4 ${inputValue.trim() && !isTyping ? 'text-slate-900' : 'text-slate-500'}`} />
+              <Send className={`w-4 h-4 ${canSend ? 'text-slate-900' : 'text-slate-500'}`} />
             </button>
           </form>
 
-          <div className="flex items-center justify-between mt-2 px-1">
+          {/* Upload hint */}
+          {pendingImages.length === 0 && (
+            <p className="text-slate-600 text-[10px] mt-1.5 px-1 flex items-center gap-1">
+              <ImagePlus className="w-3 h-3" />
+              Gửi ảnh hóa đơn, mặt bằng, kết cấu mái để được tư vấn chính xác hơn
+            </p>
+          )}
+
+          <div className="flex items-center justify-between mt-1.5 px-1">
             <span className="text-slate-600 text-[10px]">
               Powered by{' '}
               <span className="text-amber-500/80 font-semibold">Gemini AI</span>
