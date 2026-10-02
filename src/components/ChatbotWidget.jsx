@@ -1,6 +1,6 @@
 // src/components/ChatbotWidget.jsx
 // AI Chatbot powered by Google Gemini API with vision (image upload) support
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   MessageCircle, X, Send, Sun, Zap, Shield, FileText,
   HelpCircle, Building2, ChevronDown, Phone, RotateCcw,
@@ -342,6 +342,7 @@ export default function ChatbotWidget() {
   const [hasNewMsg, setHasNewMsg]     = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [apiStatus, setApiStatus]     = useState('unknown');
+  const [vpHeight, setVpHeight]       = useState(() => window.innerHeight);
 
   // Image upload state
   const [pendingImages, setPendingImages] = useState([]); // [{ dataUrl, file }]
@@ -351,6 +352,22 @@ export default function ChatbotWidget() {
   const scrollContainerRef  = useRef(null);
   const fileInputRef        = useRef(null);
 
+  // Track visual viewport for keyboard-aware layout on mobile
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const update = () => setVpHeight(vv.height);
+    vv.addEventListener('resize', update);
+    vv.addEventListener('scroll', update);
+    return () => {
+      vv.removeEventListener('resize', update);
+      vv.removeEventListener('scroll', update);
+    };
+  }, []);
+
+  // Detect mobile (< 640px)
+  const isMobile = useMemo(() => window.innerWidth < 640, []);
+
   const scrollToBottom = useCallback((smooth = true) => {
     messagesEndRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto' });
   }, []);
@@ -358,7 +375,7 @@ export default function ChatbotWidget() {
   useEffect(() => {
     if (isOpen) {
       scrollToBottom(false);
-      setTimeout(() => inputRef.current?.focus(), 100);
+      setTimeout(() => inputRef.current?.focus(), 150);
     }
   }, [isOpen, scrollToBottom]);
 
@@ -369,6 +386,14 @@ export default function ChatbotWidget() {
   useEffect(() => {
     if (!isOpen && messages.length > 1) setHasNewMsg(true);
   }, [messages, isOpen]);
+
+  // Lock body scroll on mobile when chat is open
+  useEffect(() => {
+    if (isMobile) {
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen, isMobile]);
 
   const handleScroll = () => {
     const el = scrollContainerRef.current;
@@ -519,12 +544,13 @@ export default function ChatbotWidget() {
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <>
-      {/* ── Floating toggle button ──────────────────────────────────────────── */}
+      {/* ── Floating toggle button — hidden on mobile when open ──────────────── */}
       <button
         onClick={isOpen ? () => setIsOpen(false) : openChat}
         className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-2xl
           flex items-center justify-center transition-all duration-300
-          ${isOpen
+          ${isOpen && isMobile ? 'hidden' : ''}
+          ${isOpen && !isMobile
             ? 'bg-slate-700 hover:bg-slate-600'
             : 'bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 hover:scale-110 animate-pulse-gold'
           }`}
@@ -540,13 +566,29 @@ export default function ChatbotWidget() {
         )}
       </button>
 
+      {/* ── Mobile backdrop ───────────────────────────────────────────────────── */}
+      {isMobile && isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-[55]"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       {/* ── Chat window ─────────────────────────────────────────────────────── */}
       <div
-        className={`fixed bottom-24 right-6 z-50 w-[calc(100vw-3rem)] sm:w-96
-          flex flex-col rounded-2xl shadow-2xl overflow-hidden border border-white/10
-          transition-all duration-300 origin-bottom-right
-          ${isOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-90 pointer-events-none'}`}
-        style={{ maxHeight: 'min(600px, calc(100vh - 10rem))' }}
+        className={`fixed z-[60] flex flex-col overflow-hidden
+          transition-all duration-500 ease-out
+          border border-white/10 shadow-2xl
+          inset-x-0 bottom-0 rounded-t-2xl
+          sm:inset-auto sm:bottom-24 sm:right-6 sm:w-96 sm:rounded-2xl
+          ${isOpen
+            ? 'opacity-100 translate-y-0 pointer-events-auto'
+            : 'opacity-0 translate-y-full sm:translate-y-0 sm:scale-90 pointer-events-none'
+          }`}
+        style={{
+          height: isMobile ? `${vpHeight}px` : undefined,
+          maxHeight: isMobile ? undefined : 'min(600px, calc(100vh - 10rem))',
+        }}
         role="dialog"
         aria-label="Chatbot AI hỗ trợ XBSolar"
       >
@@ -598,8 +640,8 @@ export default function ChatbotWidget() {
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto bg-slate-900/95 px-4 py-4 space-y-3 scroll-smooth"
-          style={{ minHeight: 0 }}
+          className="flex-1 overflow-y-auto bg-slate-900/95 px-4 py-4 space-y-3 scroll-smooth overscroll-contain"
+          style={{ minHeight: 0, WebkitOverflowScrolling: 'touch' }}
         >
           {messages.map((msg) => (
             <MessageBubble key={msg.id} msg={msg} />
@@ -638,7 +680,10 @@ export default function ChatbotWidget() {
         <ImagePreviewStrip previews={pendingImages.map((img) => img.dataUrl)} onRemove={removeImage} />
 
         {/* Input area */}
-        <div className="bg-slate-800/95 border-t border-white/10 px-3 py-3 flex-shrink-0">
+        <div
+          className="bg-slate-800/95 border-t border-white/10 px-3 py-3 flex-shrink-0"
+          style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
+        >
           <form onSubmit={handleSend} className="flex items-center gap-2">
 
             {/* Hidden file input */}
@@ -658,17 +703,17 @@ export default function ChatbotWidget() {
               onClick={() => fileInputRef.current?.click()}
               disabled={isTyping || pendingImages.length >= 4}
               title="Tải ảnh lên (hóa đơn, mái nhà...)"
-              className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 relative
+              className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 relative
                 ${pendingImages.length > 0
-                  ? 'bg-purple-600/80 hover:bg-purple-500/80 border border-purple-400/50 shadow-md shadow-purple-500/20'
-                  : 'bg-slate-700 hover:bg-slate-600 border border-slate-600 hover:border-slate-500'
+                  ? 'bg-purple-600/80 border border-purple-400/50 shadow-md shadow-purple-500/20'
+                  : 'bg-slate-700 border border-slate-600'
                 }
-                ${(isTyping || pendingImages.length >= 4) ? 'opacity-40 cursor-not-allowed' : 'hover:scale-105 active:scale-95'}
+                ${(isTyping || pendingImages.length >= 4) ? 'opacity-40 cursor-not-allowed' : 'active:scale-95'}
               `}
               id="chatbot-image-btn"
               aria-label="Tải ảnh lên"
             >
-              <ImagePlus className={`w-4 h-4 ${pendingImages.length > 0 ? 'text-purple-200' : 'text-slate-400'}`} />
+              <ImagePlus className={`w-5 h-5 ${pendingImages.length > 0 ? 'text-purple-200' : 'text-slate-400'}`} />
               {pendingImages.length > 0 && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-slate-800">
                   {pendingImages.length}
@@ -685,32 +730,34 @@ export default function ChatbotWidget() {
               onKeyDown={handleKeyDown}
               placeholder={pendingImages.length > 0 ? 'Mô tả thêm (tuỳ chọn)...' : 'Hỏi về điện mặt trời...'}
               className="flex-1 bg-slate-700/60 border border-slate-600 focus:border-amber-500
-                focus:ring-1 focus:ring-amber-500/30 rounded-xl px-4 py-2.5 text-sm text-white
+                focus:ring-1 focus:ring-amber-500/30 rounded-xl px-4 py-3 text-base sm:text-sm text-white
                 placeholder-slate-500 outline-none transition-all duration-200 disabled:opacity-50"
               id="chatbot-input"
               aria-label="Nhập câu hỏi"
               disabled={isTyping}
+              inputMode="text"
+              autoComplete="off"
             />
 
             {/* Send button */}
             <button
               type="submit"
               disabled={!canSend}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200
+              className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200
                 ${canSend
-                  ? 'bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 shadow-md shadow-amber-500/30 hover:scale-105 active:scale-95'
+                  ? 'bg-gradient-to-br from-amber-400 to-amber-600 shadow-md shadow-amber-500/30 active:scale-95'
                   : 'bg-slate-700 cursor-not-allowed opacity-50'
                 }`}
               id="chatbot-send-btn"
               aria-label="Gửi"
             >
-              <Send className={`w-4 h-4 ${canSend ? 'text-slate-900' : 'text-slate-500'}`} />
+              <Send className={`w-5 h-5 ${canSend ? 'text-slate-900' : 'text-slate-500'}`} />
             </button>
           </form>
 
           {/* Upload hint */}
           {pendingImages.length === 0 && (
-            <p className="text-slate-600 text-[10px] mt-1.5 px-1 flex items-center gap-1">
+            <p className="text-slate-600 text-[10px] mt-2 px-1 flex items-center gap-1">
               <ImagePlus className="w-3 h-3" />
               Gửi ảnh hóa đơn, mặt bằng, kết cấu mái để được tư vấn chính xác hơn
             </p>
