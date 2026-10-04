@@ -24,12 +24,12 @@ const PANEL_POWER_KW = 0.61;        // kW per panel
 const USABLE_RATIO = 0.75;          // usable roof ratio accounting for shading/gaps
 
 const PACKAGE_NEEDS = [
-  { name: 'XB-ECO 3kW',       areaM2: 13,  panels: 5,  kwp: 3.05 },
-  { name: 'XB-ECO 5kW',       areaM2: 23,  panels: 9,  kwp: 5.49 },
-  { name: 'XB-ECO 10kW',      areaM2: 42,  panels: 16, kwp: 10.08 },
-  { name: 'XB-HYBRID 5kW',    areaM2: 23,  panels: 9,  kwp: 5.49 },
-  { name: 'XB-HYBRID 5kW PRO',areaM2: 26,  panels: 10, kwp: 6.10 },
-  { name: 'XB-HYBRID 10kW',   areaM2: 42,  panels: 16, kwp: 10.08 },
+  { name: 'ST-ECO 3kW',       areaM2: 13,  panels: 5,  kwp: 3.05 },
+  { name: 'ST-ECO 5kW',       areaM2: 23,  panels: 9,  kwp: 5.49 },
+  { name: 'ST-ECO 10kW',      areaM2: 42,  panels: 16, kwp: 10.08 },
+  { name: 'ST-HYBRID 5kW',    areaM2: 23,  panels: 9,  kwp: 5.49 },
+  { name: 'ST-HYBRID 5kW PRO',areaM2: 26,  panels: 10, kwp: 6.10 },
+  { name: 'ST-HYBRID 10kW',   areaM2: 42,  panels: 16, kwp: 10.08 },
 ];
 
 const GOOGLE_SATELLITE_URL =
@@ -160,21 +160,21 @@ function AddressSearch({ onResult }) {
 
   return (
     <div className="relative z-[1000]">
-      <div className="flex items-center gap-2 bg-slate-800/95 border border-slate-600 rounded-xl px-3 py-2 focus-within:border-amber-500 transition-colors">
+      <div className="flex items-center gap-2 bg-white/95 border border-emerald-300 rounded-xl px-3 py-2 focus-within:border-amber-500 transition-colors">
         {loading
           ? <Loader2 className="w-4 h-4 text-amber-400 animate-spin flex-shrink-0" />
-          : <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />}
+          : <Search className="w-4 h-4 text-emerald-700 flex-shrink-0" />}
         <input
           type="text"
           value={query}
           onChange={handleChange}
           placeholder="Tìm địa chỉ (đường, phường, quận...)"
-          className="bg-transparent text-sm text-white placeholder-slate-500 outline-none w-full"
+          className="bg-transparent text-sm text-teal-800 placeholder-slate-500 outline-none w-full"
           id="roof-search-input"
           aria-label="Tìm kiếm địa chỉ"
         />
         {query && (
-          <button onClick={() => { setQuery(''); setResults([]); setError(''); }} className="text-slate-500 hover:text-white transition-colors">
+          <button onClick={() => { setQuery(''); setResults([]); setError(''); }} className="text-emerald-600 hover:text-teal-800 transition-colors">
             <X className="w-3.5 h-3.5" />
           </button>
         )}
@@ -182,7 +182,7 @@ function AddressSearch({ onResult }) {
 
       {/* Results dropdown */}
       {(results.length > 0 || error) && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-slate-800 border border-slate-600 rounded-xl overflow-hidden shadow-2xl">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-emerald-300 rounded-xl overflow-hidden shadow-2xl">
           {error && (
             <div className="px-3 py-2 text-xs text-amber-400 flex items-center gap-1.5">
               <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" /> {error}
@@ -192,7 +192,7 @@ function AddressSearch({ onResult }) {
             <button
               key={item.place_id}
               onClick={() => handleSelect(item)}
-              className="w-full text-left px-3 py-2.5 text-xs text-slate-300 hover:bg-slate-700 hover:text-white border-b border-slate-700/50 last:border-0 transition-colors flex items-start gap-2"
+              className="w-full text-left px-3 py-2.5 text-xs text-emerald-800 hover:bg-emerald-100 hover:text-teal-800 border-b border-emerald-200/50 last:border-0 transition-colors flex items-start gap-2"
             >
               <MapPin className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
               <span className="line-clamp-2">{item.display_name}</span>
@@ -227,27 +227,27 @@ function AreaResultPanel({ areaM2, onApply, onClear }) {
   const bestFit = suitablePackages[suitablePackages.length - 1];
 
   return (
-    <div className="bg-slate-800/95 border border-slate-600 rounded-2xl p-4 space-y-3">
+    <div className="bg-white/95 border border-emerald-300 rounded-2xl p-4 space-y-3">
       {/* Main area display */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-slate-400 text-[11px] font-medium">📐 Diện tích mái đo được</p>
+          <p className="text-emerald-700 text-[11px] font-medium">📐 Diện tích mái đo được</p>
           <p className="text-2xl font-black text-amber-400">
             {areaM2.toFixed(1)} <span className="text-base font-semibold">m²</span>
           </p>
-          <p className="text-slate-500 text-[10px]">Vùng lắp được ~{usableArea.toFixed(1)} m² (75% hiệu dụng)</p>
+          <p className="text-emerald-600 text-[10px]">Vùng lắp được ~{usableArea.toFixed(1)} m² (75% hiệu dụng)</p>
         </div>
         <div className="text-right">
-          <p className="text-slate-400 text-[11px] font-medium">⚡ Tối đa lắp được</p>
+          <p className="text-emerald-700 text-[11px] font-medium">⚡ Tối đa lắp được</p>
           <p className="text-xl font-black text-emerald-400">{maxPanels} tấm</p>
-          <p className="text-slate-500 text-[10px]">~{maxKwp} kWp</p>
+          <p className="text-emerald-600 text-[10px]">~{maxKwp} kWp</p>
         </div>
       </div>
 
       {/* Package fit evaluation */}
       <div className="space-y-1.5">
-        <p className="text-slate-400 text-[11px] font-semibold flex items-center gap-1">
-          <Info className="w-3 h-3" /> Đánh giá so với các gói XBSolar
+        <p className="text-emerald-700 text-[11px] font-semibold flex items-center gap-1">
+          <Info className="w-3 h-3" /> Đánh giá so với các gói SmartTech
         </p>
         <div className="grid grid-cols-2 gap-1.5">
           {PACKAGE_NEEDS.slice(0, 6).map((pkg) => {
@@ -277,9 +277,9 @@ function AreaResultPanel({ areaM2, onApply, onClear }) {
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2">
           <p className="text-amber-400 text-[11px] font-bold flex items-center gap-1.5">
             <Sun className="w-3.5 h-3.5" />
-            Gợi ý tối ưu: <span className="text-white">{bestFit.name}</span>
+            Gợi ý tối ưu: <span className="text-teal-800">{bestFit.name}</span>
           </p>
-          <p className="text-slate-400 text-[10px] mt-0.5">
+          <p className="text-emerald-700 text-[10px] mt-0.5">
             {bestFit.panels} tấm JA Solar × {bestFit.kwp} kWp — cần {bestFit.areaM2}m² / bạn có {areaM2.toFixed(0)}m² ✓
           </p>
         </div>
@@ -289,7 +289,7 @@ function AreaResultPanel({ areaM2, onApply, onClear }) {
       <div className="flex gap-2 pt-1">
         <button
           onClick={onClear}
-          className="flex-1 flex items-center justify-center gap-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold text-xs py-2.5 rounded-xl transition-colors"
+          className="flex-1 flex items-center justify-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold text-xs py-2.5 rounded-xl transition-colors"
           id="roof-clear-result-btn"
         >
           <RotateCcw className="w-3.5 h-3.5" />
@@ -297,7 +297,7 @@ function AreaResultPanel({ areaM2, onApply, onClear }) {
         </button>
         <button
           onClick={() => onApply(areaM2, maxPanels, maxKwp, bestFit)}
-          className="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-bold text-xs py-2.5 rounded-xl transition-all hover:scale-105 shadow-lg shadow-amber-500/30"
+          className="flex-1 flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-teal-800 font-bold text-xs py-2.5 rounded-xl transition-all hover:scale-105 shadow-lg shadow-amber-500/30"
           id="roof-apply-btn"
         >
           <CheckCircle2 className="w-3.5 h-3.5" />
@@ -402,22 +402,22 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} aria-hidden="true" />
 
       {/* Modal */}
-      <div className="relative w-full max-w-5xl h-[92vh] sm:h-[88vh] bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl flex flex-col animate-slide-up">
+      <div className="relative w-full max-w-5xl h-[92vh] sm:h-[88vh] bg-emerald-50 border border-emerald-200 rounded-2xl overflow-hidden shadow-2xl flex flex-col animate-slide-up">
 
         {/* ── Top bar ─────────────────────────────────────────────────────── */}
-        <div className="flex-shrink-0 bg-slate-800/90 border-b border-slate-700 px-4 py-3 flex items-center justify-between gap-3">
+        <div className="flex-shrink-0 bg-white/90 border-b border-emerald-200 px-4 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-amber-500/20 rounded-xl flex items-center justify-center">
               <Satellite className="w-4.5 h-4.5 text-amber-400 w-[18px] h-[18px]" />
             </div>
             <div>
-              <h2 className="text-white font-bold text-sm leading-tight">🛰️ Khảo sát Mái Từ Xa — Ảnh Vệ Tinh</h2>
-              <p className="text-slate-400 text-[10px]">Esri World Imagery · Nominatim · @turf/area</p>
+              <h2 className="text-teal-800 font-bold text-sm leading-tight">🛰️ Khảo sát Mái Từ Xa — Ảnh Vệ Tinh</h2>
+              <p className="text-emerald-700 text-[10px]">Esri World Imagery · Nominatim · @turf/area</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 bg-slate-700 hover:bg-slate-600 rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition-colors flex-shrink-0"
+            className="w-8 h-8 bg-emerald-100 hover:bg-emerald-200 rounded-xl flex items-center justify-center text-emerald-700 hover:text-teal-800 transition-colors flex-shrink-0"
             id="roof-modal-close-btn"
           >
             <X className="w-4 h-4" />
@@ -428,12 +428,12 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
         <div className="flex-1 flex flex-col lg:flex-row min-h-0">
 
           {/* ── Left sidebar (controls) ──────────────────────────────────── */}
-          <div className="flex-shrink-0 w-full lg:w-80 bg-slate-900/95 border-b lg:border-b-0 lg:border-r border-slate-700 flex flex-col overflow-y-auto">
+          <div className="flex-shrink-0 w-full lg:w-80 bg-emerald-50/95 border-b lg:border-b-0 lg:border-r border-emerald-200 flex flex-col overflow-y-auto">
             <div className="p-4 space-y-4">
 
               {/* Address search */}
               <div>
-                <label className="text-slate-300 text-xs font-bold mb-2 flex items-center gap-1.5">
+                <label className="text-emerald-800 text-xs font-bold mb-2 flex items-center gap-1.5">
                   <Search className="w-3.5 h-3.5 text-amber-400" />
                   Tìm địa chỉ nhà
                 </label>
@@ -462,7 +462,7 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
               {showTip && !drawing && !completed && (
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3">
                   <p className="text-amber-400 text-[11px] font-bold mb-1">💡 Hướng dẫn đo mái</p>
-                  <ol className="text-slate-400 text-[10px] space-y-0.5 list-decimal list-inside">
+                  <ol className="text-emerald-700 text-[10px] space-y-0.5 list-decimal list-inside">
                     <li>Tìm địa chỉ hoặc định vị GPS</li>
                     <li>Zoom vào mái nhà trên ảnh vệ tinh</li>
                     <li>Nhấn "Bắt đầu vẽ mái" rồi click các góc</li>
@@ -473,7 +473,7 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
 
               {/* Drawing controls */}
               <div>
-                <p className="text-slate-300 text-xs font-bold mb-2 flex items-center gap-1.5">
+                <p className="text-emerald-800 text-xs font-bold mb-2 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-emerald-400" />
                   Chế độ đo đạc
                   {points.length > 0 && (
@@ -499,7 +499,7 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
                         ● Click trên bản đồ để chấm điểm ({points.length}/∞)
                       </p>
                       {points.length < 3 && (
-                        <p className="text-slate-500 text-[10px] mt-0.5">Cần ít nhất 3 điểm</p>
+                        <p className="text-emerald-600 text-[10px] mt-0.5">Cần ít nhất 3 điểm</p>
                       )}
                     </div>
 
@@ -507,7 +507,7 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
                       <button
                         onClick={handleUndo}
                         disabled={points.length === 0}
-                        className="flex items-center justify-center gap-1.5 bg-slate-700 hover:bg-slate-600 disabled:opacity-40 text-slate-300 font-semibold text-xs py-2 rounded-xl transition-colors"
+                        className="flex items-center justify-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 disabled:opacity-40 text-emerald-800 font-semibold text-xs py-2 rounded-xl transition-colors"
                         id="roof-undo-btn"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -528,8 +528,8 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
                       disabled={points.length < 3}
                       className={`w-full flex items-center justify-center gap-2 font-bold text-sm py-3 rounded-xl transition-all ${
                         points.length >= 3
-                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 shadow-lg shadow-amber-500/30 hover:scale-[1.02]'
-                          : 'bg-slate-700 text-slate-500 cursor-not-allowed opacity-60'
+                          ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-teal-800 shadow-lg shadow-amber-500/30 hover:scale-[1.02]'
+                          : 'bg-emerald-100 text-emerald-600 cursor-not-allowed opacity-60'
                       }`}
                       id="roof-complete-btn"
                     >
@@ -543,7 +543,7 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
                   <div className="space-y-2">
                     <button
                       onClick={() => { handleReset(); handleStartDrawing(); }}
-                      className="w-full flex items-center justify-center gap-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold text-xs py-2.5 rounded-xl transition-colors"
+                      className="w-full flex items-center justify-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold text-xs py-2.5 rounded-xl transition-colors"
                       id="roof-redraw-btn"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
@@ -565,7 +565,7 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
               {completed && areaM2 === 0 && (
                 <div className="bg-rose-500/10 border border-rose-500/30 rounded-xl p-3">
                   <p className="text-rose-400 text-xs font-bold">Không tính được diện tích</p>
-                  <p className="text-slate-400 text-[10px] mt-0.5">Các điểm có thể bị thẳng hàng hoặc quá gần nhau.</p>
+                  <p className="text-emerald-700 text-[10px] mt-0.5">Các điểm có thể bị thẳng hàng hoặc quá gần nhau.</p>
                 </div>
               )}
             </div>
@@ -583,7 +583,7 @@ export default function SatelliteRoofModal({ isOpen, onClose, onApplyArea }) {
 
             {/* Zoom tip */}
             {!completed && (
-              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] bg-slate-900/80 backdrop-blur-sm border border-slate-600 rounded-full px-3 py-1 text-[10px] text-slate-300 pointer-events-none whitespace-nowrap">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] bg-emerald-50/80 backdrop-blur-sm border border-emerald-300 rounded-full px-3 py-1 text-[10px] text-emerald-800 pointer-events-none whitespace-nowrap">
                 Zoom đến level 19–20 để thấy rõ mái nhà
               </div>
             )}

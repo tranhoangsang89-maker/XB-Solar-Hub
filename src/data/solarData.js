@@ -83,8 +83,8 @@ export const PROVINCES_PSH = [
 export const SYSTEM_COMBOS = {
   ongrid: [
     {
-      id: 'XB-ECO-3K',
-      name: 'Gói Tiết Kiệm XB-ECO 3kW',
+      id: 'ST-ECO-3K',
+      name: 'Gói Tiết Kiệm ST-ECO 3kW',
       inverter: 'Sungrow SG3.0RS (1 Pha)',
       panelModel: 'JA Solar JAM66D45 LB 610W',
       panelQty: 5,
@@ -94,8 +94,8 @@ export const SYSTEM_COMBOS = {
       description: 'Phù hợp tiền điện 1.5 - 2.5 triệu/tháng, triệt tiêu điện giờ cao điểm ngày.'
     },
     {
-      id: 'XB-ECO-5K',
-      name: 'Gói Tiết Kiệm XB-ECO 5kW',
+      id: 'ST-ECO-5K',
+      name: 'Gói Tiết Kiệm ST-ECO 5kW',
       inverter: 'Sungrow SG5.0RS (1 Pha)',
       panelModel: 'JA Solar JAM66D45 LB 610W',
       panelQty: 9,
@@ -105,8 +105,8 @@ export const SYSTEM_COMBOS = {
       description: 'Phù hợp tiền điện 2.5 - 4.5 triệu/tháng, gọt sạch bậc thang điện cao nhất.'
     },
     {
-      id: 'XB-ECO-10K',
-      name: 'Gói Tiết Kiệm XB-ECO 10kW',
+      id: 'ST-ECO-10K',
+      name: 'Gói Tiết Kiệm ST-ECO 10kW',
       inverter: 'Sungrow SG10RS / SG10RT (3 Pha)',
       panelModel: 'JA Solar JAM72D42 LB 630W',
       panelQty: 16,
@@ -118,8 +118,8 @@ export const SYSTEM_COMBOS = {
   ],
   hybrid: [
     {
-      id: 'XB-HYBRID-5K',
-      name: 'Gói Toàn Diện XB-HYBRID 5kW (Áp Thấp)',
+      id: 'ST-HYBRID-5K',
+      name: 'Gói Toàn Diện ST-HYBRID 5kW (Áp Thấp)',
       inverter: 'Sungrow MG5RL (1 Pha Hybrid)',
       battery: 'Pin Lithium Sungrow MGL060 (6.0 kWh)',
       panelModel: 'JA Solar JAM66D45 LB 610W',
@@ -130,8 +130,8 @@ export const SYSTEM_COMBOS = {
       description: 'Giải pháp lưu trữ kinh tế, dùng điện mặt trời 24/7 và chống cúp điện.'
     },
     {
-      id: 'XB-HYBRID-5K-PRO',
-      name: 'Gói Cao Cấp XB-HYBRID 5kW (Lưu trữ lớn)',
+      id: 'ST-HYBRID-5K-PRO',
+      name: 'Gói Cao Cấp ST-HYBRID 5kW (Lưu trữ lớn)',
       inverter: 'Sungrow MG6RL (1 Pha Hybrid)',
       battery: 'Pin Lithium Sungrow MBL160 (16.0 kWh)',
       panelModel: 'JA Solar JAM66D45 LB 610W',
@@ -142,8 +142,8 @@ export const SYSTEM_COMBOS = {
       description: 'Lưu trữ cực lớn 16kWh, tự do chạy máy lạnh và thiết bị công suất lớn ban đêm.'
     },
     {
-      id: 'XB-HYBRID-10K-3P',
-      name: 'Gói Biệt Thự XB-HYBRID 10kW (3 Pha)',
+      id: 'ST-HYBRID-10K-3P',
+      name: 'Gói Biệt Thự ST-HYBRID 10kW (3 Pha)',
       inverter: 'Sungrow MG10TL / SH10RT (3 Pha Hybrid)',
       battery: 'Pin Sungrow Cao Áp SBR096 (9.6 kWh)',
       panelModel: 'JA Solar JAM72D42 LB 630W',

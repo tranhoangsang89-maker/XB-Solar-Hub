@@ -39,7 +39,7 @@ function StepIndicator({ currentStep }) {
             </div>
             <span
               className={`text-xs font-semibold hidden sm:block transition-colors duration-300 ${
-                currentStep === step.id ? 'text-amber-400' : currentStep > step.id ? 'text-emerald-400' : 'text-slate-500'
+                currentStep === step.id ? 'text-amber-400' : currentStep > step.id ? 'text-emerald-400' : 'text-emerald-600'
               }`}
             >
               {step.label}
@@ -48,7 +48,7 @@ function StepIndicator({ currentStep }) {
           {idx < steps.length - 1 && (
             <div
               className={`w-8 sm:w-16 h-0.5 transition-all duration-500 ${
-                currentStep > step.id ? 'bg-emerald-500' : 'bg-slate-700'
+                currentStep > step.id ? 'bg-emerald-500' : 'bg-emerald-100'
               }`}
             />
           )}
@@ -76,18 +76,18 @@ function HeroSection({ onScrollToCalc }) {
       </div>
 
       {/* Headline */}
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-4">
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-teal-800 leading-tight mb-4">
         Điện mặt trời{' '}
         <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
-          XB Solar
+          Smart Tech
         </span>
         <br />
-        <span className="text-2xl sm:text-3xl lg:text-4xl text-slate-300 font-bold">
+        <span className="text-2xl sm:text-3xl lg:text-4xl text-emerald-800 font-bold">
           Tiết kiệm thật — Hoàn vốn nhanh
         </span>
       </h1>
 
-      <p className="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+      <p className="text-emerald-700 text-base sm:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
         Nhập hóa đơn điện, chọn tỉnh thành — nhận ngay đề xuất hệ thống phù hợp, phân tích ROI 25 năm và báo giá PDF chuyên nghiệp.
       </p>
 
@@ -98,8 +98,8 @@ function HeroSection({ onScrollToCalc }) {
             <div className="w-9 h-9 bg-amber-500/20 rounded-xl flex items-center justify-center mx-auto mb-2">
               <Icon className="w-4 h-4 text-amber-400" />
             </div>
-            <p className="text-white text-xs font-bold mb-0.5">{title}</p>
-            <p className="text-slate-500 text-[10px]">{desc}</p>
+            <p className="text-teal-800 text-xs font-bold mb-0.5">{title}</p>
+            <p className="text-emerald-600 text-[10px]">{desc}</p>
           </div>
         ))}
       </div>
@@ -107,11 +107,11 @@ function HeroSection({ onScrollToCalc }) {
       {/* Scroll hint */}
       <button
         onClick={onScrollToCalc}
-        className="flex flex-col items-center gap-1 mx-auto text-slate-500 hover:text-amber-400 transition-colors animate-bounce"
+        className="flex flex-col items-center gap-1 mx-auto text-emerald-600 hover:text-amber-500 transition-colors animate-bounce"
         aria-label="Cuộn xuống để bắt đầu tính toán"
       >
-        <span className="text-xs">Bắt đầu tính ngay</span>
-        <ChevronDown className="w-5 h-5" />
+        <span className="text-sm font-semibold">Bắt đầu tính ngay</span>
+        <ChevronDown className="w-6 h-6" />
       </button>
     </div>
   );
@@ -185,7 +185,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 relative">
+    <div className="min-h-screen bg-emerald-50 relative">
       <SolarBackground />
 
       {/* Header */}
@@ -193,13 +193,13 @@ export default function App() {
 
       {/* Mode Switcher */}
       <div className="relative z-20 flex justify-center mt-6 px-4">
-        <div className="bg-slate-800/80 backdrop-blur-md p-1 rounded-full border border-slate-700 shadow-xl inline-flex overflow-x-auto max-w-full">
+        <div className="bg-white/80 backdrop-blur-md p-1 rounded-full border border-emerald-200 shadow-xl inline-flex overflow-x-auto max-w-full">
           <button
             onClick={() => setAppMode('quote')}
             className={`px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-300 whitespace-nowrap ${
               appMode === 'quote'
-                ? 'bg-amber-500 text-slate-900 shadow-lg'
-                : 'text-slate-300 hover:text-white'
+                ? 'bg-amber-500 text-teal-800 shadow-lg'
+                : 'text-emerald-800 hover:text-teal-800'
             }`}
           >
             <Zap className="w-4 h-4" />
@@ -209,8 +209,8 @@ export default function App() {
             onClick={() => setAppMode('designer')}
             className={`px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-300 whitespace-nowrap ${
               appMode === 'designer'
-                ? 'bg-emerald-500 text-slate-900 shadow-lg'
-                : 'text-slate-300 hover:text-white'
+                ? 'bg-emerald-500 text-teal-800 shadow-lg'
+                : 'text-emerald-800 hover:text-teal-800'
             }`}
           >
             <PenTool className="w-4 h-4" />
@@ -225,8 +225,23 @@ export default function App() {
           <>
             {/* Hero (step 1 only) */}
             {step === 1 && (
-              <div className="max-w-6xl mx-auto px-4 pt-12 sm:pt-20">
-                <HeroSection onScrollToCalc={scrollToCalc} />
+              <div className="w-full flex flex-col mb-12">
+                {/* Full-width Banner Video */}
+                <div className="w-full aspect-video md:aspect-[21/9] lg:aspect-[24/9] overflow-hidden shadow-lg mb-10 sm:mb-16 bg-teal-900">
+                  <video 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline 
+                    className="w-full h-full object-cover"
+                  >
+                    <source src="/video-st-logo.mp4" type="video/mp4" />
+                  </video>
+                </div>
+
+                <div className="max-w-6xl mx-auto px-4 w-full">
+                  <HeroSection onScrollToCalc={scrollToCalc} />
+                </div>
               </div>
             )}
 

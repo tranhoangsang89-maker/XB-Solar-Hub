@@ -512,61 +512,61 @@ export default function Solar3DViewer({ initialPanelQty = 12, onClose, onApply }
   const area = (totalQty * 2.58).toFixed(1);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-md p-2 sm:p-4 animate-fade-in">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl sm:rounded-3xl overflow-hidden w-full max-w-7xl h-[95vh] flex flex-col md:flex-row relative shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-teal-900/95 backdrop-blur-md p-2 sm:p-4 animate-fade-in">
+      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl sm:rounded-3xl overflow-hidden w-full max-w-7xl h-[95vh] flex flex-col md:flex-row relative shadow-2xl">
         
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-10 h-10 bg-slate-800/80 hover:bg-rose-500 rounded-full flex items-center justify-center text-slate-300 hover:text-white transition-colors border border-slate-700"
+          className="absolute top-4 right-4 z-20 w-10 h-10 bg-white/80 hover:bg-rose-500 rounded-full flex items-center justify-center text-emerald-800 hover:text-teal-800 transition-colors border border-emerald-200"
         >
           <X className="w-5 h-5" />
         </button>
 
         <div className="flex-1 relative bg-[#0f172a] h-full" ref={mountRef}>
-          <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-10 w-64 bg-slate-900/80 backdrop-blur-xl border border-slate-700/60 rounded-2xl p-4 shadow-2xl pointer-events-none">
+          <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-10 w-64 bg-emerald-50/80 backdrop-blur-xl border border-emerald-200/60 rounded-2xl p-4 shadow-2xl pointer-events-none">
             <div className="flex items-center gap-2 mb-4">
               <Sun className="w-5 h-5 text-amber-400" />
-              <h4 className="text-white font-bold text-xs sm:text-sm uppercase tracking-wider">Cấu Hình Lắp Đặt</h4>
+              <h4 className="text-teal-800 font-bold text-xs sm:text-sm uppercase tracking-wider">Cấu Hình Lắp Đặt</h4>
             </div>
             
             <div className="space-y-3 mb-5">
               <div className="flex justify-between items-center">
-                <span className="text-slate-400 text-xs">Tổng số pin:</span>
+                <span className="text-emerald-700 text-xs">Tổng số pin:</span>
                 <span className="text-emerald-400 font-black text-lg">{totalQty} <span className="text-xs font-medium text-emerald-500/70">tấm</span></span>
               </div>
               
-              <div className="flex justify-between items-center text-[10px] text-slate-500 mt-[-8px]">
-                <span>Mái trước: <span className="text-slate-300">{southQty}</span></span>
-                <span>Mái sau: <span className="text-slate-300">{northQty}</span></span>
+              <div className="flex justify-between items-center text-[10px] text-emerald-600 mt-[-8px]">
+                <span>Mái trước: <span className="text-emerald-800">{southQty}</span></span>
+                <span>Mái sau: <span className="text-emerald-800">{northQty}</span></span>
               </div>
 
-              <div className="h-px bg-slate-800" />
+              <div className="h-px bg-white" />
               <div className="flex justify-between items-center">
-                <span className="text-slate-400 text-xs">Công suất:</span>
+                <span className="text-emerald-700 text-xs">Công suất:</span>
                 <span className="text-amber-400 font-black text-base">{kwp} <span className="text-xs font-medium text-amber-500/70">kWp</span></span>
               </div>
-              <div className="h-px bg-slate-800" />
+              <div className="h-px bg-white" />
               <div className="flex justify-between items-center">
-                <span className="text-slate-400 text-xs">Diện tích mái:</span>
+                <span className="text-emerald-700 text-xs">Diện tích mái:</span>
                 <span className="text-blue-400 font-black text-base">{area} <span className="text-xs font-medium text-blue-500/70">m²</span></span>
               </div>
             </div>
 
-            <p className="text-[10px] text-slate-400 italic text-center leading-tight">
+            <p className="text-[10px] text-emerald-700 italic text-center leading-tight">
               Hover và Click trực tiếp lên mái nhà 3D bên phải để thêm/bớt tấm pin.
             </p>
           </div>
           
-          <div className="absolute bottom-6 left-6 text-slate-500 text-[10px] sm:text-xs flex items-center gap-2 z-10 bg-slate-900/50 px-3 py-1.5 rounded-full pointer-events-none hidden sm:flex">
+          <div className="absolute bottom-6 left-6 text-emerald-600 text-[10px] sm:text-xs flex items-center gap-2 z-10 bg-emerald-50/50 px-3 py-1.5 rounded-full pointer-events-none hidden sm:flex">
             <Compass className="w-4 h-4" /> Chuột trái: Xoay | Cuộn: Zoom | Chuột phải: Di chuyển
           </div>
         </div>
 
-        <div className="w-full md:w-[320px] bg-slate-900/95 border-t md:border-t-0 md:border-l border-slate-800 p-6 flex flex-col gap-6 overflow-y-auto shrink-0 z-10">
+        <div className="w-full md:w-[320px] bg-emerald-50/95 border-t md:border-t-0 md:border-l border-emerald-200 p-6 flex flex-col gap-6 overflow-y-auto shrink-0 z-10">
           
           <div>
-            <h3 className="text-xl font-black text-white mb-1">Công Cụ Layout</h3>
-            <p className="text-slate-400 text-xs">Tương tác kéo thả 3D chuyên nghiệp</p>
+            <h3 className="text-xl font-black text-teal-800 mb-1">Công Cụ Layout</h3>
+            <p className="text-emerald-700 text-xs">Tương tác kéo thả 3D chuyên nghiệp</p>
           </div>
 
           <div className="space-y-3">
@@ -576,43 +576,43 @@ export default function Solar3DViewer({ initialPanelQty = 12, onClose, onApply }
             >
               <RotateCw className="w-4 h-4" /> {orientation === 'portrait' ? 'Hướng: Xếp Dọc' : 'Hướng: Xếp Ngang'}
             </button>
-            <div className="h-px bg-slate-800/80 my-2" />
+            <div className="h-px bg-white/80 my-2" />
             <button 
               onClick={() => handleAutoLayout(totalQty > 0 ? totalQty : 12, 'south')}
-              className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition-all border border-slate-700/50"
+              className="w-full flex items-center justify-center gap-2 py-2.5 bg-white hover:bg-emerald-100 text-slate-200 rounded-xl text-xs font-semibold transition-all border border-emerald-200/50"
             >
               <LayoutGrid className="w-3.5 h-3.5 text-emerald-400" /> Lắp Mái Trước (Nam)
             </button>
             <button 
               onClick={() => handleAutoLayout(totalQty > 0 ? totalQty : 24, 'both')}
-              className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition-all border border-slate-700/50"
+              className="w-full flex items-center justify-center gap-2 py-2.5 bg-white hover:bg-emerald-100 text-slate-200 rounded-xl text-xs font-semibold transition-all border border-emerald-200/50"
             >
               <LayoutGrid className="w-3.5 h-3.5 text-blue-400" /> Lắp Cả 2 Mái (Trước & Sau)
             </button>
             <div className="flex gap-3 pt-1">
               <button 
                 onClick={handleFillAll}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-white hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-semibold transition-all"
               >
                 <Maximize className="w-3.5 h-3.5" /> Lấp đầy
               </button>
               <button 
                 onClick={handleClearAll}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-slate-800 hover:bg-rose-950 hover:text-rose-400 text-slate-300 rounded-xl text-xs font-semibold transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-white hover:bg-rose-950 hover:text-rose-400 text-emerald-800 rounded-xl text-xs font-semibold transition-all"
               >
                 <Trash2 className="w-3.5 h-3.5" /> Xóa hết
               </button>
             </div>
           </div>
 
-          <div className="h-px bg-slate-800/80 my-2" />
+          <div className="h-px bg-white/80 my-2" />
 
           <div>
-            <label className="block text-xs font-bold text-slate-500 mb-3 uppercase tracking-wider">Góc camera</label>
+            <label className="block text-xs font-bold text-emerald-600 mb-3 uppercase tracking-wider">Góc camera</label>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => setView('45')} className="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium">Phối cảnh 45°</button>
-              <button onClick={() => setView('top')} className="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium">Từ đỉnh nóc</button>
-              <button onClick={() => setView('front')} className="py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium col-span-2">Mặt tiền nhà</button>
+              <button onClick={() => setView('45')} className="py-2.5 bg-white hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-medium">Phối cảnh 45°</button>
+              <button onClick={() => setView('top')} className="py-2.5 bg-white hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-medium">Từ đỉnh nóc</button>
+              <button onClick={() => setView('front')} className="py-2.5 bg-white hover:bg-emerald-100 text-emerald-800 rounded-lg text-xs font-medium col-span-2">Mặt tiền nhà</button>
             </div>
           </div>
 
@@ -622,11 +622,11 @@ export default function Solar3DViewer({ initialPanelQty = 12, onClose, onApply }
                 if(onApply) onApply(totalQty);
                 onClose();
               }}
-              className="w-full flex items-center justify-center gap-2 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 rounded-xl text-sm font-black transition-all shadow-lg shadow-amber-500/20"
+              className="w-full flex items-center justify-center gap-2 py-4 bg-amber-500 hover:bg-amber-400 text-teal-800 rounded-xl text-sm font-black transition-all shadow-lg shadow-amber-500/20"
             >
               <Check className="w-5 h-5" /> Áp dụng vào Báo Giá
             </button>
-            <p className="text-center text-[10px] text-slate-500 mt-3">Thay đổi số lượng sẽ ảnh hưởng tới báo giá & thời gian thu hồi vốn.</p>
+            <p className="text-center text-[10px] text-emerald-600 mt-3">Thay đổi số lượng sẽ ảnh hưởng tới báo giá & thời gian thu hồi vốn.</p>
           </div>
 
         </div>

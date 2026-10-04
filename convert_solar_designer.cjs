@@ -7,16 +7,16 @@ try {
     // First replace the logo specifically so it doesn't get messed up by text replacements
     html = html.replace(/Logo Solar 24h\.png/g, '/logo-smarttech-nbg.png');
     
-    html = html.replace(/Solar 24h/g, 'XB SOLAR');
-    html = html.replace(/SOLAR 24H/g, 'XB SOLAR');
-    html = html.replace(/HỒ MINH VIỆT/g, 'HỒ NGỌC PHƯƠNG');
-    html = html.replace(/Mr\.Sang 0888\.003\.205/g, '08.9811.0068 | cskh@xbsolar.vn<br>38 Song Hành, Lake View City, TP.HCM');
+    html = html.replace(/Solar 24h/g, 'SMARTTECH');
+    html = html.replace(/SOLAR 24H/g, 'SMARTTECH');
+    html = html.replace(/HỒ MINH VIỆT/g, 'Nguyễn Thế Anh');
+    html = html.replace(/Mr\.Sang 0888\.003\.205/g, '0984 807 679 | info@smarttech.vn<br>Số 1 Nổi, Phường Long Trường, TP. Hồ Chí Minh, MST: 3702675986');
     
     // Fix PDF cover text wrapping
     html = html.replace('.pdf-cover h1 {', '.pdf-cover h1 {\n            white-space: nowrap;\n            font-size: 2.8rem !important;');
     html = html.replace('.pdf-cover h2 {', '.pdf-cover h2 {\n            white-space: nowrap;\n            font-size: 1.4rem !important;');
 
-    html = html.replace(/Logo XB SOLAR\.png/g, '/logo-smarttech-nbg.png');
+    html = html.replace(/Logo SMARTTECH\.png/g, '/logo-smarttech-nbg.png');
     html = html.replace(/\/logo-smarttech-nbg\.png/g, '/logo-smarttech-nbg.png');
 
     // 2. Colors
@@ -64,7 +64,7 @@ try {
     await new Promise(r => setTimeout(r, 800)); // allow UI to show spinner
     
     const custName = document.getElementById('custName').value || 'Khach_hang';
-    const filename = \`Bao_Cao_Solar_XBSolar_\${custName.replace(/\\s+/g, '_')}.pdf\`;
+    const filename = \`Bao_Cao_Solar_SmartTech_\${custName.replace(/\\s+/g, '_')}.pdf\`;
     
     try {
         const { jsPDF } = window.jspdf;

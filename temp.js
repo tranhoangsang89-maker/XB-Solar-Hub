@@ -1149,7 +1149,7 @@
     
     const originalTitle = document.title;
     const custName = document.getElementById('custName').value || 'Khach_hang';
-    document.title = `Bao_Cao_Solar_XBSolar_${custName.replace(/\s+/g, '_')}`;
+    document.title = `Bao_Cao_Solar_SmartTech_${custName.replace(/\s+/g, '_')}`;
     
     try {
         window.print();
@@ -1944,7 +1944,7 @@
                     <div class="tb-col tb-company">
                         <div class="tb-row tb-center" style="flex: 1.2;">
                             <span class="tb-label">ĐƠN VỊ THIẾT KẾ & THI CÔNG</span>
-                            <span style="color: #16a34a; font-size: 16px; font-weight: bold; margin-top: 4px; display: inline-block;">XB SOLAR</span>
+                            <span style="color: #16a34a; font-size: 16px; font-weight: bold; margin-top: 4px; display: inline-block;">SMARTTECH</span>
                         </div>
                         <div class="tb-row" style="border-bottom: none; flex: 0.8; justify-content: flex-start; padding-top: 6px;">
                             <span class="tb-label">PHÊ DUYỆT:</span>
@@ -2072,7 +2072,7 @@
                 <!-- Trang 1: Bìa -->
                 <div class="pdf-page">
                     <div class="pdf-cover">
-                        <img src="Logo XB SOLAR.png" alt="Logo" onerror="this.style.display='none'" style="max-width:300px; margin-bottom: 20px;">
+                        <img src="Logo SMARTTECH.png" alt="Logo" onerror="this.style.display='none'" style="max-width:300px; margin-bottom: 20px;">
                         <h1 contenteditable="true" spellcheck="false" style="outline: none;">BẢN VẼ THIẾT KẾ</h1>
                         <h2 contenteditable="true" spellcheck="false" style="outline: none;">CÔNG TRÌNH: HỆ THỐNG ĐIỆN MẶT TRỜI MÁI NHÀ</h2>
                         <h3 contenteditable="true" spellcheck="false" style="outline: none; font-size: 1.2rem; color: var(--text-dark); margin-bottom: 30px;">ĐỊA ĐIỂM LẮP ĐẶT: <span class="tb-val-address" style="font-weight: normal;">${custAddress}</span></h3>
@@ -2091,7 +2091,7 @@
                                 <p contenteditable="true" spellcheck="false" style="outline: none; font-weight: bold; font-size: 1.2rem;">ĐƠN VỊ THI CÔNG - LẮP ĐẶT</p>
                                 <p contenteditable="true" spellcheck="false" style="outline: none; font-weight: bold; font-size: 1.1rem; margin-top: 5px;">GIÁM ĐỐC</p>
                                 <div style="height: 80px;"></div>
-                                <p contenteditable="true" spellcheck="false" style="outline: none; font-weight: bold; font-size: 1.2rem;">HỒ NGỌC PHƯƠNG</p>
+                                <p contenteditable="true" spellcheck="false" style="outline: none; font-weight: bold; font-size: 1.2rem;">Nguyễn Thế Anh</p>
                             </div>
                         </div>
                     </div>

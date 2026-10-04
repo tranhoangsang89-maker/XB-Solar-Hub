@@ -93,10 +93,10 @@ export default function BillInputStep({ onNext }) {
           <Lightbulb className="w-4 h-4 text-amber-400" />
           <span className="text-amber-400 text-sm font-semibold">Bước 1 / 3</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">
+        <h2 className="text-2xl sm:text-3xl font-black text-teal-800 mb-2">
           Thông tin tiêu thụ điện
         </h2>
-        <p className="text-slate-400 text-sm sm:text-base max-w-md mx-auto">
+        <p className="text-emerald-700 text-sm sm:text-base max-w-md mx-auto">
           Nhập hóa đơn điện hàng tháng để chúng tôi tính toán hệ thống phù hợp nhất cho bạn
         </p>
       </div>
@@ -108,7 +108,7 @@ export default function BillInputStep({ onNext }) {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Zap className="w-5 h-5 text-amber-400" />
-              <label className="text-white font-semibold">Hóa đơn điện hàng tháng</label>
+              <label className="text-teal-800 font-semibold">Hóa đơn điện hàng tháng</label>
             </div>
             <div className="text-right">
               <div className="text-2xl font-black text-amber-400">{formatVnd(monthlyBill)}</div>
@@ -134,7 +134,7 @@ export default function BillInputStep({ onNext }) {
               aria-label="Tiền điện hàng tháng"
             />
           </div>
-          <div className="flex justify-between text-xs text-slate-500 mt-1">
+          <div className="flex justify-between text-xs text-emerald-600 mt-1">
             <span>500k</span>
             <span>2.5tr</span>
             <span>5tr</span>
@@ -149,8 +149,8 @@ export default function BillInputStep({ onNext }) {
                 onClick={() => setMonthlyBill(val)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 ${
                   monthlyBill === val
-                    ? 'bg-amber-500 text-slate-900 border-amber-500'
-                    : 'bg-slate-700/50 text-slate-400 border-slate-600 hover:border-amber-500/50 hover:text-amber-400'
+                    ? 'bg-amber-500 text-teal-800 border-amber-500'
+                    : 'bg-emerald-100/50 text-emerald-700 border-emerald-300 hover:border-amber-500/50 hover:text-amber-400'
                 }`}
               >
                 {formatVnd(val).replace('đ', '')}
@@ -163,7 +163,7 @@ export default function BillInputStep({ onNext }) {
         <div className="card-dark p-6">
           <div className="flex items-center gap-2 mb-4">
             <MapPin className="w-5 h-5 text-emerald-400" />
-            <label className="text-white font-semibold">Tỉnh / Thành phố lắp đặt</label>
+            <label className="text-teal-800 font-semibold">Tỉnh / Thành phố lắp đặt</label>
           </div>
           {/* Custom Searchable Dropdown */}
           <div className="relative">
@@ -173,7 +173,7 @@ export default function BillInputStep({ onNext }) {
               aria-label="Chọn tỉnh thành"
             >
               <span>{province.name} — PSH: {province.psh} giờ/ngày</span>
-              <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${isProvinceOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`w-4 h-4 text-emerald-700 transition-transform ${isProvinceOpen ? 'rotate-180' : ''}`} />
             </button>
             
             {isProvinceOpen && (
@@ -182,15 +182,15 @@ export default function BillInputStep({ onNext }) {
                   className="fixed inset-0 z-40" 
                   onClick={() => setIsProvinceOpen(false)}
                 />
-                <div className="absolute z-50 w-full mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl overflow-hidden animate-fade-in">
-                  <div className="p-2 border-b border-slate-700 flex items-center gap-2">
-                    <Search className="w-4 h-4 text-slate-400 ml-2" />
+                <div className="absolute z-50 w-full mt-2 bg-white border border-emerald-200 rounded-xl shadow-2xl overflow-hidden animate-fade-in">
+                  <div className="p-2 border-b border-emerald-200 flex items-center gap-2">
+                    <Search className="w-4 h-4 text-emerald-700 ml-2" />
                     <input
                       type="text"
                       placeholder="Tìm kiếm tỉnh/thành phố..."
                       value={provinceSearch}
                       onChange={(e) => setProvinceSearch(e.target.value)}
-                      className="bg-transparent text-sm text-white focus:outline-none w-full p-2"
+                      className="bg-transparent text-sm text-teal-800 focus:outline-none w-full p-2"
                       autoFocus
                     />
                   </div>
@@ -207,15 +207,15 @@ export default function BillInputStep({ onNext }) {
                           className={`w-full text-left px-3 py-2.5 rounded-lg text-sm flex items-center justify-between transition-colors ${
                             province.name === p.name 
                               ? 'bg-emerald-500/20 text-emerald-400 font-medium' 
-                              : 'text-slate-300 hover:bg-slate-700'
+                              : 'text-emerald-800 hover:bg-emerald-100'
                           }`}
                         >
-                          <span>{p.name} <span className="text-slate-500 text-xs ml-1">({p.region})</span></span>
+                          <span>{p.name} <span className="text-emerald-600 text-xs ml-1">({p.region})</span></span>
                           {province.name === p.name && <Check className="w-4 h-4" />}
                         </button>
                       ))
                     ) : (
-                      <div className="p-3 text-center text-slate-500 text-sm">Không tìm thấy kết quả</div>
+                      <div className="p-3 text-center text-emerald-600 text-sm">Không tìm thấy kết quả</div>
                     )}
                   </div>
                 </div>
@@ -234,7 +234,7 @@ export default function BillInputStep({ onNext }) {
         <div className="card-dark p-6">
           <div className="flex items-center gap-2 mb-4">
             <Clock className="w-5 h-5 text-blue-400" />
-            <label className="text-white font-semibold">Thói quen sử dụng điện</label>
+            <label className="text-teal-800 font-semibold">Thói quen sử dụng điện</label>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {USAGE_PROFILES.map((profile) => {
@@ -252,16 +252,16 @@ export default function BillInputStep({ onNext }) {
                   className={`relative p-4 rounded-xl border-2 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                     isSelected
                       ? 'bg-amber-500/10 border-amber-500 shadow-lg shadow-amber-500/20'
-                      : 'bg-slate-700/40 border-slate-600 hover:border-slate-500'
+                      : 'bg-emerald-100/40 border-emerald-300 hover:border-slate-500'
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${isSelected ? 'bg-amber-500/20' : 'bg-slate-600'}`}>
-                    <Icon className={`w-4 h-4 ${isSelected ? 'text-amber-400' : 'text-slate-400'}`} />
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${isSelected ? 'bg-amber-500/20' : 'bg-emerald-200'}`}>
+                    <Icon className={`w-4 h-4 ${isSelected ? 'text-amber-400' : 'text-emerald-700'}`} />
                   </div>
-                  <p className={`font-bold text-sm mb-1 ${isSelected ? 'text-white' : 'text-slate-300'}`}>
+                  <p className={`font-bold text-sm mb-1 ${isSelected ? 'text-teal-800' : 'text-emerald-800'}`}>
                     {profile.label}
                   </p>
-                  <p className="text-xs text-slate-500 leading-snug mb-2">{profile.desc}</p>
+                  <p className="text-xs text-emerald-600 leading-snug mb-2">{profile.desc}</p>
                   <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border ${tagColors[profile.tagColor]}`}>
                     {profile.tag}
                   </span>
@@ -282,7 +282,7 @@ export default function BillInputStep({ onNext }) {
           <button
             onClick={() => setRoofModalOpen(true)}
             id="open-satellite-roof-btn"
-            className="relative w-full flex items-center justify-center gap-3 bg-slate-800/80 hover:bg-slate-700/80
+            className="relative w-full flex items-center justify-center gap-3 bg-white/80 hover:bg-emerald-100/80
               border-2 border-dashed border-blue-500/50 hover:border-blue-400 text-blue-300 hover:text-blue-200
               font-bold text-sm py-4 rounded-2xl transition-all duration-200 hover:scale-[1.01] group"
           >
@@ -298,15 +298,15 @@ export default function BillInputStep({ onNext }) {
             <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-emerald-400 text-xs font-bold">✅ Đã đo mái từ vệ tinh</p>
-              <p className="text-slate-300 text-xs">
-                Diện tích: <span className="font-bold text-white">{roofData.areaM2.toFixed(1)} m²</span> &nbsp;·&nbsp;
+              <p className="text-emerald-800 text-xs">
+                Diện tích: <span className="font-bold text-teal-800">{roofData.areaM2.toFixed(1)} m²</span> &nbsp;·&nbsp;
                 Tối đa: <span className="font-bold text-amber-400">{roofData.maxPanels} tấm (~{roofData.maxKwp} kWp)</span>
               </p>
               {roofData.suggestedPackage && (
-                <p className="text-slate-400 text-[10px] mt-0.5">Gợi ý: {roofData.suggestedPackage.name}</p>
+                <p className="text-emerald-700 text-[10px] mt-0.5">Gợi ý: {roofData.suggestedPackage.name}</p>
               )}
             </div>
-            <button onClick={() => setRoofData(null)} className="text-slate-500 hover:text-slate-300 transition-colors flex-shrink-0">
+            <button onClick={() => setRoofData(null)} className="text-emerald-600 hover:text-emerald-800 transition-colors flex-shrink-0">
               <CheckCircle2 className="w-4 h-4" />
             </button>
           </div>
@@ -323,7 +323,7 @@ export default function BillInputStep({ onNext }) {
           <ChevronRight className="w-5 h-5" />
         </button>
 
-        <p className="text-center text-slate-500 text-xs">
+        <p className="text-center text-emerald-600 text-xs">
           🔒 Thông tin chỉ dùng để tính toán kỹ thuật — không lưu trữ hay chia sẻ
         </p>
       </div>

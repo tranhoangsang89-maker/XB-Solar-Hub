@@ -22,12 +22,12 @@ const formatVndM = (amount) => {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-slate-800 border border-slate-600 rounded-xl px-4 py-3 shadow-2xl">
-      <p className="text-slate-300 text-xs font-bold mb-2">Năm {label}</p>
+    <div className="bg-white border border-emerald-300 rounded-xl px-4 py-3 shadow-2xl">
+      <p className="text-emerald-800 text-xs font-bold mb-2">Năm {label}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center gap-2 text-xs mb-1">
           <div className="w-2.5 h-2.5 rounded-full" style={{ background: entry.color }} />
-          <span className="text-slate-400">{entry.name}:</span>
+          <span className="text-emerald-700">{entry.name}:</span>
           <span className={`font-bold ${entry.value >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
             {entry.value >= 0 ? '+' : ''}{formatVndM(entry.value)}đ
           </span>
@@ -54,10 +54,10 @@ export default function RoiChartStep({ monthlyBill, province, result, onBack, on
           <TrendingUp className="w-4 h-4 text-blue-400" />
           <span className="text-blue-400 text-sm font-semibold">Bước 3 / 3 — Phân tích ROI</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">
+        <h2 className="text-2xl sm:text-3xl font-black text-teal-800 mb-2">
           Dòng tiền tiết kiệm trong 25 năm
         </h2>
-        <p className="text-slate-400 text-sm max-w-lg mx-auto">
+        <p className="text-emerald-700 text-sm max-w-lg mx-auto">
           Biểu đồ lợi nhuận ròng tích lũy sau khi trừ chi phí đầu tư ban đầu (tính suy hao tấm pin ~0.5%/năm)
         </p>
       </div>
@@ -65,19 +65,19 @@ export default function RoiChartStep({ monthlyBill, province, result, onBack, on
       {/* Summary KPI cards */}
       <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         <div className="card-dark p-4 text-center">
-          <p className="text-slate-400 text-[10px] mb-1">⚡ Hoàn vốn Hòa Lưới</p>
+          <p className="text-emerald-700 text-[10px] mb-1">⚡ Hoàn vốn Hòa Lưới</p>
           <p className="text-emerald-400 text-2xl font-black">{ongridPayback}<span className="text-sm font-normal"> năm</span></p>
         </div>
         <div className="card-dark p-4 text-center">
-          <p className="text-slate-400 text-[10px] mb-1">🔋 Hoàn vốn Hybrid</p>
+          <p className="text-emerald-700 text-[10px] mb-1">🔋 Hoàn vốn Hybrid</p>
           <p className="text-amber-400 text-2xl font-black">{hybridPayback}<span className="text-sm font-normal"> năm</span></p>
         </div>
         <div className="card-dark p-4 text-center">
-          <p className="text-slate-400 text-[10px] mb-1">💰 Lời 25 năm (Hòa Lưới)</p>
+          <p className="text-emerald-700 text-[10px] mb-1">💰 Lời 25 năm (Hòa Lưới)</p>
           <p className="text-emerald-400 text-xl font-black">{formatVndM(ongridProfit)}đ</p>
         </div>
         <div className="card-dark p-4 text-center">
-          <p className="text-slate-400 text-[10px] mb-1">💎 Lời 25 năm (Hybrid)</p>
+          <p className="text-emerald-700 text-[10px] mb-1">💎 Lời 25 năm (Hybrid)</p>
           <p className="text-amber-400 text-xl font-black">{formatVndM(hybridProfit)}đ</p>
         </div>
       </div>
@@ -86,17 +86,17 @@ export default function RoiChartStep({ monthlyBill, province, result, onBack, on
       <div className="max-w-4xl mx-auto mb-8">
         <div className="card-dark p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-white font-bold text-sm sm:text-base">Lợi nhuận ròng tích lũy (VNĐ)</h3>
+            <h3 className="text-teal-800 font-bold text-sm sm:text-base">Lợi nhuận ròng tích lũy (VNĐ)</h3>
             <div className="relative group">
-              <Info className="w-4 h-4 text-slate-500 cursor-help" />
-              <div className="absolute left-0 bottom-6 z-10 hidden group-hover:block w-64 bg-slate-700 text-xs text-slate-300 rounded-xl p-3 shadow-xl border border-slate-600">
+              <Info className="w-4 h-4 text-emerald-600 cursor-help" />
+              <div className="absolute left-0 bottom-6 z-10 hidden group-hover:block w-64 bg-emerald-100 text-xs text-emerald-800 rounded-xl p-3 shadow-xl border border-emerald-300">
                 Đường ngang 0đ = điểm hoàn vốn. Khi đường vượt qua 0đ = bắt đầu có lãi ròng.
               </div>
             </div>
           </div>
-          <p className="text-slate-500 text-xs mb-4">Giá trị âm = còn đang hoàn vốn | Giá trị dương = đã có lãi</p>
+          <p className="text-emerald-600 text-xs mb-4">Giá trị âm = còn đang hoàn vốn | Giá trị dương = đã có lãi</p>
 
-          <div className="h-72 sm:h-96">
+          <div id="roi-chart-container" className="h-72 sm:h-96 bg-emerald-50 rounded-lg p-2 pt-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
@@ -109,32 +109,32 @@ export default function RoiChartStep({ monthlyBill, province, result, onBack, on
                     <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#a7f3d0" />
                 <XAxis
                   dataKey="year"
                   tickFormatter={(v) => `N${v}`}
-                  tick={{ fill: '#64748B', fontSize: 11 }}
-                  axisLine={{ stroke: '#334155' }}
+                  tick={{ fill: '#047857', fontSize: 11 }}
+                  axisLine={{ stroke: '#a7f3d0' }}
                   tickLine={false}
                 />
                 <YAxis
                   tickFormatter={(v) => formatVndM(v)}
-                  tick={{ fill: '#64748B', fontSize: 10 }}
-                  axisLine={{ stroke: '#334155' }}
+                  tick={{ fill: '#047857', fontSize: 10 }}
+                  axisLine={{ stroke: '#a7f3d0' }}
                   tickLine={false}
                   width={52}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend
                   formatter={(value) => (
-                    <span className="text-xs text-slate-300">{value}</span>
+                    <span className="text-xs text-emerald-800">{value}</span>
                   )}
                 />
                 <ReferenceLine y={0} stroke="#EF4444" strokeDasharray="6 3" strokeWidth={1.5} label={{ value: 'Điểm hoàn vốn', fill: '#EF4444', fontSize: 10, position: 'insideTopRight' }} />
                 <Area
                   type="monotone"
                   dataKey="ongridNet"
-                  name="Hòa Lưới XB-ECO"
+                  name="Hòa Lưới ST-ECO"
                   stroke="#10B981"
                   strokeWidth={2.5}
                   fill="url(#ongridGrad)"
@@ -144,7 +144,7 @@ export default function RoiChartStep({ monthlyBill, province, result, onBack, on
                 <Area
                   type="monotone"
                   dataKey="hybridNet"
-                  name="Hybrid XB-HYBRID"
+                  name="Hybrid ST-HYBRID"
                   stroke="#F59E0B"
                   strokeWidth={2.5}
                   fill="url(#hybridGrad)"
@@ -163,7 +163,7 @@ export default function RoiChartStep({ monthlyBill, province, result, onBack, on
           <Info className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-blue-400 text-xs font-bold mb-1">Giả định tính toán</p>
-            <ul className="text-slate-400 text-xs space-y-1">
+            <ul className="text-emerald-700 text-xs space-y-1">
               <li>• Giá điện EVN giữ nguyên (thực tế có xu hướng tăng 3-5%/năm → lợi hơn thực tế)</li>
               <li>• Suy hao tấm pin JA Solar: ~0.5%/năm (bảo hành 80% công suất sau 25 năm)</li>
               <li>• Hệ số hiệu suất hệ thống: 80% (Performance Ratio chuẩn công nghiệp)</li>
@@ -177,7 +177,7 @@ export default function RoiChartStep({ monthlyBill, province, result, onBack, on
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-3">
         <button
           onClick={onBack}
-          className="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-3 px-6 rounded-xl transition-all duration-200"
+          className="flex items-center justify-center gap-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold py-3 px-6 rounded-xl transition-all duration-200"
           id="roi-back-btn"
         >
           <ChevronLeft className="w-4 h-4" />

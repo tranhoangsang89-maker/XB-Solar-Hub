@@ -2,8 +2,16 @@
 import { useState, useEffect } from 'react';
 import { X, Download, User, Phone, Shield, Loader2, CheckCircle, FileText, Settings, Edit3 } from 'lucide-react';
 import { exportQuotePDF } from '../utils/pdfExport';
+import * as htmlToImage from 'html-to-image';
+import { generate25YearCashflow } from '../utils/solarCalculator';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, ReferenceLine } from 'recharts';
 
 const formatVnd = (amount) => new Intl.NumberFormat('vi-VN').format(amount);
+const formatVndM = (amount) => {
+  if (Math.abs(amount) >= 1000000000) return (amount / 1000000000).toFixed(1) + ' tỷ';
+  if (Math.abs(amount) >= 1000000) return Math.round(amount / 1000000) + 'tr';
+  return Math.round(amount / 1000) + 'k';
+};
 
 export default function QuoteModal({ isOpen, onClose, result, selectedType, monthlyBill, province }) {
   const [name, setName] = useState('');
@@ -144,6 +152,16 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
     await new Promise((r) => setTimeout(r, 800));
 
     try {
+      let chartImageBase64 = null;
+      // Use the hidden chart specifically rendered without animations
+      const chartEl = document.getElementById('hidden-roi-chart');
+      if (chartEl) {
+        chartImageBase64 = await htmlToImage.toPng(chartEl, { 
+          backgroundColor: '#ecfdf5',
+          pixelRatio: 2
+        });
+      }
+
       await exportQuotePDF({
         customerName: name,
         customerPhone: phone,
@@ -152,7 +170,8 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
         monthlyBill,
         province: province?.name,
         bomItems,
-        totalPrice
+        totalPrice,
+        chartImageBase64
       });
       setIsDone(true);
     } catch (err) {
@@ -175,21 +194,21 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={handleClose} />
       
-      <div className="relative w-full max-w-6xl max-h-[90vh] bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl animate-slide-up flex flex-col overflow-hidden">
+      <div className="relative w-full max-w-6xl max-h-[90vh] bg-emerald-50 border border-emerald-200 rounded-3xl shadow-2xl animate-slide-up flex flex-col overflow-hidden">
         <div className="h-1 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-500 flex-shrink-0" />
         
-        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
+        <div className="px-6 py-4 border-b border-emerald-200 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center">
               <Settings className="w-5 h-5 text-amber-400" />
             </div>
             <div>
-              <h2 className="text-white font-black text-lg leading-tight">Tùy chỉnh Bảng Dự Toán</h2>
-              <p className="text-slate-400 text-xs">Chỉnh sửa số lượng, đơn giá trước khi xuất PDF</p>
+              <h2 className="text-teal-800 font-black text-lg leading-tight">Tùy chỉnh Bảng Dự Toán</h2>
+              <p className="text-emerald-700 text-xs">Chỉnh sửa số lượng, đơn giá trước khi xuất PDF</p>
             </div>
           </div>
-          <button onClick={handleClose} className="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center transition-colors">
-            <X className="w-4 h-4 text-slate-400" />
+          <button onClick={handleClose} className="w-8 h-8 bg-white hover:bg-emerald-100 rounded-lg flex items-center justify-center transition-colors">
+            <X className="w-4 h-4 text-emerald-700" />
           </button>
         </div>
 
@@ -199,13 +218,13 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
               {/* Cột 1: BoM Table (chiếm 2 cột) */}
               <div className="lg:col-span-2 space-y-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Edit3 className="w-4 h-4 text-slate-400" />
-                  <h3 className="text-slate-300 font-bold text-sm">Danh Mục Vật Tư - Thiết Bị</h3>
+                  <Edit3 className="w-4 h-4 text-emerald-700" />
+                  <h3 className="text-emerald-800 font-bold text-sm">Danh Mục Vật Tư - Thiết Bị</h3>
                 </div>
                 
-                <div className="bg-slate-800/50 rounded-xl overflow-x-auto border border-slate-700/50">
-                  <table className="w-full text-left text-sm text-slate-300">
-                    <thead className="bg-slate-800 text-slate-400 text-xs uppercase font-semibold">
+                <div className="bg-white/50 rounded-xl overflow-x-auto border border-emerald-200/50">
+                  <table className="w-full text-left text-sm text-emerald-800">
+                    <thead className="bg-white text-emerald-700 text-xs uppercase font-semibold">
                       <tr>
                         <th className="px-4 py-3 rounded-tl-xl">Hạng mục</th>
                         <th className="px-4 py-3 text-center">ĐVT</th>
@@ -216,11 +235,11 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
                     </thead>
                     <tbody className="divide-y divide-slate-700/50">
                       {bomItems.map((item, idx) => (
-                        <tr key={item.id} className="hover:bg-slate-700/20 transition-colors">
+                        <tr key={item.id} className="hover:bg-emerald-100/20 transition-colors">
                           <td className="px-4 py-3 font-medium">
                             <div className="flex items-center gap-3">
                               {item.image && (
-                                <img src={item.image} alt={item.name} className="w-10 h-10 rounded object-cover border border-slate-700 hidden sm:block" />
+                                <img src={item.image} alt={item.name} className="w-10 h-10 rounded object-cover border border-emerald-200 hidden sm:block" />
                               )}
                               <div className="relative flex-1">
                                 {item.editableName ? (
@@ -231,14 +250,14 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
                                       onFocus={() => setActiveDropdown(item.id)}
                                       onBlur={() => setTimeout(() => setActiveDropdown(null), 200)}
                                       onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                                      className="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-white focus:border-amber-500 focus:outline-none min-w-[150px]"
+                                      className="w-full bg-emerald-50 border border-emerald-300 rounded px-2 py-1.5 text-teal-800 focus:border-amber-500 focus:outline-none min-w-[150px]"
                                     />
                                     {activeDropdown === item.id && (item.id === 'panel' || item.id === 'inverter' || item.id === 'battery') && (
-                                      <div className="absolute top-full left-0 mt-1 w-max min-w-full bg-slate-800 border border-slate-600 rounded shadow-xl z-50 max-h-48 overflow-y-auto">
+                                      <div className="absolute top-full left-0 mt-1 w-max min-w-full bg-white border border-emerald-300 rounded shadow-xl z-50 max-h-48 overflow-y-auto">
                                         {(item.id === 'panel' ? panelOptions : item.id === 'inverter' ? inverterOptions : batteryOptions).map((opt, i) => (
                                           <div
                                             key={i}
-                                            className="px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white cursor-pointer transition-colors"
+                                            className="px-3 py-2 text-sm text-emerald-800 hover:bg-emerald-100 hover:text-teal-800 cursor-pointer transition-colors"
                                             onClick={() => {
                                               handleItemChange(item.id, 'name', opt);
                                               setActiveDropdown(null);
@@ -256,7 +275,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3 text-center text-slate-400">{item.unit}</td>
+                          <td className="px-4 py-3 text-center text-emerald-700">{item.unit}</td>
                           <td className="px-4 py-3 text-center">
                             {item.editableQty ? (
                               <input 
@@ -264,7 +283,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
                                 min="0" 
                                 value={item.qty} 
                                 onChange={(e) => handleItemChange(item.id, 'qty', e.target.value)}
-                                className="w-16 bg-slate-900 border border-slate-600 rounded px-2 py-1 text-center text-white focus:border-amber-500 focus:outline-none"
+                                className="w-16 bg-emerald-50 border border-emerald-300 rounded px-2 py-1 text-center text-teal-800 focus:border-amber-500 focus:outline-none"
                               />
                             ) : (
                               item.qty
@@ -275,7 +294,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
                               type="text" 
                               value={formatVnd(item.price)} 
                               onChange={(e) => handleItemChange(item.id, 'price', e.target.value)}
-                              className="w-28 bg-slate-900 border border-slate-600 rounded px-2 py-1 text-right text-white focus:border-amber-500 focus:outline-none"
+                              className="w-28 bg-emerald-50 border border-emerald-300 rounded px-2 py-1 text-right text-teal-800 focus:border-amber-500 focus:outline-none"
                             />
                           </td>
                           <td className="px-4 py-3 text-right font-semibold text-emerald-400">
@@ -284,9 +303,9 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
                         </tr>
                       ))}
                     </tbody>
-                    <tfoot className="bg-slate-800 font-bold">
+                    <tfoot className="bg-white font-bold">
                       <tr>
-                        <td colSpan="4" className="px-4 py-3 text-right text-white rounded-bl-xl">TỔNG CỘNG (Chưa VAT):</td>
+                        <td colSpan="4" className="px-4 py-3 text-right text-teal-800 rounded-bl-xl">TỔNG CỘNG (Chưa VAT):</td>
                         <td className="px-4 py-3 text-right text-amber-400 text-base rounded-br-xl">{formatVnd(totalPrice)} đ</td>
                       </tr>
                     </tfoot>
@@ -295,13 +314,13 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
               </div>
 
               {/* Cột 2: Form & Submit (chiếm 1 cột) */}
-              <div className="bg-slate-800/30 rounded-2xl p-5 border border-slate-700/50 h-fit">
-                <h3 className="text-white font-bold mb-4">Thông tin khách hàng</h3>
+              <div className="bg-white/30 rounded-2xl p-5 border border-emerald-200/50 h-fit">
+                <h3 className="text-teal-800 font-bold mb-4">Thông tin khách hàng</h3>
                 <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                   <div>
-                    <label className="block text-slate-300 text-sm font-semibold mb-1.5">Họ và tên <span className="text-amber-400">*</span></label>
+                    <label className="block text-emerald-800 text-sm font-semibold mb-1.5">Họ và tên <span className="text-amber-400">*</span></label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
                       <input
                         type="text"
                         value={name}
@@ -314,23 +333,23 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 text-sm font-semibold mb-1.5">SĐT / Zalo <span className="text-amber-400">*</span></label>
+                    <label className="block text-emerald-800 text-sm font-semibold mb-1.5">SĐT / Zalo <span className="text-amber-400">*</span></label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-600" />
                       <input
                         type="tel"
                         value={phone}
                         onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: '' })); }}
-                        placeholder="0898110068"
+                        placeholder="0984807679"
                         className={`input-dark pl-10 ${errors.phone ? 'border-rose-500' : ''}`}
                       />
                     </div>
                     {errors.phone && <p className="text-rose-400 text-xs mt-1">{errors.phone}</p>}
                   </div>
 
-                  <div className="flex items-start gap-2 bg-slate-800 rounded-xl p-3">
+                  <div className="flex items-start gap-2 bg-white rounded-xl p-3">
                     <Shield className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-slate-400 text-xs leading-relaxed">
+                    <p className="text-emerald-700 text-xs leading-relaxed">
                       Thông tin sẽ được chèn trực tiếp vào báo giá PDF.
                     </p>
                   </div>
@@ -350,8 +369,8 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
               <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-10 h-10 text-emerald-400" />
               </div>
-              <h3 className="text-white font-black text-2xl mb-3">Xuất PDF thành công! 🎉</h3>
-              <p className="text-slate-400 text-sm mb-8">
+              <h3 className="text-teal-800 font-black text-2xl mb-3">Xuất PDF thành công! 🎉</h3>
+              <p className="text-emerald-700 text-sm mb-8">
                 Bảng dự toán chi tiết đã được tải về máy của bạn. Bạn có thể gửi ngay cho khách hàng hoặc lưu trữ.
               </p>
               <button onClick={handleClose} className="btn-emerald w-full py-4 text-base">Đóng cửa sổ</button>
@@ -359,6 +378,35 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
           )}
         </div>
       </div>
+      
+      {/* Hidden chart for PDF generation */}
+      {isOpen && result && (
+        <div style={{ position: 'fixed', top: '-9999px', left: '-9999px', width: '800px', height: '400px', zIndex: -1 }}>
+          <div id="hidden-roi-chart" className="w-full h-full bg-emerald-50 p-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={generate25YearCashflow(monthlyBill, province?.psh || 4.6).data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="ongridGradHid" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="hybridGradHid" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#a7f3d0" />
+                <XAxis dataKey="year" tickFormatter={(v) => `N${v}`} tick={{ fill: '#047857', fontSize: 11 }} axisLine={{ stroke: '#a7f3d0' }} tickLine={false} />
+                <YAxis tickFormatter={formatVndM} tick={{ fill: '#047857', fontSize: 10 }} axisLine={{ stroke: '#a7f3d0' }} tickLine={false} width={52} />
+                <Legend formatter={(value) => <span style={{color: '#065f46', fontSize: '12px'}}>{value}</span>} />
+                <ReferenceLine y={0} stroke="#EF4444" strokeDasharray="6 3" strokeWidth={1.5} label={{ value: 'Điểm hoàn vốn', fill: '#EF4444', fontSize: 10, position: 'insideTopRight' }} />
+                <Area isAnimationActive={false} type="monotone" dataKey="ongridNet" name="Hòa Lưới ST-ECO" stroke="#10B981" strokeWidth={2.5} fill="url(#ongridGradHid)" dot={false} />
+                <Area isAnimationActive={false} type="monotone" dataKey="hybridNet" name="Hybrid ST-HYBRID" stroke="#F59E0B" strokeWidth={2.5} fill="url(#hybridGradHid)" dot={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

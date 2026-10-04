@@ -1,14 +1,14 @@
-# Lịch Sử Phiên Làm Việc - XB Solar Hub (Ngày 27/09/2026)
+# Lịch Sử Phiên Làm Việc - Smart Tech Hub (Ngày 27/09/2026)
 
 Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quyết định kiến trúc và hướng dẫn dành cho AI Agent tiếp theo để tiếp tục phát triển dự án.
 
 ## 1. Mục tiêu đã hoàn thành
-- **Chuyển đổi thành công** ứng dụng vẽ sơ đồ Layout/3D từ nền tảng Vanilla HTML (`solar_layout_app.html`) sang tích hợp hoàn chỉnh vào ứng dụng React hiện đại (`XB Solar Hub`).
+- **Chuyển đổi thành công** ứng dụng vẽ sơ đồ Layout/3D từ nền tảng Vanilla HTML (`solar_layout_app.html`) sang tích hợp hoàn chỉnh vào ứng dụng React hiện đại (`Smart Tech Hub`).
 - Ứng dụng vẽ hiện tại chạy mượt mà bên trong iframe (`SolarDesigner.jsx`), cho phép tận dụng toàn bộ sức mạnh của mã nguồn cũ mà không làm hỏng cấu trúc React mới.
 
 ## 2. Cập nhật Nhận diện Thương hiệu & Cấu hình
-- **Thương hiệu:** Thay thế toàn bộ thương hiệu cũ ("Solar 24h") thành **"XB SOLAR"**.
-- **Thông tin liên hệ:** Cập nhật Hotline (08.9811.0068), Email (cskh@xbsolar.vn), Địa chỉ (38 Song Hành, Lake View City) và Tên Giám đốc (HỒ NGỌC PHƯƠNG).
+- **Thương hiệu:** Thay thế toàn bộ thương hiệu cũ ("Solar 24h") thành **"SMARTTECH"**.
+- **Thông tin liên hệ:** Cập nhật Hotline (0984 807 679), Email (info@smarttech.vn), Địa chỉ (Số 1 Nổi, Phường Long Trường, TP. Hồ Chí Minh) và Tên Giám đốc (Nguyễn Thế Anh).
 - **Logo:** Đã đồng bộ sử dụng logo `logo-smarttech-nbg.png` xuyên suốt phần mềm và trên bản in PDF.
 - **Màu sắc:** Chuyển đổi màu chủ đạo sang Xanh đen công nghệ (Navy Slate `#0f172a`) và Vàng Cam (Amber `#f59e0b`).
 - **Danh mục thiết bị:**
@@ -45,12 +45,12 @@ Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quy�
 
 ## 7. Triển khai (Deployment) & Tích hợp (Ngày 28/09/2026)
 - **Kiểm định mã nguồn:** Chạy `npm run build` thành công, kiểm tra thư viện ổn định 100%.
-- **Upload mã nguồn:** Tự động hoá lệnh Git, Commit toàn bộ code sạch và Push lên Repository GitHub mới của người dùng (`tranhoangsang89-maker/XB-Solar-Hub`).
-- **Triển khai Vercel & AI Chatbot:** Hướng dẫn luồng deploy Vercel và cấu hình biến môi trường `VITE_GEMINI_API_KEY` (Sử dụng model Gemini Flash-Lite) trên Production, đảm bảo trợ lý ảo XBSolar luôn trực tuyến thông minh.
-- **SEO & Social Preview (Open Graph):** Bổ sung đầy đủ các thẻ meta OG và Twitter Cards vào `index.html`. Sử dụng URL ảnh tuyệt đối (`https://xbsolar-hub.vercel.app/og-meta-tags-xb.png`) để đảm bảo hình ảnh bìa và thông điệp marketing hiển thị chính xác khi chia sẻ link lên các MXH khó tính như Zalo, Facebook.
+- **Upload mã nguồn:** Tự động hoá lệnh Git, Commit toàn bộ code sạch và Push lên Repository GitHub mới của người dùng (`tranhoangsang89-maker/Smart-Tech-Hub`).
+- **Triển khai Vercel & AI Chatbot:** Hướng dẫn luồng deploy Vercel và cấu hình biến môi trường `VITE_GEMINI_API_KEY` (Sử dụng model Gemini Flash-Lite) trên Production, đảm bảo trợ lý ảo SmartTech luôn trực tuyến thông minh.
+- **SEO & Social Preview (Open Graph):** Bổ sung đầy đủ các thẻ meta OG và Twitter Cards vào `index.html`. Sử dụng URL ảnh tuyệt đối (`https://smarttech-hub.vercel.app/og-meta-tags-xb.png`) để đảm bảo hình ảnh bìa và thông điệp marketing hiển thị chính xác khi chia sẻ link lên các MXH khó tính như Zalo, Facebook.
 
 ## 8. Nhiệm vụ tiếp theo (Next Steps cho Agent tới)
 - Theo dõi sự ổn định của hệ thống trên môi trường Production (Vercel).
 - Tiếp nhận phản hồi từ khách hàng thực tế để tinh chỉnh thông số tài chính nếu cần.
-- Có thể phát triển thêm tính năng Đăng nhập/Lưu lịch sử báo giá cho Sale nếu XBSolar muốn mở rộng quy mô.
+- Có thể phát triển thêm tính năng Đăng nhập/Lưu lịch sử báo giá cho Sale nếu SmartTech muốn mở rộng quy mô.
 

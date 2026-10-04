@@ -40,7 +40,7 @@ async function addVietnameseFont(doc) {
   }
 }
 
-export async function exportQuotePDF({ customerName, customerPhone, result, selectedType, monthlyBill, province, bomItems, totalPrice }) {
+export async function exportQuotePDF({ customerName, customerPhone, result, selectedType, monthlyBill, province, bomItems, totalPrice, chartImageBase64 }) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
@@ -56,7 +56,7 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   doc.setTextColor(245, 158, 11); // amber-500
   doc.setFontSize(22);
   doc.setFont('Roboto', 'bold');
-  doc.text('XB SOLAR HUB', margin, 20);
+  doc.text('SMARTTECH HUB', margin, 20);
 
   doc.setFontSize(9);
   doc.setTextColor(148, 163, 184); // slate-400
@@ -65,7 +65,7 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   // Right side header info
   doc.setFontSize(8);
   doc.setTextColor(203, 213, 225); // slate-300
-  doc.text('Hotline/Zalo: 08.9811.0068', W - margin, 18, { align: 'right' });
+  doc.text('Hotline/Zalo: 0984 807 679', W - margin, 18, { align: 'right' });
   doc.text('VPGD: Lake View City, Q.8, TP.HCM', W - margin, 24, { align: 'right' });
   doc.text('Kho: Long Trường, Q.9, TP.HCM', W - margin, 30, { align: 'right' });
 
@@ -154,7 +154,15 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
 
   // Thêm dòng tổng cộng
   tableData.push([
-    '', 'TỔNG CỘNG (Chưa VAT)', '', '', '', formatVnd(totalPrice)
+    { 
+      content: 'TỔNG CỘNG (Chưa VAT)', 
+      colSpan: 5, 
+      styles: { halign: 'right', fontStyle: 'bold', fillColor: [255, 251, 235], textColor: [15, 23, 42], valign: 'middle', cellPadding: { right: 4, top: 4, bottom: 4 } } 
+    },
+    { 
+      content: formatVnd(totalPrice), 
+      styles: { fontStyle: 'bold', fillColor: [255, 251, 235], textColor: [15, 23, 42], valign: 'middle', cellPadding: { top: 4, bottom: 4 } } 
+    }
   ]);
 
   doc.autoTable({
@@ -187,16 +195,7 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
       }
     },
     didParseCell: function (data) {
-      // Style cho dòng tổng cộng
-      if (data.row.index === tableData.length - 1) {
-        data.cell.styles.fillColor = [255, 251, 235]; // amber-50
-        data.cell.styles.textColor = [15, 23, 42];
-        data.cell.styles.fontStyle = 'bold';
-        if (data.column.index === 1) {
-          data.cell.styles.halign = 'right';
-          data.cell.styles.cellPadding = { left: 2, right: 2 }; // reset padding
-        }
-      }
+      // Empty, specific row styles are handled via object syntax
     }
   });
 
@@ -234,34 +233,78 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
     y += 5.5;
   });
 
-  // ── Terms ─────────────────────────────────────────────────────────────────
-  y += 5;
-  if (y > H - 50) { doc.addPage(); y = 20; }
+  // ── Chart ─────────────────────────────────────────────────────────────────
+  if (chartImageBase64) {
+    y += 10;
+    if (y > H - 80) { doc.addPage(); y = 20; }
+    doc.setFont('Roboto', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(15, 23, 42);
+    doc.text('LỢI NHUẬN RÒNG TÍCH LŨY (VNĐ)', margin, y);
+    y += 5;
+    
+    const imgWidth = W - 2 * margin;
+    const imgHeight = imgWidth * 0.45;
+    
+    doc.addImage(chartImageBase64, 'PNG', margin, y, imgWidth, imgHeight);
+    y += imgHeight + 10;
+  } else {
+    y += 10;
+  }
 
-  doc.setFillColor(248, 250, 252);
-  doc.roundedRect(margin, y, W - 2 * margin, 28, 2, 2, 'F');
-  doc.setDrawColor(203, 213, 225);
-  doc.roundedRect(margin, y, W - 2 * margin, 28, 2, 2, 'S');
-  y += 5;
+  // ── Terms & Signature ─────────────────────────────────────────────────────
+  if (y > H - 70) { doc.addPage(); y = 20; }
 
+  const startY = y;
+  
+  // HELPER: render wrapped text
+  const renderText = (text, x, yOffset, isBold, color, extraPadding = 1) => {
+    doc.setFont('Roboto', isBold ? 'bold' : 'normal');
+    doc.setTextColor(color[0], color[1], color[2]);
+    const lines = doc.splitTextToSize(text, 100);
+    doc.text(lines, x, yOffset);
+    return yOffset + lines.length * 3.6 + extraPadding;
+  };
+
+  doc.setFontSize(8); // Reduced from 9
+  
+  // 1
+  y = renderText('1. PHẠM VI CUNG CẤP', margin, y, true, [30, 64, 175], 0.5);
+  y = renderText('Cung cấp và lắp đặt trọn gói theo nội dung đã liệt kê ở trên.', margin + 5, y, false, [30, 41, 59], 2.5);
+  
+  // 2
+  y = renderText('2. PHƯƠNG THỨC THANH TOÁN: CHUYỂN KHOẢN / TIỀN MẶT', margin, y, true, [30, 64, 175], 0.5);
+  y = renderText('- Đợt 01: tạm ứng 40% giá trị hợp đồng ngay sau hai bên ký kết hợp đồng có hiệu lực.', margin + 5, y, false, [30, 41, 59], 0.5);
+  y = renderText('- Đợt 02: 40% giá trị hợp đồng sau khi đơn vị thi công tập kết vật tư thiết bị đến địa điểm lắp đặt.', margin + 5, y, false, [30, 41, 59], 0.5);
+  y = renderText('- Đợt 3: 20% giá trị hợp đồng sau khi đơn vị thi công lắp đặt hoàn thành.', margin + 5, y, false, [30, 41, 59], 2.5);
+  
+  // 3
+  y = renderText('3. TIẾN ĐỘ THI CÔNG:', margin, y, true, [30, 64, 175], 0.5);
+  y = renderText('Trong vòng 30 ngày kể từ ngày ký hợp đồng và phê duyệt bản vẽ. (Thoả thuận 2 bên)', margin + 5, y, false, [30, 41, 59], 2.5);
+  
+  // 4
+  y = renderText('4. BẢO HÀNH:', margin, y, true, [30, 64, 175], 0.5);
+  y = renderText('12 năm cho tấm quang điện, 5 năm cho bộ biến Tần và 1 năm cho các thiết bị còn lại.', margin + 5, y, false, [220, 38, 38], 0.5);
+  y = renderText('Xin vui lòng liên hệ với chúng tôi nếu Quý khách cần thêm thông tin.', margin + 5, y, false, [220, 38, 38], 0);
+
+  // RIGHT SIDE: Signature
+  let sigY = startY;
   doc.setFont('Roboto', 'bold');
-  doc.setFontSize(8.5);
-  doc.setTextColor(30, 41, 59);
-  doc.text('ĐIỀU KHOẢN BÁO GIÁ', margin + 4, y);
-  y += 5;
+  doc.setFontSize(8.5); // Reduced from 9
+  doc.setTextColor(15, 23, 42);
+  
+  const rightColCenter = W - margin - 40;
 
-  doc.setFont('Roboto', 'normal');
-  doc.setFontSize(7.5);
-  const terms = [
-    '• Báo giá có hiệu lực trong 15 ngày kể từ ngày phát hành.',
-    '• Giá trên chưa bao gồm VAT 8%. Giá đã bao gồm thi công lắp đặt, kiểm tra và kỹ thuật.',
-    '• Bảo hành: Inverter Sungrow 5 năm, Tấm pin JA Solar 12 năm (vật lý) và 25-30 năm (hiệu suất).',
-    '• Phương thức thanh toán: Đợt 1: 50% khi ký hợp đồng. Đợt 2: 40% trước khi lắp đặt. Đợt 3: 10% sau nghiệm thu.',
-  ];
-  terms.forEach((t) => {
-    doc.text(t, margin + 4, y);
-    y += 4.5;
-  });
+  // Split company name to avoid overlapping
+  const companyNameLines = doc.splitTextToSize('CÔNG TY TNHH THƯƠNG MẠI VÀ KỸ THUẬT SMARTTECH', 70);
+  doc.text(companyNameLines, rightColCenter, sigY, { align: 'center' });
+  sigY += companyNameLines.length * 4 + 2;
+  
+  doc.text('Giám Đốc', rightColCenter, sigY, { align: 'center' });
+  
+  sigY += 25; // space for signature
+  doc.text('NGUYỄN THẾ ANH', rightColCenter, sigY, { align: 'center' });
+
 
   // ── Footer ────────────────────────────────────────────────────────────────
   const footerY = H - 18;
@@ -271,13 +314,13 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   doc.setFontSize(7.5);
   doc.setFont('Roboto', 'normal');
   doc.text(
-    'XB Solar Hub | Hotline/Zalo: 08.9811.0068 | VPGD: Lake View City, Q.8, TP.HCM | Tổng kho: Long Trường, Q.9, TP.HCM',
+    'Smart Tech Hub | Hotline/Zalo: 0984 807 679 | VPGD: Số 1 Nổi, Phường Long Trường, TP. Hồ Chí Minh | MST: 3702675986',
     W / 2, footerY + 7, { align: 'center' }
   );
   doc.setTextColor(245, 158, 11);
-  doc.text('Cảm ơn Quý Khách đã tin tưởng XB Solar Hub!', W / 2, footerY + 13, { align: 'center' });
+  doc.text('Cảm ơn Quý Khách đã tin tưởng Smart Tech Hub!', W / 2, footerY + 13, { align: 'center' });
 
   // ── Save ──────────────────────────────────────────────────────────────────
-  const fileName = `XBSolar_BaoGia_${customerName?.replace(/\s+/g, '_') || 'KhachHang'}_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '')}.pdf`;
+  const fileName = `SmartTech_BaoGia_${customerName?.replace(/\s+/g, '_') || 'KhachHang'}_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '')}.pdf`;
   doc.save(fileName);
 }

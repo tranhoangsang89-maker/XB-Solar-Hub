@@ -5,7 +5,7 @@ export default function Header({ onConsult }) {
   return (
     <header className="sticky top-0 z-50 w-full">
       {/* Glassmorphism backdrop */}
-      <div className="bg-slate-900/95 backdrop-blur-md border-b border-amber-500/20 shadow-lg shadow-black/50">
+      <div className="bg-emerald-50/95 backdrop-blur-md border-b border-emerald-200 shadow-lg shadow-black/50">
         <div className="max-w-6xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between gap-3">
             {/* Logo + Brand */}
@@ -13,17 +13,17 @@ export default function Header({ onConsult }) {
               <a href="/" className="relative block">
                 <img 
                   src="/logo-smarttech-nbg.png" 
-                  alt="XB Solar Hub Logo" 
+                  alt="Smart Tech Hub Logo" 
                   className="h-10 sm:h-12 w-auto object-contain"
                 />
               </a>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-black text-amber-400 tracking-tight leading-none">XB</span>
-                  <span className="text-lg font-black text-white tracking-tight leading-none">SOLAR</span>
+                  <span className="text-lg font-black text-amber-400 tracking-tight leading-none">SMART</span>
+                  <span className="text-lg font-black text-teal-800 tracking-tight leading-none">TECH</span>
                   <span className="hidden sm:inline-block text-xs font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-500/30 px-1.5 py-0.5 rounded-md ml-1">HUB</span>
                 </div>
-                <p className="text-[10px] text-slate-400 font-medium hidden sm:block">Residential Energy Solutions</p>
+                <p className="text-[10px] text-emerald-700 font-medium hidden sm:block">Residential Energy Solutions</p>
               </div>
             </div>
 
@@ -31,35 +31,35 @@ export default function Header({ onConsult }) {
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Hotline */}
               <a
-                href="tel:0898110068"
-                className="hidden sm:flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-amber-500/50 rounded-xl px-3 py-2 transition-all duration-200 group"
-                aria-label="Gọi hotline XB Solar"
+                href="tel:0984807679"
+                className="hidden sm:flex items-center gap-2 bg-white hover:bg-emerald-100 border border-emerald-300 hover:border-amber-500/50 rounded-xl px-3 py-2 transition-all duration-200 group"
+                aria-label="Gọi hotline Smart Tech"
               >
                 <div className="w-7 h-7 bg-amber-500/20 rounded-lg flex items-center justify-center group-hover:bg-amber-500/30 transition-colors">
                   <Phone className="w-3.5 h-3.5 text-amber-400" />
                 </div>
                 <div>
-                  <p className="text-[9px] text-slate-400 leading-none mb-0.5">Hotline tư vấn</p>
-                  <p className="text-sm font-bold text-white leading-none">08.9811.0068</p>
+                  <p className="text-[9px] text-emerald-700 leading-none mb-0.5">Hotline tư vấn</p>
+                  <p className="text-sm font-bold text-teal-800 leading-none">0984 807 679</p>
                 </div>
               </a>
 
               {/* Zalo button */}
               <a
-                href="https://zalo.me/0898110068"
+                href="https://zalo.me/0984807679"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 rounded-xl px-3 py-2.5 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/40 group"
                 aria-label="Liên hệ qua Zalo"
               >
-                <MessageCircle className="w-4 h-4 text-white" />
-                <span className="text-white text-sm font-semibold hidden sm:inline">Zalo</span>
+                <MessageCircle className="w-4 h-4 text-teal-800" />
+                <span className="text-teal-800 text-sm font-semibold hidden sm:inline">Zalo</span>
               </a>
 
               {/* CTA Button */}
               <button
                 onClick={onConsult}
-                className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-bold text-sm rounded-xl px-4 py-2.5 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/40 active:scale-95"
+                className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-teal-800 font-bold text-sm rounded-xl px-4 py-2.5 transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-amber-500/40 active:scale-95"
                 id="header-consult-btn"
               >
                 <Zap className="w-4 h-4" />

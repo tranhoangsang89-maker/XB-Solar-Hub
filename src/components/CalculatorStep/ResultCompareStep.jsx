@@ -26,7 +26,7 @@ function StatCard({ icon: Icon, label, value, color = 'amber' }) {
         <Icon className="w-4 h-4" />
       </div>
       <div>
-        <p className="text-slate-400 text-[10px] leading-tight mb-0.5">{label}</p>
+        <p className="text-emerald-700 text-[10px] leading-tight mb-0.5">{label}</p>
         <p className={`font-bold text-sm ${colors[color].split(' ')[0]}`}>{value}</p>
       </div>
     </div>
@@ -41,14 +41,14 @@ function ComboCard({ type, plan, recommended, onSelect, isSelected }) {
   const borderColor = isHybrid ? 'border-amber-500' : 'border-emerald-500';
   const borderInactive = isHybrid ? 'border-amber-500/30' : 'border-emerald-500/30';
   const tagBg = isHybrid ? 'bg-amber-500' : 'bg-emerald-500';
-  const tagText = isHybrid ? 'text-slate-900' : 'text-white';
+  const tagText = isHybrid ? 'text-teal-800' : 'text-teal-800';
   const iconColor = isHybrid ? 'text-amber-400' : 'text-emerald-400';
   const iconBg = isHybrid ? 'bg-amber-500/20' : 'bg-emerald-500/20';
 
   return (
     <div
       className={`relative rounded-2xl border-2 transition-all duration-300 cursor-pointer
-        bg-gradient-to-b ${gradientFrom} to-slate-800/60
+        bg-gradient-to-b ${gradientFrom} to-white/60
         ${isSelected ? `${borderColor} shadow-lg` : `${borderInactive} hover:border-opacity-60`}
         hover:scale-[1.01]`}
       onClick={onSelect}
@@ -72,14 +72,14 @@ function ComboCard({ type, plan, recommended, onSelect, isSelected }) {
           </div>
           <div>
             <div className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md mb-1 ${isHybrid ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
-              {isHybrid ? 'XB-HYBRID Sungrow + Pin BESS' : 'XB-ECO Hòa Lưới'}
+              {isHybrid ? 'ST-HYBRID Sungrow + Pin BESS' : 'ST-ECO Hòa Lưới'}
             </div>
-            <h3 className="text-white font-bold text-base leading-tight">{combo.name}</h3>
+            <h3 className="text-teal-800 font-bold text-base leading-tight">{combo.name}</h3>
           </div>
         </div>
 
         {/* Description */}
-        <p className="text-slate-400 text-xs leading-relaxed mb-4 border-l-2 border-slate-600 pl-3">
+        <p className="text-emerald-700 text-xs leading-relaxed mb-4 border-l-2 border-emerald-300 pl-3">
           {combo.description}
         </p>
 
@@ -93,7 +93,7 @@ function ComboCard({ type, plan, recommended, onSelect, isSelected }) {
 
         {/* Battery info (hybrid only) */}
         {isHybrid && combo.battery && (
-          <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 mb-4">
+          <div className="bg-amber-500/10 border border-emerald-200 rounded-xl p-3 mb-4">
             <div className="flex items-center gap-2">
               <Battery className="w-4 h-4 text-amber-400 flex-shrink-0" />
               <div>
@@ -105,32 +105,32 @@ function ComboCard({ type, plan, recommended, onSelect, isSelected }) {
         )}
 
         {/* Inverter */}
-        <div className="bg-slate-700/40 rounded-lg px-3 py-2 mb-4">
-          <p className="text-[10px] text-slate-500 mb-0.5">Inverter</p>
-          <p className="text-slate-300 text-xs font-semibold">{combo.inverter}</p>
+        <div className="bg-emerald-100/40 rounded-lg px-3 py-2 mb-4">
+          <p className="text-[10px] text-emerald-600 mb-0.5">Inverter</p>
+          <p className="text-emerald-800 text-xs font-semibold">{combo.inverter}</p>
         </div>
 
         {/* Financial highlights */}
         <div className="grid grid-cols-2 gap-2 mb-4">
-          <div className={`rounded-xl p-3 text-center ${isHybrid ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
+          <div className={`rounded-xl p-3 text-center ${isHybrid ? 'bg-amber-500/10 border border-emerald-200' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
             <Clock className={`w-4 h-4 mx-auto mb-1 ${iconColor}`} />
-            <p className="text-slate-400 text-[10px]">Hoàn vốn</p>
+            <p className="text-emerald-700 text-[10px]">Hoàn vốn</p>
             <p className={`font-black text-lg ${iconColor}`}>{finance.paybackYears}<span className="text-xs font-normal"> năm</span></p>
           </div>
-          <div className={`rounded-xl p-3 text-center ${isHybrid ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
+          <div className={`rounded-xl p-3 text-center ${isHybrid ? 'bg-amber-500/10 border border-emerald-200' : 'bg-emerald-500/10 border border-emerald-500/20'}`}>
             <TrendingUp className={`w-4 h-4 mx-auto mb-1 ${iconColor}`} />
-            <p className="text-slate-400 text-[10px]">Lời 25 năm</p>
+            <p className="text-emerald-700 text-[10px]">Lời 25 năm</p>
             <p className={`font-black text-sm ${iconColor}`}>{formatVndM(finance.total25YearSavings)}</p>
           </div>
         </div>
 
         {/* Price */}
         <div className={`rounded-xl p-4 mb-4 text-center ${isHybrid ? 'bg-gradient-to-r from-amber-600/20 to-amber-500/10 border border-amber-500/30' : 'bg-gradient-to-r from-emerald-600/20 to-emerald-500/10 border border-emerald-500/30'}`}>
-          <p className="text-slate-400 text-xs mb-1">Giá trọn gói (chưa VAT)</p>
+          <p className="text-emerald-700 text-xs mb-1">Giá trọn gói (chưa VAT)</p>
           <p className={`text-2xl font-black ${iconColor}`}>
             {formatVndM(combo.basePriceVnd)}
           </p>
-          <p className="text-slate-500 text-[10px] mt-1">Đã bao gồm vật tư + thi công + bảo hành</p>
+          <p className="text-emerald-600 text-[10px] mt-1">Đã bao gồm vật tư + thi công + bảo hành</p>
         </div>
 
         {/* Select button */}
@@ -139,9 +139,9 @@ function ComboCard({ type, plan, recommended, onSelect, isSelected }) {
           className={`w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
             isSelected
               ? isHybrid
-                ? 'bg-amber-500 text-slate-900 shadow-lg shadow-amber-500/30'
-                : 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                ? 'bg-amber-500 text-teal-800 shadow-lg shadow-amber-500/30'
+                : 'bg-emerald-500 text-teal-800 shadow-lg shadow-emerald-500/30'
+              : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
           }`}
         >
           {isSelected ? '✓ Đã chọn gói này' : 'Chọn gói này'}
@@ -166,15 +166,15 @@ export default function ResultCompareStep({ result, onNext, onBack, onOpenQuote 
           <TrendingUp className="w-4 h-4 text-emerald-400" />
           <span className="text-emerald-400 text-sm font-semibold">Bước 2 / 3 — Kết quả phân tích</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">
+        <h2 className="text-2xl sm:text-3xl font-black text-teal-800 mb-2">
           So sánh 2 gói phù hợp nhất
         </h2>
-        <p className="text-slate-400 text-sm max-w-lg mx-auto mb-5">
-          Dựa trên hóa đơn điện và vị trí của bạn, đây là 2 phương án tối ưu nhất mà XB Solar đề xuất
+        <p className="text-emerald-700 text-sm max-w-lg mx-auto mb-5">
+          Dựa trên hóa đơn điện và vị trí của bạn, đây là 2 phương án tối ưu nhất mà Smart Tech đề xuất
         </p>
         <button
           onClick={() => setShow3DViewer(true)}
-          className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-amber-500/10"
+          className="inline-flex items-center gap-2 bg-white hover:bg-emerald-100 text-amber-400 border border-emerald-200 px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-lg hover:shadow-amber-500/10"
         >
           <Box className="w-4 h-4" /> Xem mô phỏng 3D trên mái
         </button>
@@ -182,19 +182,19 @@ export default function ResultCompareStep({ result, onNext, onBack, onOpenQuote 
 
       {/* Summary banner */}
       <div className="max-w-4xl mx-auto mb-6">
-        <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 flex flex-wrap gap-4 justify-center sm:justify-start">
+        <div className="bg-white/60 border border-emerald-200 rounded-2xl p-4 flex flex-wrap gap-4 justify-center sm:justify-start">
           <div className="text-center">
-            <p className="text-slate-500 text-xs">Tiêu thụ ước tính</p>
-            <p className="text-white font-bold">{formatVnd(result.estimatedKwh)} kWh/tháng</p>
+            <p className="text-emerald-600 text-xs">Tiêu thụ ước tính</p>
+            <p className="text-teal-800 font-bold">{formatVnd(result.estimatedKwh)} kWh/tháng</p>
           </div>
-          <div className="w-px bg-slate-700 hidden sm:block" />
+          <div className="w-px bg-emerald-100 hidden sm:block" />
           <div className="text-center">
-            <p className="text-slate-500 text-xs">Cần công suất</p>
-            <p className="text-white font-bold">{result.recommendedKwp} kWp</p>
+            <p className="text-emerald-600 text-xs">Cần công suất</p>
+            <p className="text-teal-800 font-bold">{result.recommendedKwp} kWp</p>
           </div>
-          <div className="w-px bg-slate-700 hidden sm:block" />
+          <div className="w-px bg-emerald-100 hidden sm:block" />
           <div className="text-center">
-            <p className="text-slate-500 text-xs">Mô hình phù hợp</p>
+            <p className="text-emerald-600 text-xs">Mô hình phù hợp</p>
             <p className="text-amber-400 font-bold">{recommendHybrid ? 'Hybrid + Pin BESS' : 'Hòa Lưới / Hybrid'}</p>
           </div>
         </div>
@@ -223,11 +223,11 @@ export default function ResultCompareStep({ result, onNext, onBack, onOpenQuote 
         <div className="card-dark p-5">
           <div className="flex items-center gap-2 mb-3">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <h4 className="text-white font-bold text-sm">Phụ kiện & Thiết bị tiêu chuẩn (đã bao gồm)</h4>
+            <h4 className="text-teal-800 font-bold text-sm">Phụ kiện & Thiết bị tiêu chuẩn (đã bao gồm)</h4>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {STANDARD_ACCESSORIES.map((acc, i) => (
-              <div key={i} className="flex items-start gap-2 text-xs text-slate-400">
+              <div key={i} className="flex items-start gap-2 text-xs text-emerald-700">
                 <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full flex-shrink-0 mt-1.5" />
                 {acc}
               </div>
@@ -240,7 +240,7 @@ export default function ResultCompareStep({ result, onNext, onBack, onOpenQuote 
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-3">
         <button
           onClick={onBack}
-          className="flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-3 px-6 rounded-xl transition-all duration-200 sm:w-auto"
+          className="flex items-center justify-center gap-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold py-3 px-6 rounded-xl transition-all duration-200 sm:w-auto"
           id="result-back-btn"
         >
           <ChevronLeft className="w-4 h-4" />

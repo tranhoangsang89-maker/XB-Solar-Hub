@@ -15,13 +15,13 @@ const GEMINI_MODEL = 'gemini-flash-lite-latest';
 const GEMINI_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
 // ── System instruction ────────────────────────────────────────────────────────
-const SYSTEM_INSTRUCTION = `Bạn là Trợ lý Kỹ thuật & Tư vấn Giải pháp cao cấp của Công ty Cổ phần XBSolar (xbsolar.vn).
+const SYSTEM_INSTRUCTION = `Bạn là Trợ lý Kỹ thuật & Tư vấn Giải pháp cao cấp của Công ty TNHH Thương mại và Kỹ thuật SMARTTECH (smarttech.vn).
 
 ## VAI TRÒ & PHONG CÁCH
 - Xưng "Em", gọi khách là "Anh/Chị". Giọng điệu chuyên nghiệp, thân thiện, rõ ràng.
 - Trả lời súc tích, tối đa 250 từ mỗi lượt. Ưu tiên dùng danh sách gạch đầu dòng để dễ đọc.
 - Luôn chào hỏi lịch sự ở lượt đầu tiên.
-- Cuối mỗi câu trả lời kỹ thuật quan trọng, khéo léo mời khách để lại số điện thoại/Zalo hoặc gọi Hotline 08.9811.0068 để kỹ sư khảo sát và báo giá miễn phí tại nhà.
+- Cuối mỗi câu trả lời kỹ thuật quan trọng, khéo léo mời khách để lại số điện thoại/Zalo hoặc gọi Hotline 0984 807 679 để kỹ sư khảo sát và báo giá miễn phí tại nhà.
 
 ## KHI NHẬN ĐƯỢC ẢNH TỪ KHÁCH
 - Nếu là **hóa đơn tiền điện**: Đọc số kWh tiêu thụ, số tiền, chu kỳ. Từ đó ước tính hệ thống phù hợp (công suất kWp, số tấm pin, giá sơ bộ, ROI).
@@ -29,15 +29,15 @@ const SYSTEM_INSTRUCTION = `Bạn là Trợ lý Kỹ thuật & Tư vấn Giải 
 - Nếu là **ảnh công trình hoặc thiết bị**: Nhận diện thiết bị, đánh giá tình trạng, đưa ra khuyến nghị.
 - Luôn nói rõ đây là **phân tích sơ bộ qua ảnh**, cần khảo sát thực tế để chính xác hơn.
 
-## KIẾN THỨC SẢN PHẨM XB-ECO (HÒA LƯỚI ON-GRID)
-- **XB-ECO 3kW**: Inverter Sungrow SG3.0RS (1 pha), 5 tấm JA Solar JAM66D45 LB 610W, 3.05 kWp, cần 13m², giá 42 triệu. Phù hợp hóa đơn 1.5–2.5 triệu/tháng.
-- **XB-ECO 5kW**: Inverter Sungrow SG5.0RS (1 pha), 9 tấm JA Solar JAM66D45 LB 610W, 5.49 kWp, cần 23m², giá 68 triệu. Phù hợp hóa đơn 2.5–4.5 triệu/tháng.
-- **XB-ECO 10kW**: Inverter Sungrow SG10RS/SG10RT (3 pha), 16 tấm JA Solar JAM72D42 LB 630W, 10.08 kWp, cần 42m², giá 125 triệu. Phù hợp hóa đơn 5–9 triệu/tháng.
+## KIẾN THỨC SẢN PHẨM ST-ECO (HÒA LƯỚI ON-GRID)
+- **ST-ECO 3kW**: Inverter Sungrow SG3.0RS (1 pha), 5 tấm JA Solar JAM66D45 LB 610W, 3.05 kWp, cần 13m², giá 42 triệu. Phù hợp hóa đơn 1.5–2.5 triệu/tháng.
+- **ST-ECO 5kW**: Inverter Sungrow SG5.0RS (1 pha), 9 tấm JA Solar JAM66D45 LB 610W, 5.49 kWp, cần 23m², giá 68 triệu. Phù hợp hóa đơn 2.5–4.5 triệu/tháng.
+- **ST-ECO 10kW**: Inverter Sungrow SG10RS/SG10RT (3 pha), 16 tấm JA Solar JAM72D42 LB 630W, 10.08 kWp, cần 42m², giá 125 triệu. Phù hợp hóa đơn 5–9 triệu/tháng.
 
-## KIẾN THỨC SẢN PHẨM XB-HYBRID (LƯU TRỮ BESS)
-- **XB-HYBRID 5kW (Áp Thấp)**: Inverter Sungrow MG5RL (1 pha Hybrid) + Pin LiFePO4 Sungrow MGL060 6.0 kWh, 9 tấm JA 610W, 5.49 kWp, 23m², giá 118 triệu.
-- **XB-HYBRID 5kW PRO (Lưu trữ lớn)**: Inverter Sungrow MG6RL (1 pha Hybrid) + Pin LiFePO4 Sungrow MBL160 16.0 kWh, 10 tấm JA 610W, 6.10 kWp, 26m², giá 165 triệu.
-- **XB-HYBRID 10kW (Biệt thự 3 pha)**: Inverter Sungrow MG10TL/SH10RT (3 pha Hybrid) + Pin Cao Áp SBR096 9.6 kWh, 16 tấm JA 630W, 10.08 kWp, 42m², giá 220 triệu.
+## KIẾN THỨC SẢN PHẨM ST-HYBRID (LƯU TRỮ BESS)
+- **ST-HYBRID 5kW (Áp Thấp)**: Inverter Sungrow MG5RL (1 pha Hybrid) + Pin LiFePO4 Sungrow MGL060 6.0 kWh, 9 tấm JA 610W, 5.49 kWp, 23m², giá 118 triệu.
+- **ST-HYBRID 5kW PRO (Lưu trữ lớn)**: Inverter Sungrow MG6RL (1 pha Hybrid) + Pin LiFePO4 Sungrow MBL160 16.0 kWh, 10 tấm JA 610W, 6.10 kWp, 26m², giá 165 triệu.
+- **ST-HYBRID 10kW (Biệt thự 3 pha)**: Inverter Sungrow MG10TL/SH10RT (3 pha Hybrid) + Pin Cao Áp SBR096 9.6 kWh, 16 tấm JA 630W, 10.08 kWp, 42m², giá 220 triệu.
 
 ## PHỤ KIỆN TIÊU CHUẨN (đã bao gồm trong giá)
 - Tủ điện AC/DC Solar Mersen (chống sét lan truyền Type II DC/AC, cầu chì bảo vệ quá dòng)
@@ -53,14 +53,14 @@ TP.HCM & Bình Dương: 4.6h/ngày | Tiền Giang, Long An: 4.7h/ngày | Tây Ni
 - **An toàn PCCC**: Pin LiFePO4 là loại an toàn nhất, không cháy nổ khi quá nhiệt/va đập. Rapid Shutdown bắt buộc cho mọi công trình.
 - **Mái nhà**: Tôn dùng kẹp Seamlock/Kliplok (không khoan); Ngói dùng móc inox 304; Bê tông dùng khung Unistrut nghiêng 10–15°. Cam kết 100% không dột.
 - **Bảo hành**: JA Solar 12 năm vật lý / 25–30 năm hiệu suất; Inverter Sungrow 5 năm; Pin BESS 10 năm / 6.000 chu kỳ; EPC 2 năm.
-- **Thủ tục EVN**: Hệ thống <100kWp hộ gia đình được khuyến khích, XBSolar hỗ trợ trọn gói hồ sơ và tích hợp Zero Export.
+- **Thủ tục EVN**: Hệ thống <100kWp hộ gia đình được khuyến khích, SmartTech hỗ trợ trọn gói hồ sơ và tích hợp Zero Export.
 
-## VỀ XBSOLAR
+## VỀ SMARTTECH
 - Top 4 Nhà phân phối chính thức Sungrow tại Việt Nam, đã cung cấp >37 MW biến tần.
 - Dự án tiêu biểu: KCN Phước Đông 3.4MW, Sheico 8MW, Worldon 15MW.
-- VP Giao dịch: 38 Song Hành, Lake View City, Q.8, TP.HCM.
+- VP Giao dịch: Số 1 Nổi, Phường Long Trường, TP. Hồ Chí Minh.
 - Tổng kho: 01 Gò Nổi, P. Long Trường, Q.9, TP.HCM.
-- Hotline/Zalo kỹ thuật 24/7: **08.9811.0068**.
+- Hotline/Zalo kỹ thuật 24/7: **0984 807 679**.
 
 ## QUY TẮC TƯ VẤN
 1. Nếu khách hỏi về giá/báo giá → Ước tính sơ bộ theo hóa đơn điện, sau đó mời khảo sát miễn phí.
@@ -212,14 +212,14 @@ function MessageBubble({ msg }) {
     <div className={`flex gap-2.5 ${isBot ? 'items-start' : 'items-end flex-row-reverse'} animate-fade-in`}>
       {isBot && (
         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md shadow-amber-500/30">
-          <Sparkles className="w-3.5 h-3.5 text-slate-900" />
+          <Sparkles className="w-3.5 h-3.5 text-teal-800" />
         </div>
       )}
       <div
         className={`max-w-[82%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
           isBot
-            ? 'bg-slate-700/90 border border-slate-600/50 text-slate-200 rounded-tl-sm'
-            : 'bg-gradient-to-br from-amber-500 to-amber-600 text-slate-900 font-semibold rounded-tr-sm'
+            ? 'bg-emerald-100/90 border border-emerald-300/50 text-slate-200 rounded-tl-sm'
+            : 'bg-gradient-to-br from-amber-500 to-amber-600 text-teal-800 font-semibold rounded-tr-sm'
         }`}
       >
         {/* Image previews (user side) */}
@@ -242,7 +242,7 @@ function MessageBubble({ msg }) {
         {isBot && msg.source && (
           <div className="mt-2 flex items-center gap-1">
             {msg.source === 'gemini' ? (
-              <span className="inline-flex items-center gap-1 text-[9px] text-amber-400/70 bg-amber-500/10 px-1.5 py-0.5 rounded-full border border-amber-500/20">
+              <span className="inline-flex items-center gap-1 text-[9px] text-amber-400/70 bg-amber-500/10 px-1.5 py-0.5 rounded-full border border-emerald-200">
                 <Sparkles className="w-2.5 h-2.5" /> Gemini AI
               </span>
             ) : msg.source === 'vision' ? (
@@ -268,8 +268,8 @@ function QuickChip({ entry, onClick }) {
     <button
       onClick={() => onClick(entry)}
       className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold
-        border border-white/10 bg-slate-700/80 hover:bg-slate-600/80 text-slate-300
-        hover:text-white transition-all duration-150 hover:scale-105 active:scale-95
+        border border-emerald-200/50 bg-emerald-100/80 hover:bg-emerald-200/80 text-emerald-800
+        hover:text-teal-800 transition-all duration-150 hover:scale-105 active:scale-95
         whitespace-nowrap flex-shrink-0"
     >
       <Icon className={`w-3 h-3 ${cat.color}`} />
@@ -282,9 +282,9 @@ function TypingIndicator() {
   return (
     <div className="flex items-center gap-2.5 animate-fade-in">
       <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center flex-shrink-0 shadow-md shadow-amber-500/30">
-        <Sparkles className="w-3.5 h-3.5 text-slate-900" />
+        <Sparkles className="w-3.5 h-3.5 text-teal-800" />
       </div>
-      <div className="bg-slate-700/90 border border-slate-600/50 rounded-2xl rounded-tl-sm px-4 py-3">
+      <div className="bg-emerald-100/90 border border-emerald-300/50 rounded-2xl rounded-tl-sm px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="flex gap-1">
             {[0, 150, 300].map((delay) => (
@@ -295,7 +295,7 @@ function TypingIndicator() {
               />
             ))}
           </div>
-          <span className="text-slate-400 text-[10px] font-medium">Đang phân tích...</span>
+          <span className="text-emerald-700 text-[10px] font-medium">Đang phân tích...</span>
         </div>
       </div>
     </div>
@@ -321,7 +321,7 @@ function ImagePreviewStrip({ previews, onRemove }) {
             className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-600 hover:bg-rose-500 rounded-full flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition-opacity"
             aria-label="Xóa ảnh"
           >
-            <X className="w-3 h-3 text-white" />
+            <X className="w-3 h-3 text-teal-800" />
           </button>
         </div>
       ))}
@@ -478,17 +478,17 @@ export default function ChatbotWidget() {
         { role: 'model', parts: [{ text: botText }] },
       ]);
     } catch (err) {
-      console.warn('[XBSolar Chatbot] Gemini API error, falling back:', err.message);
+      console.warn('[SmartTech Chatbot] Gemini API error, falling back:', err.message);
       setApiStatus('fallback');
       source = 'fallback';
 
       if (hasImages) {
-        botText = `Em chưa thể phân tích ảnh do kết nối gián đoạn.\nAnh/chị vui lòng gọi trực tiếp:\n📞 Hotline/Zalo: **08.9811.0068** — kỹ sư XBSolar sẽ hỗ trợ ngay!`;
+        botText = `Em chưa thể phân tích ảnh do kết nối gián đoạn.\nAnh/chị vui lòng gọi trực tiếp:\n📞 Hotline/Zalo: **0984 807 679** — kỹ sư SmartTech sẽ hỗ trợ ngay!`;
       } else {
         const match = findAnswer(userText);
         botText = match
           ? match.answer
-          : `Em chưa có thông tin chi tiết về vấn đề này.\nAnh/chị vui lòng liên hệ trực tiếp:\n📞 Hotline/Zalo: **08.9811.0068** — kỹ sư XBSolar sẽ hỗ trợ ngay!`;
+          : `Em chưa có thông tin chi tiết về vấn đề này.\nAnh/chị vui lòng liên hệ trực tiếp:\n📞 Hotline/Zalo: **0984 807 679** — kỹ sư SmartTech sẽ hỗ trợ ngay!`;
       }
       setGeminiHistory(updatedHistory);
     }
@@ -551,7 +551,7 @@ export default function ChatbotWidget() {
           flex items-center justify-center transition-all duration-300
           ${isOpen && isMobile ? 'hidden' : ''}
           ${isOpen && !isMobile
-            ? 'bg-slate-700 hover:bg-slate-600'
+            ? 'bg-emerald-100 hover:bg-emerald-200'
             : 'bg-gradient-to-br from-amber-400 to-amber-600 hover:from-amber-300 hover:to-amber-500 hover:scale-110 animate-pulse-gold'
           }`}
         aria-label={isOpen ? 'Đóng chat' : 'Mở chat hỗ trợ AI'}
@@ -559,7 +559,7 @@ export default function ChatbotWidget() {
       >
         {isOpen
           ? <X className="w-6 h-6 text-slate-200" />
-          : <MessageCircle className="w-6 h-6 text-slate-900" />
+          : <MessageCircle className="w-6 h-6 text-teal-800" />
         }
         {!isOpen && hasNewMsg && (
           <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-slate-900 animate-pulse" />
@@ -578,7 +578,7 @@ export default function ChatbotWidget() {
       <div
         className={`fixed z-[60] flex flex-col overflow-hidden
           transition-all duration-500 ease-out
-          border border-white/10 shadow-2xl
+          border border-emerald-200/50 shadow-2xl
           inset-x-0 bottom-0 rounded-t-2xl
           sm:inset-auto sm:bottom-24 sm:right-6 sm:w-96 sm:rounded-2xl
           ${isOpen
@@ -590,26 +590,26 @@ export default function ChatbotWidget() {
           maxHeight: isMobile ? undefined : 'min(600px, calc(100vh - 10rem))',
         }}
         role="dialog"
-        aria-label="Chatbot AI hỗ trợ XBSolar"
+        aria-label="Chatbot AI hỗ trợ SmartTech"
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-slate-800 to-slate-900 border-b border-white/10 px-4 py-3 flex items-center justify-between flex-shrink-0">
+        <div className="bg-gradient-to-r from-white to-emerald-50 border-b border-emerald-200/50 px-4 py-3 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-md shadow-amber-500/40">
-                <Sparkles className="w-[18px] h-[18px] text-slate-900" />
+                <Sparkles className="w-[18px] h-[18px] text-teal-800" />
               </div>
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-slate-800 animate-pulse" />
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-emerald-200 animate-pulse" />
             </div>
             <div>
-              <p className="text-white font-bold text-sm leading-tight">XBSolar AI Assistant</p>
+              <p className="text-teal-800 font-bold text-sm leading-tight">SmartTech AI Assistant</p>
               <StatusDot />
             </div>
           </div>
 
           <div className="flex items-center gap-1">
             <a
-              href="tel:0898110068"
+              href="tel:0984807679"
               className="flex items-center gap-1 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/30 text-amber-400 text-[10px] font-bold px-2 py-1 rounded-lg transition-colors"
               title="Gọi hotline"
               id="chatbot-call-btn"
@@ -619,7 +619,7 @@ export default function ChatbotWidget() {
             </a>
             <button
               onClick={handleReset}
-              className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-400 hover:text-white transition-colors"
+              className="w-7 h-7 flex items-center justify-center rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-700 hover:text-teal-800 transition-colors"
               title="Bắt đầu lại"
               id="chatbot-reset-btn"
             >
@@ -627,7 +627,7 @@ export default function ChatbotWidget() {
             </button>
             <button
               onClick={() => setIsOpen(false)}
-              className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-400 hover:text-white transition-colors"
+              className="w-7 h-7 flex items-center justify-center rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-700 hover:text-teal-800 transition-colors"
               aria-label="Đóng chat"
               id="chatbot-close-btn"
             >
@@ -640,7 +640,7 @@ export default function ChatbotWidget() {
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto bg-slate-900/95 px-4 py-4 space-y-3 scroll-smooth overscroll-contain"
+          className="flex-1 overflow-y-auto bg-emerald-50/95 px-4 py-4 space-y-3 scroll-smooth overscroll-contain"
           style={{ minHeight: 0, WebkitOverflowScrolling: 'touch' }}
         >
           {messages.map((msg) => (
@@ -654,16 +654,16 @@ export default function ChatbotWidget() {
         {showScrollBtn && (
           <button
             onClick={() => scrollToBottom()}
-            className="absolute bottom-28 right-4 w-8 h-8 bg-slate-700 border border-slate-600 rounded-full flex items-center justify-center shadow-lg hover:bg-slate-600 transition-colors animate-fade-in z-10"
+            className="absolute bottom-28 right-4 w-8 h-8 bg-emerald-100 border border-emerald-300 rounded-full flex items-center justify-center shadow-lg hover:bg-emerald-200 transition-colors animate-fade-in z-10"
             aria-label="Cuộn xuống"
           >
-            <ChevronDown className="w-4 h-4 text-slate-300" />
+            <ChevronDown className="w-4 h-4 text-emerald-800" />
           </button>
         )}
 
         {/* Quick FAQ chips */}
-        <div className="bg-slate-900/95 border-t border-white/5 px-3 py-2.5 flex-shrink-0">
-          <p className="text-slate-500 text-[10px] font-semibold uppercase tracking-wide mb-2 px-1">
+        <div className="bg-emerald-50/95 border-t border-emerald-200/50 px-3 py-2.5 flex-shrink-0">
+          <p className="text-emerald-600 text-[10px] font-semibold uppercase tracking-wide mb-2 px-1">
             Câu hỏi thường gặp
           </p>
           <div
@@ -681,7 +681,7 @@ export default function ChatbotWidget() {
 
         {/* Input area */}
         <div
-          className="bg-slate-800/95 border-t border-white/10 px-3 py-3 flex-shrink-0"
+          className="bg-white/95 border-t border-emerald-200/50 px-3 py-3 flex-shrink-0"
           style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
         >
           <form onSubmit={handleSend} className="flex items-center gap-2">
@@ -706,16 +706,16 @@ export default function ChatbotWidget() {
               className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200 relative
                 ${pendingImages.length > 0
                   ? 'bg-purple-600/80 border border-purple-400/50 shadow-md shadow-purple-500/20'
-                  : 'bg-slate-700 border border-slate-600'
+                  : 'bg-emerald-100 border border-emerald-300'
                 }
                 ${(isTyping || pendingImages.length >= 4) ? 'opacity-40 cursor-not-allowed' : 'active:scale-95'}
               `}
               id="chatbot-image-btn"
               aria-label="Tải ảnh lên"
             >
-              <ImagePlus className={`w-5 h-5 ${pendingImages.length > 0 ? 'text-purple-200' : 'text-slate-400'}`} />
+              <ImagePlus className={`w-5 h-5 ${pendingImages.length > 0 ? 'text-purple-200' : 'text-emerald-700'}`} />
               {pendingImages.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-slate-800">
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-purple-500 text-teal-800 text-[9px] font-bold rounded-full flex items-center justify-center border border-emerald-200">
                   {pendingImages.length}
                 </span>
               )}
@@ -729,8 +729,8 @@ export default function ChatbotWidget() {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={pendingImages.length > 0 ? 'Mô tả thêm (tuỳ chọn)...' : 'Hỏi về điện mặt trời...'}
-              className="flex-1 bg-slate-700/60 border border-slate-600 focus:border-amber-500
-                focus:ring-1 focus:ring-amber-500/30 rounded-xl px-4 py-3 text-base sm:text-sm text-white
+              className="flex-1 bg-emerald-100/60 border border-emerald-300 focus:border-amber-500
+                focus:ring-1 focus:ring-amber-500/30 rounded-xl px-4 py-3 text-base sm:text-sm text-teal-800
                 placeholder-slate-500 outline-none transition-all duration-200 disabled:opacity-50"
               id="chatbot-input"
               aria-label="Nhập câu hỏi"
@@ -746,30 +746,30 @@ export default function ChatbotWidget() {
               className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200
                 ${canSend
                   ? 'bg-gradient-to-br from-amber-400 to-amber-600 shadow-md shadow-amber-500/30 active:scale-95'
-                  : 'bg-slate-700 cursor-not-allowed opacity-50'
+                  : 'bg-emerald-100 cursor-not-allowed opacity-50'
                 }`}
               id="chatbot-send-btn"
               aria-label="Gửi"
             >
-              <Send className={`w-5 h-5 ${canSend ? 'text-slate-900' : 'text-slate-500'}`} />
+              <Send className={`w-5 h-5 ${canSend ? 'text-teal-800' : 'text-emerald-600'}`} />
             </button>
           </form>
 
           {/* Upload hint */}
           {pendingImages.length === 0 && (
-            <p className="text-slate-600 text-[10px] mt-2 px-1 flex items-center gap-1">
+            <p className="text-emerald-500 text-[10px] mt-2 px-1 flex items-center gap-1">
               <ImagePlus className="w-3 h-3" />
               Gửi ảnh hóa đơn, mặt bằng, kết cấu mái để được tư vấn chính xác hơn
             </p>
           )}
 
           <div className="flex items-center justify-between mt-1.5 px-1">
-            <span className="text-slate-600 text-[10px]">
+            <span className="text-emerald-500 text-[10px]">
               Powered by{' '}
               <span className="text-amber-500/80 font-semibold">Gemini AI</span>
             </span>
             <a
-              href="https://zalo.me/0898110068"
+              href="https://zalo.me/0984807679"
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-400/70 hover:text-blue-400 text-[10px] font-medium transition-colors"
