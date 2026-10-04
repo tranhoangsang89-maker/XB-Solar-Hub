@@ -235,7 +235,7 @@ export default function App() {
                     playsInline 
                     className="w-full h-full object-cover"
                   >
-                    <source src="/video-st-logo2.mp4" type="video/mp4" />
+                    <source src="/video-st-logo3.mp4" type="video/mp4" />
                   </video>
                 </div>
 
