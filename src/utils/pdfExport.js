@@ -8,6 +8,21 @@ const formatVnd = (amount) =>
 const formatNumber = (n) =>
   new Intl.NumberFormat('vi-VN').format(n);
 
+async function getBase64FromUrl(url) {
+  try {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+  } catch (e) {
+    console.error('Failed to load image', e);
+    return null;
+  }
+}
+
 // Hàm hỗ trợ nạp font Roboto từ CDN
 async function addVietnameseFont(doc) {
   try {
@@ -52,22 +67,31 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   doc.setFillColor(15, 23, 42); // slate-900
   doc.rect(0, 0, W, 50, 'F');
 
+  // Fetch and Add Logo
+  const logoBase64 = await getBase64FromUrl('/logo-smarttech-nbg.png');
+  let textStartX = margin;
+  if (logoBase64) {
+    // Logo is roughly square, making it 26x26
+    doc.addImage(logoBase64, 'PNG', margin, 10, 26, 26);
+    textStartX = margin + 32; // shift text to the right of the logo
+  }
+
   // Company name
   doc.setTextColor(245, 158, 11); // amber-500
   doc.setFontSize(22);
   doc.setFont('Roboto', 'bold');
-  doc.text('SMARTTECH HUB', margin, 20);
+  doc.text('SMARTTECH HUB', textStartX, 22);
 
-  doc.setFontSize(9);
+  doc.setFontSize(10);
   doc.setTextColor(148, 163, 184); // slate-400
-  doc.text('Năng lượng mặt trời thường trú - Giải pháp toàn diện Sungrow & JA Solar', margin, 27);
+  doc.text('Residential Energy Solutions', textStartX, 29);
 
   // Right side header info
   doc.setFontSize(8);
   doc.setTextColor(203, 213, 225); // slate-300
-  doc.text('Hotline/Zalo: 0984 807 679', W - margin, 18, { align: 'right' });
+  doc.text('Hotline/Zalo: 0984 807 679 (Mr. Thế Anh)', W - margin, 18, { align: 'right' });
   doc.text('VPGD: Lake View City, Q.8, TP.HCM', W - margin, 24, { align: 'right' });
-  doc.text('Kho: Long Trường, Q.9, TP.HCM', W - margin, 30, { align: 'right' });
+  doc.text('Kho: Số 1 Nổi, P. Long Trường, Q.9, TP.HCM', W - margin, 30, { align: 'right' });
 
   // Title bar
   doc.setFillColor(245, 158, 11);
