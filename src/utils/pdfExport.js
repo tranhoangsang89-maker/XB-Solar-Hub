@@ -80,7 +80,7 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   doc.setTextColor(245, 158, 11); // amber-500
   doc.setFontSize(22);
   doc.setFont('Roboto', 'bold');
-  doc.text('SMARTTECH HUB', textStartX, 22);
+  doc.text('SMART TECH', textStartX, 22);
 
   doc.setFontSize(10);
   doc.setTextColor(148, 163, 184); // slate-400

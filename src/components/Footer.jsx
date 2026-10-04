@@ -22,7 +22,7 @@ export default function Footer() {
               </a>
               <div>
                 <span className="text-xl font-black text-amber-400">SMART</span>
-                <span className="text-xl font-black text-white ml-1">TECH HUB</span>
+                <span className="text-xl font-black text-white ml-1">TECH</span>
               </div>
             </div>
             
