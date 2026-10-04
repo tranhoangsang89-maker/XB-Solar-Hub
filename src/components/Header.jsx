@@ -1,5 +1,5 @@
 // src/components/Header.jsx
-import { Sun, Phone, MessageCircle, Zap } from 'lucide-react';
+import { Sun, Phone, MessageCircle, Zap, MapPin } from 'lucide-react';
 
 export default function Header({ onConsult }) {
   return (
@@ -24,6 +24,17 @@ export default function Header({ onConsult }) {
                   <span className="hidden sm:inline-block text-xs font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-500/30 px-1.5 py-0.5 rounded-md ml-1">HUB</span>
                 </div>
                 <p className="text-[10px] text-emerald-700 font-medium hidden sm:block">Residential Energy Solutions</p>
+              </div>
+            </div>
+
+            {/* Address (Hidden on mobile/tablet) */}
+            <div className="hidden lg:flex items-center gap-2 flex-1 justify-center px-4">
+              <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 border border-emerald-300">
+                <MapPin className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">Trụ sở chính</span>
+                <span className="text-xs font-medium text-teal-900">Số 1 Nổi, P. Long Trường, TP. HCM, VN</span>
               </div>
             </div>
 

@@ -218,7 +218,7 @@ function MessageBubble({ msg }) {
       <div
         className={`max-w-[82%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
           isBot
-            ? 'bg-emerald-100/90 border border-emerald-300/50 text-slate-200 rounded-tl-sm'
+            ? 'bg-emerald-100/90 border border-emerald-300/50 text-teal-900 rounded-tl-sm'
             : 'bg-gradient-to-br from-amber-500 to-amber-600 text-teal-800 font-semibold rounded-tr-sm'
         }`}
       >
@@ -558,7 +558,7 @@ export default function ChatbotWidget() {
         id="chatbot-toggle-btn"
       >
         {isOpen
-          ? <X className="w-6 h-6 text-slate-200" />
+          ? <X className="w-6 h-6 text-teal-900" />
           : <MessageCircle className="w-6 h-6 text-teal-800" />
         }
         {!isOpen && hasNewMsg && (
