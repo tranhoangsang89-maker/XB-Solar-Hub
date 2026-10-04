@@ -21,8 +21,8 @@ export default function Footer() {
                 />
               </a>
               <div>
-                <span className="text-xl font-black text-amber-400">SMART</span>
-                <span className="text-xl font-black text-white ml-1">TECH</span>
+                <span className="text-xl font-black text-blue-600 tracking-tight">SMART</span>
+                <span className="text-xl font-black text-green-500 tracking-tight">TECH</span>
               </div>
             </div>
             

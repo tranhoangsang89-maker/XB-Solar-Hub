@@ -18,9 +18,9 @@ export default function Header({ onConsult }) {
                 />
               </a>
               <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-lg font-black text-amber-400 tracking-tight leading-none">SMART</span>
-                  <span className="text-lg font-black text-teal-800 tracking-tight leading-none">TECH</span>
+                <div className="flex items-center">
+                  <span className="text-lg font-black text-blue-600 tracking-tight leading-none">SMART</span>
+                  <span className="text-lg font-black text-green-500 tracking-tight leading-none">TECH</span>
                 </div>
                 <p className="text-[10px] text-emerald-700 font-medium hidden sm:block">Residential Energy Solutions</p>
               </div>

@@ -77,10 +77,15 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   }
 
   // Company name
-  doc.setTextColor(245, 158, 11); // amber-500
   doc.setFontSize(22);
   doc.setFont('Roboto', 'bold');
-  doc.text('SMART TECH', textStartX, 22);
+  
+  doc.setTextColor(37, 99, 235); // blue-600
+  doc.text('SMART', textStartX, 22);
+  
+  const smartWidth = doc.getTextWidth('SMART');
+  doc.setTextColor(34, 197, 94); // green-500
+  doc.text('TECH', textStartX + smartWidth, 22);
 
   doc.setFontSize(10);
   doc.setTextColor(148, 163, 184); // slate-400
