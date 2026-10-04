@@ -22,7 +22,7 @@ export default function Header({ onConsult }) {
                   <span className="text-lg font-black text-blue-600 tracking-tight leading-none">SMART</span>
                   <span className="text-lg font-black text-green-500 tracking-tight leading-none">TECH</span>
                 </div>
-                <p className="text-[10px] text-emerald-700 font-medium hidden sm:block">Residential Energy Solutions</p>
+                <p className="text-[10px] text-amber-500 font-medium hidden sm:block">Giải pháp điện mặt trời cho mọi nhà</p>
               </div>
             </div>
 

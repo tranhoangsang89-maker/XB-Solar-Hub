@@ -88,8 +88,8 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   doc.text('TECH', textStartX + smartWidth, 22);
 
   doc.setFontSize(10);
-  doc.setTextColor(148, 163, 184); // slate-400
-  doc.text('Residential Energy Solutions', textStartX, 29);
+  doc.setTextColor(245, 158, 11); // amber-500
+  doc.text('Giải pháp điện mặt trời cho mọi nhà', textStartX, 29);
 
   // Right side header info
   doc.setFontSize(8);
