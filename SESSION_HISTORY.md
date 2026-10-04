@@ -54,3 +54,11 @@ Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quy�
 - Tiếp nhận phản hồi từ khách hàng thực tế để tinh chỉnh thông số tài chính nếu cần.
 - Có thể phát triển thêm tính năng Đăng nhập/Lưu lịch sử báo giá cho Sale nếu SmartTech muốn mở rộng quy mô.
 
+## 9. Tái cấu trúc & Hoàn thiện Giao diện (Ngày 04/10/2026)
+- **Tái định vị Thương hiệu:** Loại bỏ hoàn toàn chữ "HUB" khỏi mọi ngóc ngách của hệ thống. Tên gọi chính thức được chuẩn hoá là **SMARTTECH** (viết liền, không khoảng trắng) với bộ mã màu nhận diện đúng chuẩn logo: "SMART" màu xanh dương (`text-blue-600`), "TECH" màu xanh lá sáng (`text-green-500`).
+- **Giao diện Eco Green (Năng lượng xanh):** Đại tu toàn bộ bảng màu UI từ giao diện tối (Dark Slate) sang phong cách sáng, tươi mới, tràn đầy năng lượng đúng chất năng lượng xanh (Emerald/Teal/Amber).
+- **Hero Section & Video Cinematic:** Thay đổi hoàn toàn bố cục trang chủ. Nhúng video toàn màn hình (Full-width banner video) độc lập ở ngay trên cùng trang web. Video hiện tại được ghim cứng tại `public/video-st-logo3.mp4` với đầy đủ các tuỳ chọn HTML5 chuẩn mobile (`autoplay`, `muted`, `playsinline`, `loop`) đảm bảo phát video mượt mà trên mọi trình duyệt.
+- **Header & Footer:** Dời phần địa chỉ trụ sở ("Số 1 Nổi...") từ Footer lên khoảng trống giữa của Header để tăng độ uy tín ngay từ cái nhìn đầu tiên. Đổi Slogan thành tiếng Việt "Giải pháp điện mặt trời cho mọi nhà" (màu cam).
+- **Trợ lý Ảo AI:** Cập nhật lại màu chữ của Chatbot thành xanh mòng két đậm (`text-teal-900`) để tăng độ tương phản (contrast), chống hiện tượng chữ bị chìm khi đổi màu nền khung chat sang màu sáng (`bg-emerald-100`).
+- **Xuất PDF Siêu Chuẩn:** Tái căn chỉnh lại toạ độ Header trong tệp PDF xuất ra. Fix lỗi aspect-ratio khiến Logo bị bóp méo (canh chuẩn khung vuông `26x26`), dời vị trí text cho cân xứng, cập nhật Slogan, đổi màu text SMARTTECH, và thêm tên giám đốc "Mr. Thế Anh" vào đuôi số Hotline để tăng tính thân thiện.
+- **Triển khai liên tục:** Cập nhật file liên tục qua Git, đẩy source code lên nhánh `main` để Vercel tự động deploy ra Production cho người dùng test.
