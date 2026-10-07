@@ -100,7 +100,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
     }
     
     initialItems.push(
-      { id: 'tuDien', name: 'Tủ điện AC/DC Solar Mersen', unit: 'Bộ', qty: 1, price: tuDienPrice, total: tuDienPrice, editableQty: false, editableName: true, image: '/tu-dien-xb.png' },
+      { id: 'tuDien', name: 'Tủ điện AC/DC Solar Mersen', unit: 'Bộ', qty: 1, price: tuDienPrice, total: tuDienPrice, editableQty: false, editableName: true, image: '/tu-dien.png' },
       { id: 'vatTu', name: 'Hệ khung ray nhôm chuyên dụng', unit: 'Bộ', qty: 1, price: khunGiaPrice, total: khunGiaPrice, editableQty: false, editableName: true, image: '/he-khung-ray-nhom.jpg' },
       { id: 'dayDan', name: 'Cáp điện DC & dây tiếp địa', unit: 'Hệ', qty: 1, price: dayDanPrice, total: dayDanPrice, editableQty: false, editableName: true, image: '/day-cap.jpg' },
       { id: 'vanChuyen', name: 'Nhân công lắp đặt trọn gói', unit: 'Gói', qty: 1, price: vanChuyenPrice, total: vanChuyenPrice, editableQty: false, editableName: true, image: '/nhan-cong-lap-dat.jpg' }

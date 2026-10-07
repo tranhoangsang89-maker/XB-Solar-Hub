@@ -1,4 +1,4 @@
-// bang-gia-thiet-bi.js - Cập nhật danh mục thiết bị & giá thi công chính thức XB Solar (10/2026)
+// bang-gia-thiet-bi.js - Cập nhật danh mục thiết bị & giá thi công chính thức SmartTech (10/2026)
 
 // 1. TẤM PIN NĂNG LƯỢNG MẶT TRỜI
 export const SOLAR_PANELS = [
