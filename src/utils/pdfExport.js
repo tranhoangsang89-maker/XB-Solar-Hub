@@ -123,14 +123,32 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   doc.setTextColor(30, 41, 59);
 
   const plan = result[selectedType || 'hybrid'];
+  const panelItem = bomItems.find(i => i.id === 'panel');
+  let finalKwp = plan.combo.systemCapacityKwp;
+  let finalGen = plan.monthlyGenKwh;
+  let finalName = plan.combo.name;
+
+  if (panelItem) {
+    const match = panelItem.name.match(/(\d+)W/);
+    const wattage = match ? parseInt(match[1]) : 720;
+    const currentKwp = (panelItem.qty * wattage) / 1000;
+    
+    // Nếu có sự thay đổi (sai số do float)
+    if (Math.abs(currentKwp - plan.combo.systemCapacityKwp) > 0.1) {
+      finalKwp = currentKwp;
+      finalName = `Gói thiết kế tùy chỉnh ${finalKwp.toFixed(1)}kWp`;
+      finalGen = finalKwp * 4.6 * 30 * 0.8; // Sản lượng = kWp * 4.6 * 30 * 0.8
+    }
+  }
+
   const infoRows = [
     ['Họ và tên:', customerName || 'Khách hàng'],
     ['SĐT / Zalo:', customerPhone || '---'],
     ['Tỉnh / Thành phố:', province || '---'],
     ['Hóa đơn điện TB/tháng:', typeof monthlyBill === 'number' ? formatVnd(monthlyBill) : monthlyBill],
-    ['Gói giải pháp:', plan.combo.name],
-    ['Công suất lắp đặt:', `${plan.combo.systemCapacityKwp} kWp`],
-    ['Sản lượng ước tính:', `${formatNumber(plan.monthlyGenKwh)} kWh/tháng`],
+    ['Gói giải pháp:', finalName],
+    ['Công suất lắp đặt:', `${finalKwp.toFixed(2)} kWp`],
+    ['Sản lượng ước tính:', `${formatNumber(Math.round(finalGen))} kWh/tháng`],
     ['Ngày báo giá:', new Date().toLocaleDateString('vi-VN')],
   ];
 
