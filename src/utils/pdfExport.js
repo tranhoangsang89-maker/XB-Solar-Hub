@@ -265,10 +265,17 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   y += 5;
 
   const finance = plan.finance;
+  
+  // Tính toán lại tài chính dựa trên cấu hình vật tư (BOM) đã chỉnh sửa
+  const genRatio = finalGen / plan.monthlyGenKwh;
+  const estimatedNewSavings = Math.round(finance.monthlySavings * genRatio);
+  const newPaybackYears = (totalPrice / (estimatedNewSavings * 12)).toFixed(1);
+  const newTotalProfit = (estimatedNewSavings * 12 * 25) - totalPrice;
+
   const financeRows = [
-    ['Tiết kiệm ước tính mỗi tháng:', formatVnd(finance.monthlySavings)],
-    ['Thời gian hoàn vốn ước tính:', `${finance.paybackYears} năm`],
-    ['Tổng lợi nhuận ròng sau 25 năm:', formatVnd(finance.total25YearSavings)]
+    ['Tiết kiệm ước tính mỗi tháng:', formatVnd(estimatedNewSavings)],
+    ['Thời gian hoàn vốn ước tính:', `${newPaybackYears} năm`],
+    ['Tổng lợi nhuận ròng sau 25 năm:', formatVnd(Math.max(0, newTotalProfit))]
   ];
 
   financeRows.forEach(([label, value]) => {
