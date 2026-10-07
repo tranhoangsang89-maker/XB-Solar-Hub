@@ -1,14 +1,14 @@
 // src/components/CalculatorStep/BillInputStep.jsx
 import { useState, lazy, Suspense } from 'react';
-import { Zap, MapPin, Clock, ChevronRight, Lightbulb, Home, Building, Satellite, CheckCircle2, Search, ChevronDown, Check } from 'lucide-react';
+import { Zap, MapPin, Clock, ChevronRight, Lightbulb, Home, Building, Satellite, CheckCircle2, Search, ChevronDown, Check, Sun } from 'lucide-react';
 import { PROVINCES_PSH } from '../../data/solarData';
 
 // Lazy-load the heavy map modal
 const SatelliteRoofModal = lazy(() => import('../SatelliteRoofModal'));
 
-const BILL_STEPS = [500000, 800000, 1000000, 1500000, 2000000, 2500000, 3000000, 4000000, 5000000, 7000000, 10000000];
-const BILL_MIN = 500000;
-const BILL_MAX = 10000000;
+const BILL_STEPS = [2000000, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000];
+const BILL_MIN = 2000000;
+const BILL_MAX = 30000000;
 
 const USAGE_PROFILES = [
   {
@@ -44,7 +44,9 @@ const getSliderPercent = (value) =>
   ((value - BILL_MIN) / (BILL_MAX - BILL_MIN)) * 100;
 
 export default function BillInputStep({ onNext }) {
-  const [monthlyBill, setMonthlyBill] = useState(2000000);
+  const [inputType, setInputType] = useState('bill'); // 'bill' | 'kwp'
+  const [customKwp, setCustomKwp] = useState(5);
+  const [monthlyBill, setMonthlyBill] = useState(5000000);
   const [province, setProvince] = useState(PROVINCES_PSH[0]);
   const [usageProfile, setUsageProfile] = useState('home_all_day');
   const [roofModalOpen, setRoofModalOpen] = useState(false);
@@ -72,14 +74,14 @@ export default function BillInputStep({ onNext }) {
   };
 
   const handleNext = () => {
-    onNext({ monthlyBill, province, usageProfile });
+    onNext({ inputType, customKwp, monthlyBill, province, usageProfile });
   };
 
   // Determine bill tier label
   const getBillTier = () => {
-    if (monthlyBill < 1000000) return { label: 'Thấp', color: 'text-blue-400' };
-    if (monthlyBill < 3000000) return { label: 'Trung bình', color: 'text-emerald-400' };
-    if (monthlyBill < 6000000) return { label: 'Cao', color: 'text-amber-400' };
+    if (monthlyBill <= 5000000) return { label: 'Thấp', color: 'text-blue-400' };
+    if (monthlyBill <= 10000000) return { label: 'Trung bình', color: 'text-emerald-400' };
+    if (monthlyBill <= 20000000) return { label: 'Cao', color: 'text-amber-400' };
     return { label: 'Rất cao', color: 'text-red-400' };
   };
 
@@ -103,60 +105,134 @@ export default function BillInputStep({ onNext }) {
 
       <div className="max-w-2xl mx-auto space-y-6">
 
-        {/* Bill Slider */}
+        {/* Toggle Input Type */}
+        <div className="flex bg-emerald-100/50 p-1 rounded-xl mb-6 max-w-sm mx-auto">
+          <button
+            onClick={() => setInputType('bill')}
+            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${
+              inputType === 'bill' ? 'bg-white text-teal-800 shadow' : 'text-emerald-700 hover:text-teal-800'
+            }`}
+          >
+            Tính theo tiền điện
+          </button>
+          <button
+            onClick={() => setInputType('kwp')}
+            className={`flex-1 py-2 text-sm font-bold rounded-lg transition-all ${
+              inputType === 'kwp' ? 'bg-white text-teal-800 shadow' : 'text-emerald-700 hover:text-teal-800'
+            }`}
+          >
+            Số kWp tùy chỉnh
+          </button>
+        </div>
+
+        {/* Input Block */}
         <div className="card-dark p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Zap className="w-5 h-5 text-amber-400" />
-              <label className="text-teal-800 font-semibold">Hóa đơn điện hàng tháng</label>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-black text-amber-400">{formatVnd(monthlyBill)}</div>
-              <div className={`text-xs font-semibold ${tier.color}`}>{tier.label}</div>
-            </div>
-          </div>
+          {inputType === 'bill' ? (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-amber-400" />
+                  <label className="text-teal-800 font-semibold">Hóa đơn điện hàng tháng</label>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-black text-amber-400">{formatVnd(monthlyBill)}</div>
+                  <div className={`text-xs font-semibold ${tier.color}`}>{tier.label}</div>
+                </div>
+              </div>
 
-          {/* Slider */}
-          <div className="relative mb-2">
-            <div
-              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 pointer-events-none"
-              style={{ width: `${sliderPercent}%`, top: '50%', transform: 'translateY(-50%)', height: '8px' }}
-            />
-            <input
-              type="range"
-              id="bill-slider"
-              min={BILL_MIN}
-              max={BILL_MAX}
-              step={100000}
-              value={monthlyBill}
-              onChange={handleSliderChange}
-              className="w-full relative z-10"
-              aria-label="Tiền điện hàng tháng"
-            />
-          </div>
-          <div className="flex justify-between text-xs text-emerald-600 mt-1">
-            <span>500k</span>
-            <span>2.5tr</span>
-            <span>5tr</span>
-            <span>10tr</span>
-          </div>
+              {/* Slider */}
+              <div className="relative mb-2">
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 pointer-events-none"
+                  style={{ width: `${sliderPercent}%`, top: '50%', transform: 'translateY(-50%)', height: '8px' }}
+                />
+                <input
+                  type="range"
+                  id="bill-slider"
+                  min={BILL_MIN}
+                  max={BILL_MAX}
+                  step={100000}
+                  value={monthlyBill}
+                  onChange={handleSliderChange}
+                  className="w-full relative z-10"
+                  aria-label="Tiền điện hàng tháng"
+                />
+              </div>
+              <div className="flex justify-between text-xs text-emerald-600 mt-1">
+                <span>2tr</span>
+                <span>10tr</span>
+                <span>20tr</span>
+                <span>30tr</span>
+              </div>
 
-          {/* Quick select chips */}
-          <div className="mt-4 flex flex-wrap gap-2">
-            {[1000000, 2000000, 3000000, 5000000, 7000000].map((val) => (
-              <button
-                key={val}
-                onClick={() => setMonthlyBill(val)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 ${
-                  monthlyBill === val
-                    ? 'bg-amber-500 text-teal-800 border-amber-500'
-                    : 'bg-emerald-100/50 text-emerald-700 border-emerald-300 hover:border-amber-500/50 hover:text-amber-400'
-                }`}
-              >
-                {formatVnd(val).replace('đ', '')}
-              </button>
-            ))}
-          </div>
+              {/* Quick select chips */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {[2000000, 5000000, 10000000, 15000000, 20000000].map((val) => (
+                  <button
+                    key={val}
+                    onClick={() => setMonthlyBill(val)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 ${
+                      monthlyBill === val
+                        ? 'bg-amber-500 text-teal-800 border-amber-500'
+                        : 'bg-emerald-100/50 text-emerald-700 border-emerald-300 hover:border-amber-500/50 hover:text-amber-400'
+                    }`}
+                  >
+                    {formatVnd(val).replace('đ', '')}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Sun className="w-5 h-5 text-amber-400" />
+                  <label className="text-teal-800 font-semibold">Công suất hệ thống (kWp)</label>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-black text-amber-400">{customKwp} kWp</div>
+                </div>
+              </div>
+
+              {/* Slider kWp */}
+              <div className="relative mb-2">
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 pointer-events-none"
+                  style={{ width: `${((customKwp - 3) / (50 - 3)) * 100}%`, top: '50%', transform: 'translateY(-50%)', height: '8px' }}
+                />
+                <input
+                  type="range"
+                  min={3}
+                  max={50}
+                  step={1}
+                  value={customKwp}
+                  onChange={(e) => setCustomKwp(Number(e.target.value))}
+                  className="w-full relative z-10"
+                />
+              </div>
+              <div className="flex justify-between text-xs text-emerald-600 mt-1">
+                <span>3 kWp</span>
+                <span>25 kWp</span>
+                <span>50 kWp</span>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {[3, 5, 8, 10, 15, 20].map((val) => (
+                  <button
+                    key={val}
+                    onClick={() => setCustomKwp(val)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 ${
+                      customKwp === val
+                        ? 'bg-amber-500 text-teal-800 border-amber-500'
+                        : 'bg-emerald-100/50 text-emerald-700 border-emerald-300 hover:border-amber-500/50 hover:text-amber-400'
+                    }`}
+                  >
+                    {val} kWp
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Province Selector */}

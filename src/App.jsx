@@ -155,9 +155,9 @@ export default function App() {
   const [selectedQuoteType, setSelectedQuoteType] = useState('hybrid');
   const [appMode, setAppMode] = useState('quote'); // 'quote' | 'designer'
 
-  const handleStep1Next = ({ monthlyBill, province, usageProfile }) => {
-    const result = recommendCombos(monthlyBill, province.psh);
-    setInputData({ monthlyBill, province, usageProfile });
+  const handleStep1Next = ({ inputType, customKwp, monthlyBill, province, usageProfile }) => {
+    const result = recommendCombos(inputType, monthlyBill, customKwp, province.psh, usageProfile);
+    setInputData({ inputType, customKwp, monthlyBill, province, usageProfile });
     setCalcResult(result);
     setStep(2);
     // Scroll to top smoothly
@@ -189,13 +189,32 @@ export default function App() {
       <SolarBackground />
 
       {/* Header */}
-      <Header onConsult={() => setIsQuoteOpen(true)} />
+      <Header onConsult={() => {
+        if (calcResult) {
+          setIsQuoteOpen(true);
+        } else {
+          setAppMode('quote');
+          setStep(1);
+          scrollToCalc();
+        }
+      }} />
 
       {/* Mode Switcher */}
       <div className="relative z-20 flex justify-center mt-6 px-4">
         <div className="bg-white/80 backdrop-blur-md p-1 rounded-full border border-emerald-200 shadow-xl inline-flex overflow-x-auto max-w-full">
           <button
-            onClick={() => setAppMode('quote')}
+            onClick={() => {
+              if (appMode === 'quote') {
+                if (step === 1) {
+                  scrollToCalc();
+                } else {
+                  setStep(1);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              } else {
+                setAppMode('quote');
+              }
+            }}
             className={`px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all duration-300 whitespace-nowrap ${
               appMode === 'quote'
                 ? 'bg-amber-500 text-teal-800 shadow-lg'
@@ -301,7 +320,9 @@ export default function App() {
           onClose={handleCloseQuote}
           result={calcResult}
           selectedType={selectedQuoteType}
-          monthlyBill={inputData?.monthlyBill || 2000000}
+          inputType={inputData?.inputType || 'bill'}
+          customKwp={inputData?.customKwp || 5}
+          monthlyBill={inputData?.monthlyBill || 5000000}
           province={inputData?.province}
         />
       )}

@@ -2,28 +2,28 @@ export default function ProjectShowcase() {
   const projects = [
     {
       title: 'Biệt thự Lake View City (Quận 2, TP.HCM)',
-      specs: '15 kWp - Inverter Sungrow Hybrid 3 Pha + Pin Sungrow SBR 12.8kWh + Tấm pin JA Solar N-Type',
+      specs: '14.4 kWp (20 tấm JA 720W) - Inverter SOLIS Hybrid 18kW + Pin Hithium 16kWh',
       img: '/lake-view-villa.jpg'
     },
     {
       title: 'Nhà phố dân dụng (TP. Mỹ Tho, Tiền Giang)',
-      specs: '5.4 kWp - Inverter Sungrow SG5.0RS + 9 tấm JA Solar 610W',
+      specs: '5.04 kWp (7 tấm JA 720W) - Inverter SUNGROW SG5.0RS On-grid',
       img: '/townhouse-solar.jpg'
     },
     {
-      title: 'HT ĐMT Nhà máy Sheico (KCN Đông Nam, Củ Chi)',
-      specs: '8 MWp - Inverter Sungrow SG125CX',
-      img: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?auto=format&fit=crop&q=80&w=1000'
+      title: 'Biệt thự Vườn (Đà Lạt, Lâm Đồng)',
+      specs: '10.08 kWp (14 tấm JA 720W) - Inverter SOLIS Hybrid 10kW + Pin Dyness 10.24kWh',
+      img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1000'
     },
     {
-      title: 'ĐMT Mặt nước KCN Phước Đông (Tây Ninh)',
-      specs: '3.4 MWp - Inverter Sungrow SG250CX/SG350HX',
-      img: 'https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?q=80&w=1000'
+      title: 'Shophouse Thương Mại (KĐT Sala, TP.HCM)',
+      specs: '20.16 kWp (28 tấm JA 720W) - Inverter SUNGROW SG20RT On-grid',
+      img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=1000'
     },
     {
-      title: 'Trang trại Năng lượng sạch (Tân Uyên, Bình Dương)',
-      specs: '17 MWp - Tấm pin JA Solar + Sungrow SG110CX',
-      img: 'https://images.unsplash.com/photo-1521618755572-156ae0cdd74d?q=80&w=1000'
+      title: 'Villa Nghỉ Dưỡng (Hồ Tràm, Vũng Tàu)',
+      specs: '15.12 kWp (21 tấm JA 720W) - 2x Inverter SOLIS Hybrid 8kW + Pin Dyness 16kWh',
+      img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1000'
     }
   ];
 

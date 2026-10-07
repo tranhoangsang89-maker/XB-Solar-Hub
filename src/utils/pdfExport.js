@@ -127,7 +127,7 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
     ['Họ và tên:', customerName || 'Khách hàng'],
     ['SĐT / Zalo:', customerPhone || '---'],
     ['Tỉnh / Thành phố:', province || '---'],
-    ['Hóa đơn điện TB/tháng:', formatVnd(monthlyBill)],
+    ['Hóa đơn điện TB/tháng:', typeof monthlyBill === 'number' ? formatVnd(monthlyBill) : monthlyBill],
     ['Gói giải pháp:', plan.combo.name],
     ['Công suất lắp đặt:', `${plan.combo.systemCapacityKwp} kWp`],
     ['Sản lượng ước tính:', `${formatNumber(plan.monthlyGenKwh)} kWh/tháng`],

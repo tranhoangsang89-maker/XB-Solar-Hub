@@ -4,6 +4,7 @@ import { X, Download, User, Phone, Shield, Loader2, CheckCircle, FileText, Setti
 import { exportQuotePDF } from '../utils/pdfExport';
 import * as htmlToImage from 'html-to-image';
 import { generate25YearCashflow } from '../utils/solarCalculator';
+import { SOLAR_PANELS, INVERTERS, BATTERIES } from '../data/bang-gia-thiet-bi';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, ReferenceLine } from 'recharts';
 
 const formatVnd = (amount) => new Intl.NumberFormat('vi-VN').format(amount);
@@ -13,7 +14,7 @@ const formatVndM = (amount) => {
   return Math.round(amount / 1000) + 'k';
 };
 
-export default function QuoteModal({ isOpen, onClose, result, selectedType, monthlyBill, province }) {
+export default function QuoteModal({ isOpen, onClose, result, selectedType, inputType, customKwp, monthlyBill, province }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -22,34 +23,22 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
   const [bomItems, setBomItems] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
-  const panelOptions = [
-    "Tấm pin JA Solar JAM66D45 LB 610W",
-    "Tấm pin JA Solar JAM72D42 LB 630W",
-    "Tấm pin Jinko Solar Tiger Neo 620W",
-    "Tấm pin Jinko Solar Tiger Neo 630W",
-    "Tấm pin Canadian Solar 600W"
-  ];
+  const panelOptions = SOLAR_PANELS.map(p => ({
+    name: `Tấm pin ${p.brand} ${p.model} ${p.wattage}W`,
+    price: p.priceVnd
+  }));
 
-  const inverterOptions = [
-    "Inverter Sungrow SG3.0RS (1 Pha)",
-    "Inverter Sungrow SG5.0RS (1 Pha)",
-    "Inverter Sungrow SG10RS (1 Pha)",
-    "Inverter Sungrow SG10RT (3 Pha)",
-    "Inverter Hybrid Sungrow MG5RL (1 Pha)",
-    "Inverter Hybrid Sungrow MG6RL (1 Pha)",
-    "Inverter Hybrid Sungrow SH10RT (3 Pha)",
-    "Inverter Hybrid Deye 5kW (1 Pha)",
-    "Inverter Hybrid Deye 12kW (3 Pha)"
-  ];
+  const inverterOptions = INVERTERS
+    .filter(i => selectedType === 'hybrid' ? i.systemType === 'hybrid' : i.systemType === 'ongrid')
+    .map(i => ({
+      name: `Inverter ${i.brand} ${i.model} (${i.powerKw}kW)`,
+      price: i.priceVnd
+    }));
 
-  const batteryOptions = [
-    "Pin Lithium Sungrow MGL060 (6.0 kWh)",
-    "Pin Lithium Sungrow MBL160 (16.0 kWh)",
-    "Pin Sungrow Cao Áp SBR096 (9.6 kWh)",
-    "Pin Sungrow Cao Áp SBR128 (12.8 kWh)",
-    "Pin Lithium Deye RW-M6.1 (6.1 kWh)",
-    "Pin Lithium Deye SE-G5.1 Pro (5.1 kWh)"
-  ];
+  const batteryOptions = BATTERIES.map(b => ({
+    name: `Pin lưu trữ ${b.brand} ${b.model} (${b.capacityKwh} kWh)`,
+    price: b.priceVnd
+  }));
 
   useEffect(() => {
     if (!isOpen || !result) return;
@@ -57,7 +46,11 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
     const combo = plan.combo;
     const kwp = combo.systemCapacityKwp;
     
-    const getInverterPrice = (name) => {
+    const getInverterPrice = (id, name) => {
+      if (id) {
+        const found = INVERTERS.find(i => i.id === id);
+        if (found) return found.priceVnd;
+      }
       if (name.includes('SG3.0RS')) return 11500000;
       if (name.includes('SG5.0RS')) return 14000000;
       if (name.includes('SG10')) return 25000000;
@@ -67,31 +60,43 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
       return 15000000;
     };
 
-    const getBatteryPrice = (name) => {
-      if (!name) return 0;
+    const getBatteryPrice = (id, name) => {
+      if (!name && !id) return 0;
+      if (id) {
+        const found = BATTERIES.find(b => b.id === id);
+        if (found) return found.priceVnd;
+      }
       if (name.includes('MGL060')) return 35000000;
       if (name.includes('MBL160')) return 75000000;
       if (name.includes('SBR096')) return 85000000;
       return 35000000;
     };
+    
+    const getPanelPrice = (id) => {
+      if (id) {
+        const found = SOLAR_PANELS.find(p => p.id === id);
+        if (found) return found.priceVnd;
+      }
+      return 2600000;
+    };
 
-    const panelPrice = 2750000; // 610W-630W ~ 2.75M
-    const inverterPrice = getInverterPrice(combo.inverter);
-    const batteryPrice = getBatteryPrice(combo.battery);
+    const panelPrice = getPanelPrice(combo.panelId);
+    const inverterPrice = getInverterPrice(combo.inverterId, combo.inverter);
+    const batteryPrice = getBatteryPrice(combo.batteryId, combo.battery);
     
     // Phụ trợ tính theo quy mô
-    const tuDienPrice = kwp > 8 ? 6500000 : 4500000;
-    const khunGiaPrice = combo.panelQty * 450000; // ~450k/tấm tiền khung/rail
+    const tuDienPrice = kwp <= 8 ? 4500000 : 6500000;
+    const khunGiaPrice = combo.panelQty * 450000;
     const dayDanPrice = Math.round(kwp * 650000);
     const vanChuyenPrice = Math.round(kwp * 800000); // Nhân công & vận chuyển
 
     const initialItems = [
       { id: 'panel', name: `Tấm pin ${combo.panelModel}`, unit: 'Tấm', qty: combo.panelQty, price: panelPrice, total: combo.panelQty * panelPrice, editableQty: true, editableName: true, image: '/tam-pin-jasolar.png' },
-      { id: 'inverter', name: `Inverter ${combo.inverter}`, unit: 'Bộ', qty: 1, price: inverterPrice, total: inverterPrice, editableQty: true, editableName: true, image: '/inverter-5kw.png' },
+      { id: 'inverter', name: `Inverter ${combo.inverter}`, unit: 'Bộ', qty: combo.inverterQty || 1, price: inverterPrice, total: (combo.inverterQty || 1) * inverterPrice, editableQty: true, editableName: true, image: '/inverter-5kw.png' },
     ];
     
     if (selectedType === 'hybrid') {
-      initialItems.push({ id: 'battery', name: `Pin lưu trữ ${combo.battery}`, unit: 'Pack', qty: 1, price: batteryPrice, total: batteryPrice, editableQty: true, editableName: true, image: '/pin-luu-tru-6kwh.png' });
+      initialItems.push({ id: 'battery', name: `Pin lưu trữ ${combo.battery}`, unit: 'Pack', qty: combo.batteryQty || 1, price: batteryPrice, total: (combo.batteryQty || 1) * batteryPrice, editableQty: true, editableName: true, image: '/pin-luu-tru-6kwh.png' });
     }
     
     initialItems.push(
@@ -106,23 +111,67 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
   }, [isOpen, result, selectedType]);
 
   const handleItemChange = (id, field, value) => {
-    setBomItems(prev => prev.map(item => {
-      if (item.id === id) {
-        if (field === 'name') {
-          return { ...item, name: value };
+    setBomItems(prev => {
+      let updatedItems = prev.map(item => {
+        if (item.id === id) {
+          if (field === 'full_update') {
+            const updated = { ...item, name: value.name, price: value.price };
+            updated.total = updated.qty * updated.price;
+            return updated;
+          }
+          if (field === 'name') {
+            return { ...item, name: value };
+          }
+          let numVal = 0;
+          if (field === 'price') {
+              numVal = parseInt(value.toString().replace(/[^0-9]/g, '')) || 0;
+          } else {
+              numVal = parseInt(value) || 0;
+          }
+          const updated = { ...item, [field]: numVal };
+          updated.total = updated.qty * updated.price;
+          return updated;
         }
-        let numVal = 0;
-        if (field === 'price') {
-            numVal = parseInt(value.replace(/[^0-9]/g, '')) || 0;
-        } else {
-            numVal = parseInt(value) || 0;
+        return item;
+      });
+
+      // Tự động tính toán lại vật tư phụ khi thay đổi Pin hoặc Inverter
+      if (id === 'panel' || id === 'inverter') {
+        const panelItem = updatedItems.find(i => i.id === 'panel');
+        const inverterItem = updatedItems.find(i => i.id === 'inverter');
+        
+        if (panelItem) {
+          const match = panelItem.name.match(/(\d+)W/);
+          const wattage = match ? parseInt(match[1]) : 720;
+          const newKwp = (panelItem.qty * wattage) / 1000;
+          
+          updatedItems = updatedItems.map(item => {
+            if (item.id === 'vatTu' && id === 'panel') {
+              item.price = panelItem.qty * 450000;
+              item.total = item.qty * item.price;
+            }
+            if (item.id === 'dayDan' && id === 'panel') {
+              item.price = Math.round(newKwp * 650000);
+              item.total = item.qty * item.price;
+            }
+            if (item.id === 'vanChuyen' && id === 'panel') {
+              item.price = Math.round(newKwp * 800000);
+              item.total = item.qty * item.price;
+            }
+            if (item.id === 'tuDien') {
+              if (inverterItem) item.qty = inverterItem.qty; // 1 inverter đi kèm 1 tủ điện
+              if (id === 'panel') {
+                item.price = newKwp <= 8 ? 4500000 : 6500000; // Tủ công suất lớn đắt hơn
+              }
+              item.total = item.qty * item.price;
+            }
+            return item;
+          });
         }
-        const updated = { ...item, [field]: numVal };
-        updated.total = updated.qty * updated.price;
-        return updated;
       }
-      return item;
-    }));
+
+      return updatedItems;
+    });
   };
 
   const totalPrice = bomItems.reduce((sum, item) => sum + item.total, 0);
@@ -167,7 +216,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
         customerPhone: phone,
         result,
         selectedType,
-        monthlyBill,
+        monthlyBill: inputType === 'kwp' ? 'Nhu cầu tùy chỉnh' : monthlyBill,
         province: province?.name,
         bomItems,
         totalPrice,
@@ -257,13 +306,14 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, mont
                                         {(item.id === 'panel' ? panelOptions : item.id === 'inverter' ? inverterOptions : batteryOptions).map((opt, i) => (
                                           <div
                                             key={i}
-                                            className="px-3 py-2 text-sm text-emerald-800 hover:bg-emerald-100 hover:text-teal-800 cursor-pointer transition-colors"
+                                            className="px-3 py-2 text-sm text-emerald-800 hover:bg-emerald-100 hover:text-teal-800 cursor-pointer transition-colors flex justify-between gap-4"
                                             onClick={() => {
-                                              handleItemChange(item.id, 'name', opt);
+                                              handleItemChange(item.id, 'full_update', opt);
                                               setActiveDropdown(null);
                                             }}
                                           >
-                                            {opt}
+                                            <span>{opt.name}</span>
+                                            <span className="font-semibold text-emerald-600">{formatVnd(opt.price)}đ</span>
                                           </div>
                                         ))}
                                       </div>

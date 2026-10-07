@@ -998,9 +998,7 @@
 
         // --- 1. Dữ liệu (Database) ---
         const panels = [
-            { id: 'ja610', name: 'JA Solar JAM66D45 LB 610W', w: 1.134, h: 2.28, power: 610 },
-            { id: 'ja630', name: 'JA Solar JAM72D42 LB 630W', w: 1.134, h: 2.38, power: 630 },
-            { id: 'jinko580', name: 'Jinko Solar Tiger Neo 580W', w: 1.134, h: 2.278, power: 580 }
+            { id: 'ja720', name: 'JA Solar JAM66D46-720/LB 720W', w: 1.303, h: 2.384, power: 720 }
         ];
 
         const packages = [
@@ -1020,19 +1018,19 @@
         let invertersConfig = [
             {
                 id: Date.now(),
-                model: "Sungrow SG10RS",
-                type: "on-grid", // Giả lập On-grid ghép nối theo yêu cầu user
+                model: 'SUNGROW SG10RS',
+                type: 'on-grid',
                 numStrings: 3,
-                panelModel: "ja610",
-                batteryModel: "none"
+                panelModel: 'ja720',
+                batteryModel: 'none'
             },
             {
                 id: Date.now() + 1,
-                model: "Sungrow SH10RT",
-                type: "hybrid",
+                model: 'SUNGROW SH10RT',
+                type: 'hybrid',
                 numStrings: 2,
-                panelModel: "ja610",
-                batteryModel: "Pin Lithium Sungrow MBL160"
+                panelModel: 'ja720',
+                batteryModel: 'Dyness Powerbox Pro 10.24kWh'
             }
         ];
 
@@ -1272,16 +1270,16 @@
                     
                     <div class="form-group">
                         <label>Hãng / Model</label>
-                        <select class="form-control" onchange="updateInverter(${inv.id}, 'model', this.value); updateInverter(${inv.id}, 'type', (this.value.includes('Deye 10kW') || this.value.includes('SMA')) ? 'on-grid' : 'hybrid');">
-                            <option value="Sungrow SG3.0RS" ${inv.model === 'Sungrow SG3.0RS' ? 'selected' : ''}>Sungrow SG3.0RS (3kW - 1 Pha Hòa Lưới)</option>
-<option value="Sungrow SG5.0RS" ${inv.model === 'Sungrow SG5.0RS' ? 'selected' : ''}>Sungrow SG5.0RS (5kW - 1 Pha Hòa Lưới)</option>
-<option value="Sungrow SG10RS" ${inv.model === 'Sungrow SG10RS' ? 'selected' : ''}>Sungrow SG10RS (10kW - 1 Pha Hòa Lưới)</option>
-<option value="Sungrow SG15RT" ${inv.model === 'Sungrow SG15RT' ? 'selected' : ''}>Sungrow SG15RT (15kW - 3 Pha Hòa Lưới)</option>
-<option value="Sungrow MG5RL" ${inv.model === 'Sungrow MG5RL' ? 'selected' : ''}>Sungrow MG5RL (5kW - 1 Pha Hybrid Áp Thấp)</option>
-<option value="Sungrow MG6RL" ${inv.model === 'Sungrow MG6RL' ? 'selected' : ''}>Sungrow MG6RL (6kW - 1 Pha Hybrid Áp Thấp)</option>
-<option value="Sungrow SH5.0RS" ${inv.model === 'Sungrow SH5.0RS' ? 'selected' : ''}>Sungrow SH5.0RS (5kW - 1 Pha Hybrid Áp Cao)</option>
-<option value="Sungrow MG10TL" ${inv.model === 'Sungrow MG10TL' ? 'selected' : ''}>Sungrow MG10TL (10kW - 3 Pha Hybrid Biệt Thự)</option>
-<option value="Sungrow SH10RT" ${inv.model === 'Sungrow SH10RT' ? 'selected' : ''}>Sungrow SH10RT (10kW - 3 Pha Hybrid Áp Cao)</option>
+                        <select class="form-control" onchange="updateInverter(${inv.id}, 'model', this.value); updateInverter(${inv.id}, 'type', this.value.includes('Hybrid') || !this.value.includes('SG') ? 'hybrid' : 'on-grid');">
+<option value="SUNGROW SG3.0RS" ${inv.model === 'SUNGROW SG3.0RS' ? 'selected' : ''}>SUNGROW SG3.0RS (3kW - On-grid)</option>
+                            <option value="SUNGROW SG5.0RS" ${inv.model === 'SUNGROW SG5.0RS' ? 'selected' : ''}>SUNGROW SG5.0RS (5kW - On-grid)</option>
+                            <option value="SUNGROW SG10RS" ${inv.model === 'SUNGROW SG10RS' ? 'selected' : ''}>SUNGROW SG10RS (10kW - On-grid)</option>
+                            <option value="SUNGROW SG20RT" ${inv.model === 'SUNGROW SG20RT' ? 'selected' : ''}>SUNGROW SG20RT (20kW - On-grid)</option>
+                            <option value="SOLIS S6-EH1P5K-L-PRO" ${inv.model === 'SOLIS S6-EH1P5K-L-PRO' ? 'selected' : ''}>SOLIS S6-EH1P5K (5kW - Hybrid)</option>
+                            <option value="SOLIS S6-EH1P8K-L-PRO" ${inv.model === 'SOLIS S6-EH1P8K-L-PRO' ? 'selected' : ''}>SOLIS S6-EH1P8K (8kW - Hybrid)</option>
+                            <option value="SOLIS S6-EH3P10K-H" ${inv.model === 'SOLIS S6-EH3P10K-H' ? 'selected' : ''}>SOLIS S6-EH3P10K (10kW - Hybrid)</option>
+                            <option value="SOLIS S6-EH1P18K03-NV-YD-L" ${inv.model === 'SOLIS S6-EH1P18K03-NV-YD-L' ? 'selected' : ''}>SOLIS S6-EH1P18K (18kW - Hybrid)</option>
+                            <option value="SUNGROW SH10RT" ${inv.model === 'SUNGROW SH10RT' ? 'selected' : ''}>SUNGROW SH10RT (10kW - Hybrid)</option>
                         </select>
                     </div>
                     
@@ -1301,11 +1299,10 @@
                     <div class="form-group">
                         <label>Pin Lưu trữ (Battery)</label>
                         <select class="form-control" onchange="updateInverter(${inv.id}, 'batteryModel', this.value)">
-                            <option value="none" ${inv.batteryModel === 'none' ? 'selected' : ''}>Không có</option>
-                            <option value="Pin Lithium Sungrow MGL060" ${inv.batteryModel === 'Pin Lithium Sungrow MGL060' ? 'selected' : ''}>Pin Lithium Sungrow MGL060 (6.0 kWh - Áp Thấp)</option>
-<option value="Pin Lithium Sungrow MBL160" ${inv.batteryModel === 'Pin Lithium Sungrow MBL160' ? 'selected' : ''}>Pin Lithium Sungrow MBL160 (16.0 kWh - Áp Thấp)</option>
-<option value="Pin Cao Áp Sungrow SBS050" ${inv.batteryModel === 'Pin Cao Áp Sungrow SBS050' ? 'selected' : ''}>Pin Cao Áp Sungrow SBS050 (5.12 kWh - Áp Cao)</option>
-<option value="Pin Cao Áp Sungrow SBR096" ${inv.batteryModel === 'Pin Cao Áp Sungrow SBR096' ? 'selected' : ''}>Pin Cao Áp Sungrow SBR096 (9.6 kWh - Áp Cao)</option>
+<option value="none" ${inv.batteryModel === 'none' ? 'selected' : ''}>Không có</option>
+                            <option value="Dyness Powerbox Pro 10.24kWh" ${inv.batteryModel === 'Dyness Powerbox Pro 10.24kWh' ? 'selected' : ''}>Dyness Powerbox Pro (10.24 kWh)</option>
+                            <option value="Dyness Power Brick SC 16kWh" ${inv.batteryModel === 'Dyness Power Brick SC 16kWh' ? 'selected' : ''}>Dyness Power Brick SC (16.0 kWh)</option>
+                            <option value="Hithium Hero 16kWh" ${inv.batteryModel === 'Hithium Hero 16kWh' ? 'selected' : ''}>Hithium Hero (16.0 kWh)</option>
                         </select>
                     </div>
                 `;
@@ -2591,11 +2588,11 @@
 
             for (let i = 0; i < invertersConfig.length; i++) {
                 if (!invertersConfig[i].autoImg) {
-                    invertersConfig[i].autoImg = await fetchImageAsBase64('Inverter ' + invertersConfig[i].model + '.png');
+                    invertersConfig[i].autoImg = await fetchImageAsBase64('/inverter-5kw.png');
                 }
                 if (invertersConfig[i].batteryModel && invertersConfig[i].batteryModel !== 'none') {
                     if (!invertersConfig[i].autoBatImg) {
-                        invertersConfig[i].autoBatImg = await fetchImageAsBase64('Pin ' + invertersConfig[i].batteryModel + '.png');
+                        invertersConfig[i].autoBatImg = await fetchImageAsBase64('/pin-luu-tru-6kwh.png');
                     }
                 }
             }

@@ -72,7 +72,7 @@ function ComboCard({ type, plan, recommended, onSelect, isSelected }) {
           </div>
           <div>
             <div className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-md mb-1 ${isHybrid ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
-              {isHybrid ? 'ST-HYBRID Sungrow + Pin BESS' : 'ST-ECO Hòa Lưới'}
+              {isHybrid ? `ST-HYBRID ${combo.inverter.split(' ')[0]} + BESS` : 'ST-ECO Hòa Lưới'}
             </div>
             <h3 className="text-teal-800 font-bold text-base leading-tight">{combo.name}</h3>
           </div>
@@ -98,7 +98,7 @@ function ComboCard({ type, plan, recommended, onSelect, isSelected }) {
               <Battery className="w-4 h-4 text-amber-400 flex-shrink-0" />
               <div>
                 <p className="text-[10px] text-amber-300/70 font-medium">Lưu trữ BESS</p>
-                <p className="text-amber-300 text-xs font-bold">{combo.battery}</p>
+                <p className="text-amber-300 text-xs font-bold">{combo.batteryQty > 1 ? `${combo.batteryQty} x ` : ''}{combo.battery}</p>
               </div>
             </div>
           </div>
@@ -107,7 +107,7 @@ function ComboCard({ type, plan, recommended, onSelect, isSelected }) {
         {/* Inverter */}
         <div className="bg-emerald-100/40 rounded-lg px-3 py-2 mb-4">
           <p className="text-[10px] text-emerald-600 mb-0.5">Inverter</p>
-          <p className="text-emerald-800 text-xs font-semibold">{combo.inverter}</p>
+          <p className="text-emerald-800 text-xs font-semibold">{combo.inverterQty > 1 ? `${combo.inverterQty} x ` : ''}{combo.inverter}</p>
         </div>
 
         {/* Financial highlights */}

@@ -37,9 +37,9 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-export default function RoiChartStep({ monthlyBill, province, result, onBack, onOpenQuote }) {
+export default function RoiChartStep({ inputType = 'bill', monthlyBill, customKwp, province, result, onBack, onOpenQuote }) {
   const psh = province?.psh || 4.6;
-  const { data } = generate25YearCashflow(monthlyBill, psh);
+  const { data } = generate25YearCashflow(inputType, monthlyBill, customKwp, psh);
 
   const ongridPayback = result.ongrid.finance.paybackYears;
   const hybridPayback = result.hybrid.finance.paybackYears;
