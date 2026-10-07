@@ -434,24 +434,49 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
         <div style={{ position: 'fixed', top: '-9999px', left: '-9999px', width: '800px', height: '400px', zIndex: -1 }}>
           <div id="hidden-roi-chart" className="w-full h-full bg-emerald-50 p-4">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={generate25YearCashflow(monthlyBill, province?.psh || 4.6).data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <AreaChart 
+                data={(() => {
+                  const plan = result[selectedType];
+                  const panelItem = bomItems.find(i => i.id === 'panel');
+                  let finalGen = plan.monthlyGenKwh;
+                  if (panelItem) {
+                    const match = panelItem.name.match(/(\d+)W/);
+                    const wattage = match ? parseInt(match[1]) : 720;
+                    const currentKwp = (panelItem.qty * wattage) / 1000;
+                    if (Math.abs(currentKwp - plan.combo.systemCapacityKwp) > 0.1) {
+                      finalGen = currentKwp * (province?.psh || 4.6) * 30 * 0.8;
+                    }
+                  }
+                  const genRatio = finalGen / plan.monthlyGenKwh;
+                  const newSavings = Math.round(plan.finance.monthlySavings * genRatio);
+                  const annualSavings = newSavings * 12;
+                  
+                  const chartData = [];
+                  let currentNet = -totalPrice;
+                  for (let year = 0; year <= 25; year++) {
+                    if (year === 0) {
+                      chartData.push({ year: 0, netValue: currentNet });
+                    } else {
+                      currentNet += annualSavings * Math.pow(0.995, year - 1);
+                      chartData.push({ year, netValue: Math.round(currentNet) });
+                    }
+                  }
+                  return chartData;
+                })()} 
+                margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+              >
                 <defs>
-                  <linearGradient id="ongridGradHid" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="hybridGradHid" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                  <linearGradient id="customGradHid" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={selectedType === 'ongrid' ? '#10B981' : '#F59E0B'} stopOpacity={0.4} />
+                    <stop offset="95%" stopColor={selectedType === 'ongrid' ? '#10B981' : '#F59E0B'} stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#a7f3d0" />
                 <XAxis dataKey="year" tickFormatter={(v) => `N${v}`} tick={{ fill: '#047857', fontSize: 11 }} axisLine={{ stroke: '#a7f3d0' }} tickLine={false} />
                 <YAxis tickFormatter={formatVndM} tick={{ fill: '#047857', fontSize: 10 }} axisLine={{ stroke: '#a7f3d0' }} tickLine={false} width={52} />
-                <Legend formatter={(value) => <span style={{color: '#065f46', fontSize: '12px'}}>{value}</span>} />
+                <Legend formatter={() => <span style={{color: '#065f46', fontSize: '12px'}}>{selectedType === 'ongrid' ? 'Hòa Lưới ST-ECO' : 'Hybrid ST-HYBRID'}</span>} />
                 <ReferenceLine y={0} stroke="#EF4444" strokeDasharray="6 3" strokeWidth={1.5} label={{ value: 'Điểm hoàn vốn', fill: '#EF4444', fontSize: 10, position: 'insideTopRight' }} />
-                <Area isAnimationActive={false} type="monotone" dataKey="ongridNet" name="Hòa Lưới ST-ECO" stroke="#10B981" strokeWidth={2.5} fill="url(#ongridGradHid)" dot={false} />
-                <Area isAnimationActive={false} type="monotone" dataKey="hybridNet" name="Hybrid ST-HYBRID" stroke="#F59E0B" strokeWidth={2.5} fill="url(#hybridGradHid)" dot={false} />
+                <Area isAnimationActive={false} type="monotone" dataKey="netValue" name="Giá trị" stroke={selectedType === 'ongrid' ? '#10B981' : '#F59E0B'} strokeWidth={2.5} fill="url(#customGradHid)" dot={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
