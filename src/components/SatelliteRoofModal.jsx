@@ -19,17 +19,16 @@ L.Icon.Default.mergeOptions({
 });
 
 // ── Constants ─────────────────────────────────────────────────────────────────
-const PANEL_AREA_M2 = 2.6;          // JA Solar JAM66D45 LB 610W footprint
-const PANEL_POWER_KW = 0.61;        // kW per panel
+const PANEL_AREA_M2 = 3.1;          // JA Solar 720W footprint (2.38m x 1.30m)
+const PANEL_POWER_KW = 0.72;        // kW per panel
 const USABLE_RATIO = 0.75;          // usable roof ratio accounting for shading/gaps
 
 const PACKAGE_NEEDS = [
-  { name: 'ST-ECO 3kW',       areaM2: 13,  panels: 5,  kwp: 3.05 },
-  { name: 'ST-ECO 5kW',       areaM2: 23,  panels: 9,  kwp: 5.49 },
-  { name: 'ST-ECO 10kW',      areaM2: 42,  panels: 16, kwp: 10.08 },
-  { name: 'ST-HYBRID 5kW',    areaM2: 23,  panels: 9,  kwp: 5.49 },
-  { name: 'ST-HYBRID 5kW PRO',areaM2: 26,  panels: 10, kwp: 6.10 },
-  { name: 'ST-HYBRID 10kW',   areaM2: 42,  panels: 16, kwp: 10.08 },
+  { name: 'ST-ECO 5kW',       areaM2: 22,  panels: 7,  kwp: 5.04 },
+  { name: 'ST-ECO 10kW',      areaM2: 44,  panels: 14, kwp: 10.08 },
+  { name: 'ST-HYBRID 5kW',    areaM2: 22,  panels: 7,  kwp: 5.04 },
+  { name: 'ST-HYBRID 10kW',   areaM2: 44,  panels: 14, kwp: 10.08 },
+  { name: 'ST-HYBRID 15kW',   areaM2: 65,  panels: 21, kwp: 15.12 },
 ];
 
 const GOOGLE_SATELLITE_URL =
