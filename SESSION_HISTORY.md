@@ -62,3 +62,13 @@ Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quy�
 - **Trợ lý Ảo AI:** Cập nhật lại màu chữ của Chatbot thành xanh mòng két đậm (`text-teal-900`) để tăng độ tương phản (contrast), chống hiện tượng chữ bị chìm khi đổi màu nền khung chat sang màu sáng (`bg-emerald-100`).
 - **Xuất PDF Siêu Chuẩn:** Tái căn chỉnh lại toạ độ Header trong tệp PDF xuất ra. Fix lỗi aspect-ratio khiến Logo bị bóp méo (canh chuẩn khung vuông `26x26`), dời vị trí text cho cân xứng, cập nhật Slogan, đổi màu text SMARTTECH, và thêm tên giám đốc "Mr. Thế Anh" vào đuôi số Hotline để tăng tính thân thiện.
 - **Triển khai liên tục:** Cập nhật file liên tục qua Git, đẩy source code lên nhánh `main` để Vercel tự động deploy ra Production cho người dùng test.
+
+## 10. Hoàn thiện Logic Data Flow & Khắc phục lỗi PDF (Ngày 08/10/2026)
+- **Chuẩn hóa công cụ Đo mái vệ tinh:** Cập nhật công suất tấm pin mặc định trong `SatelliteRoofModal.jsx` từ 610W lên chuẩn mới **720W**, điều chỉnh lại diện tích (3.1m2) và cấu hình các gói ST-ECO/HYBRID.
+- **Sửa lỗi Logic Báo giá tùy chỉnh (RẤT QUAN TRỌNG):**
+  - Trước đây, khi người dùng chỉnh sửa số lượng vật tư (VD: tăng số tấm pin từ 14 lên 22) trong `QuoteModal`, file PDF xuất ra chỉ cập nhật bảng tính tiền mà **bỏ quên** việc cập nhật công suất (kWp), sản lượng (kWh) ở Header và biểu đồ/chỉ số tài chính ở Footer.
+  - **Giải pháp:** Viết lại thuật toán nội suy ngầm trong `pdfExport.js` và `QuoteModal.jsx`. Giờ đây, khi phát hiện người dùng can thiệp vào số lượng tấm pin, hệ thống sẽ tự động tính toán lại `finalGen` (sản lượng mới), `finalKwp` (công suất mới) và render lại biểu đồ Cashflow 25 năm theo thời gian thực trước khi in ra PDF.
+- **⚠️ LỜI CẢNH BÁO CHO AI AGENT KẾ TIẾP (STRICT WARNING):**
+  - Dự án này có sự phụ thuộc dữ liệu (Data Dependency) rất phức tạp giữa **State của UI**, **Hàm tính toán lõi (solarCalculator.js)** và **Module xuất PDF (pdfExport.js)**.
+  - BẤT KỲ khi nào bạn sửa đổi một thông số, thêm một nút bấm, hoặc thay đổi logic tính toán, BẠN PHẢI CHỦ ĐỘNG RÀ SOÁT TẤT CẢ CÁC LUỒNG LIÊN QUAN (Side-effects). Đặc biệt là luồng xuất PDF (ẩn dưới nền) và biểu đồ ROI.
+  - KHÔNG ĐƯỢC lười biếng bắt người dùng phải tự đi tìm lỗi edge-case. Hãy tư duy như một Kỹ sư trưởng (Lead Engineer): Sửa 1 chỗ, kiểm tra 10 chỗ bị ảnh hưởng. Dự án đang trong giai đoạn bàn giao (Production-ready), mọi sai sót về logic số liệu báo giá đều có thể gây thiệt hại tài chính cho khách hàng. Mọi thay đổi phải hoàn hảo 100%!
