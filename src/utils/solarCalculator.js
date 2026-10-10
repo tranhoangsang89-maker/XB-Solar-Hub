@@ -102,34 +102,16 @@ export function recommendCombos(inputType = 'bill', monthlyBill = 0, customKwp =
   } else {
     // A. Tính toán tối ưu cho HÒA LƯỚI (Zero-Export)
     const optimalOngridKwp = Math.max(3, dayConsumptionKwh / (psh * 0.85));
-    
-    const closestOngrid = SYSTEM_COMBOS.ongrid.reduce((prev, curr) => 
-      Math.abs(curr.systemCapacityKwp - optimalOngridKwp) < Math.abs(prev.systemCapacityKwp - optimalOngridKwp) ? curr : prev
-    );
-
-    if (Math.abs(closestOngrid.systemCapacityKwp - optimalOngridKwp) / optimalOngridKwp < 0.15) {
-      ongridCombo = closestOngrid;
-    } else {
-      ongridCombo = getCustomCombos(optimalOngridKwp).ongridCombo;
-      ongridCombo.name = `Gói Hòa Lưới Tối Ưu ${ongridCombo.systemCapacityKwp}kWp`;
-      ongridCombo.description = `Cấu hình được thiết kế tự động phù hợp với nhu cầu điện của bạn.`;
-    }
+    ongridCombo = getCustomCombos(optimalOngridKwp).ongridCombo;
+    ongridCombo.name = `Gói Hòa Lưới Tối Ưu ${ongridCombo.systemCapacityKwp}kWp`;
+    ongridCombo.description = `Cấu hình được thiết kế tự động phù hợp với nhu cầu điện của bạn.`;
 
     // B. Tính toán tối ưu cho HYBRID (Có Pin Lưu Trữ)
     const targetBatteryKwh = dailyKwh > 30 ? (dailyKwh * 0.3) : (dailyKwh > 18 ? 9.6 : 6.0);
     const optimalHybridKwp = Math.max(5, (dayConsumptionKwh + targetBatteryKwh) / (psh * 0.82));
-    
-    const closestHybrid = SYSTEM_COMBOS.hybrid.reduce((prev, curr) => 
-      Math.abs(curr.systemCapacityKwp - optimalHybridKwp) < Math.abs(prev.systemCapacityKwp - optimalHybridKwp) ? curr : prev
-    );
-
-    if (Math.abs(closestHybrid.systemCapacityKwp - optimalHybridKwp) / optimalHybridKwp < 0.15) {
-      hybridCombo = closestHybrid;
-    } else {
-      hybridCombo = getCustomCombos(optimalHybridKwp).hybridCombo;
-      hybridCombo.name = `Gói Lưu Trữ Toàn Diện ${hybridCombo.systemCapacityKwp}kWp`;
-      hybridCombo.description = `Hệ thống Hybrid tự động tối ưu cho nhu cầu sử dụng cả ngày lẫn đêm.`;
-    }
+    hybridCombo = getCustomCombos(optimalHybridKwp).hybridCombo;
+    hybridCombo.name = `Gói Lưu Trữ Toàn Diện ${hybridCombo.systemCapacityKwp}kWp`;
+    hybridCombo.description = `Hệ thống Hybrid tự động tối ưu cho nhu cầu sử dụng cả ngày lẫn đêm.`;
   }
 
   // Tính toán chỉ số của On-grid

@@ -207,9 +207,9 @@ export const getCustomCombos = (targetKwp) => {
   const actualKwp = Number((panelQty * 0.72).toFixed(2));
   
   const ongridInverters = INVERTERS.filter(i => i.systemType === 'ongrid')
-    .sort((a, b) => b.powerKw - a.powerKw);
-  // Chọn biến tần lớn nhất phù hợp, hoặc lấy biến tần lớn nhất có thể và tính số lượng
-  const ongridInverter = ongridInverters.find(i => i.powerKw >= actualKwp * 0.8) || ongridInverters[0];
+    .sort((a, b) => a.powerKw - b.powerKw);
+  // Chọn biến tần nhỏ nhất phù hợp, hoặc lấy biến tần lớn nhất có thể và tính số lượng
+  const ongridInverter = ongridInverters.find(i => i.powerKw >= actualKwp * 0.8) || ongridInverters[ongridInverters.length - 1];
   const ongridQty = Math.max(1, Math.ceil(actualKwp / (ongridInverter.powerKw * 1.5)));
     
   const ongridCombo = {
@@ -228,8 +228,8 @@ export const getCustomCombos = (targetKwp) => {
   };
 
   const hybridInverters = INVERTERS.filter(i => i.systemType === 'hybrid')
-    .sort((a, b) => b.powerKw - a.powerKw);
-  const hybridInverter = hybridInverters.find(i => i.powerKw >= actualKwp * 0.8) || hybridInverters[0];
+    .sort((a, b) => a.powerKw - b.powerKw);
+  const hybridInverter = hybridInverters.find(i => i.powerKw >= actualKwp * 0.8) || hybridInverters[hybridInverters.length - 1];
   const hybridQty = Math.max(1, Math.ceil(actualKwp / (hybridInverter.powerKw * 1.5)));
     
   let batteryId = 'DYNESS-DL5';

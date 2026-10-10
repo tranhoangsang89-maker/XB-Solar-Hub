@@ -10,6 +10,7 @@ import {
   Tooltip,
   Legend,
   ReferenceLine,
+  ReferenceDot,
 } from 'recharts';
 import { generate25YearCashflow } from '../../utils/solarCalculator';
 
@@ -25,21 +26,23 @@ const CustomTooltip = ({ active, payload, label }) => {
     <div className="bg-white border border-emerald-300 rounded-xl px-4 py-3 shadow-2xl">
       <p className="text-emerald-800 text-xs font-bold mb-2">Năm {label}</p>
       {payload.map((entry) => (
-        <div key={entry.dataKey} className="flex items-center gap-2 text-xs mb-1">
-          <div className="w-2.5 h-2.5 rounded-full" style={{ background: entry.color }} />
-          <span className="text-emerald-700">{entry.name}:</span>
-          <span className={`font-bold ${entry.value >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {entry.value >= 0 ? '+' : ''}{formatVndM(entry.value)}đ
-          </span>
+        <div key={entry.dataKey} className="flex flex-col mb-1 last:mb-0">
+          <div className="flex items-center gap-2 text-xs">
+            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: entry.color }} />
+            <span className="text-emerald-700">{entry.name}:</span>
+            <span className={`font-bold ${entry.value >= 0 ? 'text-emerald-500' : 'text-rose-400'}`}>
+              {entry.value >= 0 ? '+' : ''}{formatVndM(entry.value)}đ
+            </span>
+          </div>
         </div>
       ))}
     </div>
   );
 };
 
-export default function RoiChartStep({ inputType = 'bill', monthlyBill, customKwp, province, result, onBack, onOpenQuote }) {
+export default function RoiChartStep({ inputType = 'bill', monthlyBill, customKwp, province, result, onBack, onOpenQuote, usageProfile }) {
   const psh = province?.psh || 4.6;
-  const { data } = generate25YearCashflow(inputType, monthlyBill, customKwp, psh);
+  const { data } = generate25YearCashflow(inputType, monthlyBill, customKwp, psh, usageProfile);
 
   const ongridPayback = result.ongrid.finance.paybackYears;
   const hybridPayback = result.hybrid.finance.paybackYears;
@@ -112,6 +115,10 @@ export default function RoiChartStep({ inputType = 'bill', monthlyBill, customKw
                 <CartesianGrid strokeDasharray="3 3" stroke="#a7f3d0" />
                 <XAxis
                   dataKey="year"
+                  type="number"
+                  domain={[1, 25]}
+                  ticks={[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25]}
+                  allowDecimals={false}
                   tickFormatter={(v) => `N${v}`}
                   tick={{ fill: '#047857', fontSize: 11 }}
                   axisLine={{ stroke: '#a7f3d0' }}
@@ -130,7 +137,8 @@ export default function RoiChartStep({ inputType = 'bill', monthlyBill, customKw
                     <span className="text-xs text-emerald-800">{value}</span>
                   )}
                 />
-                <ReferenceLine y={0} stroke="#EF4444" strokeDasharray="6 3" strokeWidth={1.5} label={{ value: 'Điểm hoàn vốn', fill: '#EF4444', fontSize: 10, position: 'insideTopRight' }} />
+                <ReferenceLine y={0} stroke="#EF4444" strokeDasharray="6 3" strokeWidth={1.5} />
+                
                 <Area
                   type="monotone"
                   dataKey="ongridNet"
@@ -150,6 +158,14 @@ export default function RoiChartStep({ inputType = 'bill', monthlyBill, customKw
                   fill="url(#hybridGrad)"
                   dot={false}
                   activeDot={{ r: 5, fill: '#F59E0B' }}
+                />
+                <ReferenceDot 
+                  x={ongridPayback} y={0} r={6} fill="#10B981" stroke="#fff" strokeWidth={2} isFront={true} 
+                  label={{ position: 'top', value: `${ongridPayback} năm`, fill: '#047857', fontSize: 11, fontWeight: 'bold' }}
+                />
+                <ReferenceDot 
+                  x={hybridPayback} y={0} r={6} fill="#F59E0B" stroke="#fff" strokeWidth={2} isFront={true} 
+                  label={{ position: 'bottom', value: `${hybridPayback} năm`, fill: '#B45309', fontSize: 11, fontWeight: 'bold' }}
                 />
               </AreaChart>
             </ResponsiveContainer>

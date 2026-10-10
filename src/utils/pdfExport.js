@@ -55,7 +55,7 @@ async function addVietnameseFont(doc) {
   }
 }
 
-export async function exportQuotePDF({ customerName, customerPhone, result, selectedType, monthlyBill, province, bomItems, totalPrice, chartImageBase64 }) {
+export async function exportQuotePDF({ customerName, customerPhone, result, selectedType, monthlyBill, province, bomItems, totalPrice, chartImageBase64, pdfTerms }) {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
@@ -322,24 +322,38 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
 
   doc.setFontSize(8); // Reduced from 9
   
+  // ── Terms & Conditions ──────────────────────────────────────────────────
+  const terms = pdfTerms || {
+    scope: 'Cung cấp và lắp đặt trọn gói theo nội dung đã liệt kê ở trên.',
+    payment: '- Đợt 01: tạm ứng 40% giá trị hợp đồng ngay sau hai bên ký kết hợp đồng có hiệu lực.\n- Đợt 02: 40% giá trị hợp đồng sau khi đơn vị thi công tập kết vật tư thiết bị đến địa điểm lắp đặt.\n- Đợt 3: 20% giá trị hợp đồng sau khi đơn vị thi công lắp đặt hoàn thành.',
+    schedule: 'Trong vòng 30 ngày kể từ ngày ký hợp đồng và phê duyệt bản vẽ. (Thoả thuận 2 bên)',
+    warranty: '12 năm cho tấm quang điện, 5 năm cho bộ biến Tần và 1 năm cho các thiết bị còn lại.\nXin vui lòng liên hệ với chúng tôi nếu Quý khách cần thêm thông tin.'
+  };
+
   // 1
   y = renderText('1. PHẠM VI CUNG CẤP', margin, y, true, [30, 64, 175], 0.5);
-  y = renderText('Cung cấp và lắp đặt trọn gói theo nội dung đã liệt kê ở trên.', margin + 5, y, false, [30, 41, 59], 2.5);
+  y = renderText(terms.scope, margin + 5, y, false, [30, 41, 59], 2.5);
   
   // 2
   y = renderText('2. PHƯƠNG THỨC THANH TOÁN: CHUYỂN KHOẢN / TIỀN MẶT', margin, y, true, [30, 64, 175], 0.5);
-  y = renderText('- Đợt 01: tạm ứng 40% giá trị hợp đồng ngay sau hai bên ký kết hợp đồng có hiệu lực.', margin + 5, y, false, [30, 41, 59], 0.5);
-  y = renderText('- Đợt 02: 40% giá trị hợp đồng sau khi đơn vị thi công tập kết vật tư thiết bị đến địa điểm lắp đặt.', margin + 5, y, false, [30, 41, 59], 0.5);
-  y = renderText('- Đợt 3: 20% giá trị hợp đồng sau khi đơn vị thi công lắp đặt hoàn thành.', margin + 5, y, false, [30, 41, 59], 2.5);
+  const paymentLines = terms.payment.split('\n');
+  paymentLines.forEach((line, i) => {
+    y = renderText(line, margin + 5, y, false, [30, 41, 59], i === paymentLines.length - 1 ? 2.5 : 0.5);
+  });
   
   // 3
   y = renderText('3. TIẾN ĐỘ THI CÔNG:', margin, y, true, [30, 64, 175], 0.5);
-  y = renderText('Trong vòng 30 ngày kể từ ngày ký hợp đồng và phê duyệt bản vẽ. (Thoả thuận 2 bên)', margin + 5, y, false, [30, 41, 59], 2.5);
+  const scheduleLines = terms.schedule.split('\n');
+  scheduleLines.forEach((line, i) => {
+    y = renderText(line, margin + 5, y, false, [30, 41, 59], i === scheduleLines.length - 1 ? 2.5 : 0.5);
+  });
   
   // 4
   y = renderText('4. BẢO HÀNH:', margin, y, true, [30, 64, 175], 0.5);
-  y = renderText('12 năm cho tấm quang điện, 5 năm cho bộ biến Tần và 1 năm cho các thiết bị còn lại.', margin + 5, y, false, [220, 38, 38], 0.5);
-  y = renderText('Xin vui lòng liên hệ với chúng tôi nếu Quý khách cần thêm thông tin.', margin + 5, y, false, [220, 38, 38], 0);
+  const warrantyLines = terms.warranty.split('\n');
+  warrantyLines.forEach((line, i) => {
+    y = renderText(line, margin + 5, y, false, [220, 38, 38], i === warrantyLines.length - 1 ? 0 : 0.5);
+  });
 
   // RIGHT SIDE: Signature
   let sigY = startY;

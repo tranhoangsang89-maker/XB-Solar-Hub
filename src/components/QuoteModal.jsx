@@ -5,7 +5,7 @@ import { exportQuotePDF } from '../utils/pdfExport';
 import * as htmlToImage from 'html-to-image';
 import { generate25YearCashflow } from '../utils/solarCalculator';
 import { SOLAR_PANELS, INVERTERS, BATTERIES } from '../data/bang-gia-thiet-bi';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Legend, ReferenceLine, ReferenceDot } from 'recharts';
 
 const formatVnd = (amount) => new Intl.NumberFormat('vi-VN').format(amount);
 const formatVndM = (amount) => {
@@ -14,7 +14,7 @@ const formatVndM = (amount) => {
   return Math.round(amount / 1000) + 'k';
 };
 
-export default function QuoteModal({ isOpen, onClose, result, selectedType, inputType, customKwp, monthlyBill, province }) {
+export default function QuoteModal({ isOpen, onClose, result, selectedType, inputType, customKwp, monthlyBill, province, usageProfile }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +22,14 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
   const [errors, setErrors] = useState({});
   const [bomItems, setBomItems] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
+
+  const [showTerms, setShowTerms] = useState(false);
+  const [pdfTerms, setPdfTerms] = useState({
+    scope: 'Cung cấp và lắp đặt trọn gói theo nội dung đã liệt kê ở trên.',
+    payment: '- Đợt 01: tạm ứng 40% giá trị hợp đồng ngay sau hai bên ký kết hợp đồng có hiệu lực.\n- Đợt 02: 40% giá trị hợp đồng sau khi đơn vị thi công tập kết vật tư thiết bị đến địa điểm lắp đặt.\n- Đợt 3: 20% giá trị hợp đồng sau khi đơn vị thi công lắp đặt hoàn thành.',
+    schedule: 'Trong vòng 30 ngày kể từ ngày ký hợp đồng và phê duyệt bản vẽ. (Thoả thuận 2 bên)',
+    warranty: '12 năm cho tấm quang điện, 5 năm cho bộ biến Tần và 1 năm cho các thiết bị còn lại.\nXin vui lòng liên hệ với chúng tôi nếu Quý khách cần thêm thông tin.'
+  });
 
   const panelOptions = SOLAR_PANELS.map(p => ({
     name: `Tấm pin ${p.brand} ${p.model} ${p.wattage}W`,
@@ -220,7 +228,8 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
         province: province?.name,
         bomItems,
         totalPrice,
-        chartImageBase64
+        chartImageBase64,
+        pdfTerms
       });
       setIsDone(true);
     } catch (err) {
@@ -403,6 +412,40 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
                       Thông tin sẽ được chèn trực tiếp vào báo giá PDF.
                     </p>
                   </div>
+                  
+                  <div className="mt-4 border-t border-emerald-100 pt-4">
+                    <button type="button" onClick={() => setShowTerms(!showTerms)} className="text-emerald-700 text-sm font-bold flex items-center gap-1 mb-2 hover:text-amber-500 transition-colors">
+                      <Settings className="w-4 h-4" /> Tùy chỉnh điều khoản Hợp đồng {showTerms ? '(Thu gọn)' : '(Mở rộng)'}
+                    </button>
+                    {showTerms && (
+                      <div className="space-y-3 bg-white/50 p-3 rounded-xl border border-emerald-200">
+                        <div>
+                          <label className="block text-emerald-800 text-[11px] font-semibold mb-1">Phương thức thanh toán</label>
+                          <textarea 
+                            value={pdfTerms.payment} 
+                            onChange={e => setPdfTerms(p => ({...p, payment: e.target.value}))}
+                            className="input-dark text-xs min-h-[70px] py-2 leading-relaxed w-full"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-emerald-800 text-[11px] font-semibold mb-1">Tiến độ thi công</label>
+                          <textarea 
+                            value={pdfTerms.schedule} 
+                            onChange={e => setPdfTerms(p => ({...p, schedule: e.target.value}))}
+                            className="input-dark text-xs min-h-[50px] py-2 leading-relaxed w-full"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-emerald-800 text-[11px] font-semibold mb-1">Bảo hành</label>
+                          <textarea 
+                            value={pdfTerms.warranty} 
+                            onChange={e => setPdfTerms(p => ({...p, warranty: e.target.value}))}
+                            className="input-dark text-xs min-h-[50px] py-2 leading-relaxed w-full"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   <button
                     type="submit"
@@ -453,14 +496,28 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
                   
                   const chartData = [];
                   let currentNet = -totalPrice;
-                  for (let year = 0; year <= 25; year++) {
-                    if (year === 0) {
-                      chartData.push({ year: 0, netValue: currentNet });
-                    } else {
-                      currentNet += annualSavings * Math.pow(0.995, year - 1);
-                      chartData.push({ year, netValue: Math.round(currentNet) });
+                  for (let year = 1; year <= 25; year++) {
+                    currentNet += annualSavings * Math.pow(0.995, year - 1);
+                    chartData.push({ year, netValue: Math.round(currentNet) });
+                  }
+                  
+                  // Compute payback exactly
+                  let payback = 0;
+                  // If year 1 is already positive:
+                  if (chartData[0].netValue >= 0) {
+                     const fraction = totalPrice / annualSavings;
+                     payback = fraction;
+                  } else {
+                    for (let i = 0; i < chartData.length - 1; i++) {
+                      if (chartData[i].netValue < 0 && chartData[i+1].netValue >= 0) {
+                        const fraction = Math.abs(chartData[i].netValue) / (chartData[i+1].netValue - chartData[i].netValue);
+                        payback = chartData[i].year + fraction;
+                        break;
+                      }
                     }
                   }
+                  window.__hiddenPayback = Math.round(payback * 10) / 10;
+                  
                   return chartData;
                 })()} 
                 margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
@@ -472,11 +529,34 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#a7f3d0" />
-                <XAxis dataKey="year" tickFormatter={(v) => `N${v}`} tick={{ fill: '#047857', fontSize: 11 }} axisLine={{ stroke: '#a7f3d0' }} tickLine={false} />
+                <XAxis 
+                  dataKey="year" 
+                  type="number"
+                  domain={[1, 25]}
+                  ticks={[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25]}
+                  allowDecimals={false}
+                  tickFormatter={(v) => `N${v}`} 
+                  tick={{ fill: '#047857', fontSize: 11 }} 
+                  axisLine={{ stroke: '#a7f3d0' }} 
+                  tickLine={false} 
+                />
                 <YAxis tickFormatter={formatVndM} tick={{ fill: '#047857', fontSize: 10 }} axisLine={{ stroke: '#a7f3d0' }} tickLine={false} width={52} />
                 <Legend formatter={() => <span style={{color: '#065f46', fontSize: '12px'}}>{selectedType === 'ongrid' ? 'Hòa Lưới ST-ECO' : 'Hybrid ST-HYBRID'}</span>} />
-                <ReferenceLine y={0} stroke="#EF4444" strokeDasharray="6 3" strokeWidth={1.5} label={{ value: 'Điểm hoàn vốn', fill: '#EF4444', fontSize: 10, position: 'insideTopRight' }} />
+                <ReferenceLine y={0} stroke="#EF4444" strokeDasharray="6 3" strokeWidth={1.5} />
+                
                 <Area isAnimationActive={false} type="monotone" dataKey="netValue" name="Giá trị" stroke={selectedType === 'ongrid' ? '#10B981' : '#F59E0B'} strokeWidth={2.5} fill="url(#customGradHid)" dot={false} />
+                
+                <ReferenceDot 
+                  x={window.__hiddenPayback} y={0} r={6} 
+                  fill={selectedType === 'ongrid' ? '#10B981' : '#F59E0B'} 
+                  stroke="#fff" strokeWidth={2} isFront={true} 
+                  label={{ 
+                    position: 'top', 
+                    value: `${window.__hiddenPayback} năm`, 
+                    fill: selectedType === 'ongrid' ? '#047857' : '#B45309', 
+                    fontSize: 11, fontWeight: 'bold' 
+                  }}
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>

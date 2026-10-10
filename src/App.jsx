@@ -294,6 +294,7 @@ export default function App() {
               result={calcResult}
               onBack={handleBack}
               onOpenQuote={handleOpenQuote}
+              usageProfile={inputData.usageProfile}
             />
           )}
         </section>
@@ -324,6 +325,7 @@ export default function App() {
           customKwp={inputData?.customKwp || 5}
           monthlyBill={inputData?.monthlyBill || 5000000}
           province={inputData?.province}
+          usageProfile={inputData?.usageProfile || 'home_all_day'}
         />
       )}
 
