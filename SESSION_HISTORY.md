@@ -72,3 +72,12 @@ Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quy�
   - Dự án này có sự phụ thuộc dữ liệu (Data Dependency) rất phức tạp giữa **State của UI**, **Hàm tính toán lõi (solarCalculator.js)** và **Module xuất PDF (pdfExport.js)**.
   - BẤT KỲ khi nào bạn sửa đổi một thông số, thêm một nút bấm, hoặc thay đổi logic tính toán, BẠN PHẢI CHỦ ĐỘNG RÀ SOÁT TẤT CẢ CÁC LUỒNG LIÊN QUAN (Side-effects). Đặc biệt là luồng xuất PDF (ẩn dưới nền) và biểu đồ ROI.
   - KHÔNG ĐƯỢC lười biếng bắt người dùng phải tự đi tìm lỗi edge-case. Hãy tư duy như một Kỹ sư trưởng (Lead Engineer): Sửa 1 chỗ, kiểm tra 10 chỗ bị ảnh hưởng. Dự án đang trong giai đoạn bàn giao (Production-ready), mọi sai sót về logic số liệu báo giá đều có thể gây thiệt hại tài chính cho khách hàng. Mọi thay đổi phải hoàn hảo 100%!
+
+## 11. Cập nhật Biểu đồ & Tùy chỉnh Báo giá (Ngày 10/10/2026)
+- **Truyền dẫn dữ liệu Thói quen sử dụng điện:** Nối thành công `usageProfile` (ban ngày/cả ngày/buổi tối) từ component gốc xuống `RoiChartStep` và `QuoteModal`, giúp các tính toán tài chính (biểu đồ ROI) phản ánh đúng thói quen của người dùng.
+- **Nâng cấp UI Biểu đồ (Web & PDF):** 
+  - Đổi thiết lập trục X (`XAxis`) của `recharts` sang kiểu số (`type="number"`) và chia vạch (ticks) mỗi 2 năm để giao diện chi tiết, bớt trống trải hơn.
+  - Vẽ điểm hoàn vốn chính xác (tính toán toán học nội suy động) và hiển thị trực tiếp trên biểu đồ bằng `ReferenceDot` với nhãn chú thích (ví dụ "2.8 năm"), giúp báo giá trở nên cực kỳ trực quan và thuyết phục đối với khách hàng.
+  - Đảm bảo **biểu đồ ẩn (hidden chart)** dùng để chụp ảnh dán vào PDF cũng được đồng bộ 100% với biểu đồ hiển thị trên web.
+- **Tính năng Tùy chỉnh Điều khoản Hợp đồng:** Bổ sung giao diện chỉnh sửa nhanh các điều khoản thương mại (Phương thức thanh toán, Tiến độ thi công, Bảo hành) ngay tại Modal trước khi in PDF. Dữ liệu này được truyền vào `exportQuotePDF` và render đa dòng hoàn hảo vào trang báo giá.
+- **Đồng bộ GitHub:** Tự động commit và push toàn bộ code lên nhánh `main`.
