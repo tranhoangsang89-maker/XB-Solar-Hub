@@ -142,7 +142,7 @@ export function recommendCombos(inputType = 'bill', monthlyBill = 0, customKwp =
   // C. Tính chỉ số tài chính ROI & Hoàn vốn
   const getRoi = (combo, monthlySavings) => {
     const annualSavings = monthlySavings * 12;
-    const paybackYears = Number((combo.basePriceVnd / annualSavings).toFixed(1));
+    const paybackYears = annualSavings > 0 ? Number((combo.basePriceVnd / annualSavings).toFixed(1)) : 0;
     // 25 năm tính suy hao pin 0.5%/năm
     const total25YearSavings = Math.round(annualSavings * 25 * 0.92 - combo.basePriceVnd);
     return {

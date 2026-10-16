@@ -129,7 +129,7 @@ export default function RoiChartStep({ inputType = 'bill', monthlyBill, customKw
                   tick={{ fill: '#047857', fontSize: 10 }}
                   axisLine={{ stroke: '#a7f3d0' }}
                   tickLine={false}
-                  width={52}
+                  width={58}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend

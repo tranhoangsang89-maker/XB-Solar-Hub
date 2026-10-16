@@ -62,6 +62,13 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
       if (name.includes('SG3.0RS')) return 11500000;
       if (name.includes('SG5.0RS')) return 14000000;
       if (name.includes('SG10')) return 25000000;
+      if (name.includes('SG33')) return 41500000;
+      if (name.includes('SG50')) return 49500000;
+      if (name.includes('SG100')) return 78500000;
+      if (name.includes('SG110')) return 85000000;
+      if (name.includes('SG125')) return 95000000;
+      if (name.includes('SUN-30K')) return 82000000;
+      if (name.includes('SUN-50K')) return 108000000;
       if (name.includes('MG5RL')) return 25000000;
       if (name.includes('MG6RL')) return 28500000;
       if (name.includes('MG10TL') || name.includes('SH10RT')) return 55000000;
@@ -93,14 +100,15 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
     const batteryPrice = getBatteryPrice(combo.batteryId, combo.battery);
     
     // Phụ trợ tính theo quy mô
-    const tuDienPrice = kwp <= 8 ? 4500000 : 6500000;
+    const tuDienPrice = kwp <= 8 ? 4500000 : (kwp <= 25 ? 6500000 : 7500000);
     const khunGiaPrice = combo.panelQty * 450000;
     const dayDanPrice = Math.round(kwp * 650000);
     const vanChuyenPrice = Math.round(kwp * 800000); // Nhân công & vận chuyển
+    const invQty = combo.inverterQty || 1;
 
     const initialItems = [
       { id: 'panel', name: `Tấm pin ${combo.panelModel}`, unit: 'Tấm', qty: combo.panelQty, price: panelPrice, total: combo.panelQty * panelPrice, editableQty: true, editableName: true, image: '/tam-pin-jasolar.png' },
-      { id: 'inverter', name: `Inverter ${combo.inverter}`, unit: 'Bộ', qty: combo.inverterQty || 1, price: inverterPrice, total: (combo.inverterQty || 1) * inverterPrice, editableQty: true, editableName: true, image: '/inverter-5kw.png' },
+      { id: 'inverter', name: `Inverter ${combo.inverter}`, unit: 'Bộ', qty: invQty, price: inverterPrice, total: invQty * inverterPrice, editableQty: true, editableName: true, image: '/inverter-5kw.png' },
     ];
     
     if (selectedType === 'hybrid') {
@@ -108,7 +116,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
     }
     
     initialItems.push(
-      { id: 'tuDien', name: 'Tủ điện AC/DC Solar Mersen', unit: 'Bộ', qty: 1, price: tuDienPrice, total: tuDienPrice, editableQty: false, editableName: true, image: '/tu-dien.png' },
+      { id: 'tuDien', name: 'Tủ điện AC/DC Solar Mersen', unit: 'Bộ', qty: invQty, price: tuDienPrice, total: invQty * tuDienPrice, editableQty: false, editableName: true, image: '/tu-dien.png' },
       { id: 'vatTu', name: 'Hệ khung ray nhôm chuyên dụng', unit: 'Bộ', qty: 1, price: khunGiaPrice, total: khunGiaPrice, editableQty: false, editableName: true, image: '/he-khung-ray-nhom.jpg' },
       { id: 'dayDan', name: 'Cáp điện DC & dây tiếp địa', unit: 'Hệ', qty: 1, price: dayDanPrice, total: dayDanPrice, editableQty: false, editableName: true, image: '/day-cap.jpg' },
       { id: 'vanChuyen', name: 'Nhân công lắp đặt trọn gói', unit: 'Gói', qty: 1, price: vanChuyenPrice, total: vanChuyenPrice, editableQty: false, editableName: true, image: '/nhan-cong-lap-dat.jpg' }
@@ -169,7 +177,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
             if (item.id === 'tuDien') {
               if (inverterItem) item.qty = inverterItem.qty; // 1 inverter đi kèm 1 tủ điện
               if (id === 'panel') {
-                item.price = newKwp <= 8 ? 4500000 : 6500000; // Tủ công suất lớn đắt hơn
+                item.price = newKwp <= 8 ? 4500000 : (newKwp <= 25 ? 6500000 : 7500000); // Tủ công suất lớn đắt hơn
               }
               item.total = item.qty * item.price;
             }
@@ -540,7 +548,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
                   axisLine={{ stroke: '#a7f3d0' }} 
                   tickLine={false} 
                 />
-                <YAxis tickFormatter={formatVndM} tick={{ fill: '#047857', fontSize: 10 }} axisLine={{ stroke: '#a7f3d0' }} tickLine={false} width={52} />
+                <YAxis tickFormatter={formatVndM} tick={{ fill: '#047857', fontSize: 10 }} axisLine={{ stroke: '#a7f3d0' }} tickLine={false} width={58} />
                 <Legend formatter={() => <span style={{color: '#065f46', fontSize: '12px'}}>{selectedType === 'ongrid' ? 'Hòa Lưới ST-ECO' : 'Hybrid ST-HYBRID'}</span>} />
                 <ReferenceLine y={0} stroke="#EF4444" strokeDasharray="6 3" strokeWidth={1.5} />
                 

@@ -81,3 +81,17 @@ Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quy�
   - Đảm bảo **biểu đồ ẩn (hidden chart)** dùng để chụp ảnh dán vào PDF cũng được đồng bộ 100% với biểu đồ hiển thị trên web.
 - **Tính năng Tùy chỉnh Điều khoản Hợp đồng:** Bổ sung giao diện chỉnh sửa nhanh các điều khoản thương mại (Phương thức thanh toán, Tiến độ thi công, Bảo hành) ngay tại Modal trước khi in PDF. Dữ liệu này được truyền vào `exportQuotePDF` và render đa dòng hoàn hảo vào trang báo giá.
 - **Đồng bộ GitHub:** Tự động commit và push toàn bộ code lên nhánh `main`.
+
+## 12. Nâng cấp Dải Công Suất Tùy Chỉnh Lên 200 kWp & Thuật Toán Quy Mô Lớn (Ngày 16/10/2026)
+- **Mở rộng Thanh trượt & Input số (UI):** 
+  - Nâng giới hạn thanh trượt từ tối đa 50 kWp lên **200 kWp** (dải 3 kWp - 200 kWp).
+  - Tích hợp thêm ô nhập liệu số trực tiếp cạnh chữ "kWp" để người dùng có thể gõ nhanh bất kỳ công suất nào (ví dụ: 75, 120, 185 kWp) bên cạnh việc kéo thanh trượt.
+  - Bổ sung các mốc chọn nhanh (Quick chips): `3, 5, 10, 15, 20, 30, 50, 100, 150, 200 kWp` phục vụ cả khách hàng dân dụng lẫn nhà xưởng, thương mại (C&I).
+- **Mở rộng Thiết bị Biến Tần C&I (Inverters):**
+  - Bổ sung các dòng biến tần hòa lưới công nghiệp lớn chuẩn hãng Sungrow: `SG33CX (33kW)`, `SG50CX-P2 (50kW)`, `SG100CX-P2 (100kW)`, `SG110CX-P2 (110kW)`, `SG125CX-P2 (125kW)`.
+  - Bổ sung biến tần Hybrid 3 pha cao áp công suất lớn: `Deye SUN-30K-SG01HP3-EU-BM3 (30kW)` và `Deye SUN-50K-SG01HP3-EU-BM4 (50kW)`.
+- **Hoàn thiện Thuật toán Tính toán Quy mô lớn:**
+  - Tối ưu hóa thuật toán lựa chọn số lượng biến tần theo tỷ lệ DC/AC chuẩn kỹ thuật điện mặt trời (~1.15 - 1.25), tự động ghép cụm inverter cho các hệ thống từ 50kWp - 200kWp.
+  - Cập nhật hàm tính chi phí phụ trợ & thi công (`calculateBOS` và `tuDienPrice`) theo số lượng biến tần và quy mô công nghiệp.
+  - Tự động mở rộng dải hiển thị trục Y của biểu đồ dòng tiền ROI (lên đơn vị tỷ VNĐ) mà không bị cắt chữ.
+  - Đồng bộ thuật toán nội suy sản lượng theo PSH thực tế tại `pdfExport.js` và `QuoteModal.jsx`.

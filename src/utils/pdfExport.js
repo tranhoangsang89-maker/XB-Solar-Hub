@@ -137,7 +137,8 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
     if (Math.abs(currentKwp - plan.combo.systemCapacityKwp) > 0.1) {
       finalKwp = currentKwp;
       finalName = `Gói thiết kế tùy chỉnh ${finalKwp.toFixed(1)}kWp`;
-      finalGen = finalKwp * 4.6 * 30 * 0.8; // Sản lượng = kWp * 4.6 * 30 * 0.8
+      const pshVal = (plan.monthlyGenKwh && plan.combo.systemCapacityKwp) ? (plan.monthlyGenKwh / (plan.combo.systemCapacityKwp * 30 * 0.8)) : 4.6;
+      finalGen = finalKwp * pshVal * 30 * 0.8;
     }
   }
 

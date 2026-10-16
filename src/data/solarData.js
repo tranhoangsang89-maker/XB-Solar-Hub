@@ -83,8 +83,11 @@ export const PROVINCES_PSH = [
 import { SOLAR_PANELS, INVERTERS, BATTERIES } from './bang-gia-thiet-bi';
 
 // Hàm tính chi phí vật tư phụ và nhân công (BOS)
-const calculateBOS = (systemCapacityKwp, panelQty) => {
-  const tuDienPrice = systemCapacityKwp <= 8 ? 4500000 : 6500000;
+const calculateBOS = (systemCapacityKwp, panelQty, inverterQty = 1) => {
+  let tuDienPrice = systemCapacityKwp <= 8 ? 4500000 : 6500000;
+  if (inverterQty > 1 || systemCapacityKwp > 25) {
+    tuDienPrice = Math.max(1, inverterQty) * 6500000;
+  }
   const khungRayPrice = panelQty * 450000;
   const capDienPrice = systemCapacityKwp * 650000;
   const nhanCongPrice = systemCapacityKwp * 800000;
@@ -102,7 +105,7 @@ const calculateComboPrice = (panelId, panelQty, inverterId, inverterQty = 1, bat
   const panelCost = panel.priceVnd * panelQty;
   const inverterCost = (inverter ? inverter.priceVnd : 0) * inverterQty;
   const batteryCost = (battery ? battery.priceVnd : 0) * batteryQty;
-  const bosCost = calculateBOS(kwp, panelQty);
+  const bosCost = calculateBOS(kwp, panelQty, inverterQty);
 
   return Math.round(panelCost + inverterCost + batteryCost + bosCost);
 };
@@ -208,9 +211,9 @@ export const getCustomCombos = (targetKwp) => {
   
   const ongridInverters = INVERTERS.filter(i => i.systemType === 'ongrid')
     .sort((a, b) => a.powerKw - b.powerKw);
-  // Chọn biến tần nhỏ nhất phù hợp, hoặc lấy biến tần lớn nhất có thể và tính số lượng
+  // Chọn biến tần phù hợp với tỉ lệ DC/AC tối ưu (~1.1 - 1.25)
   const ongridInverter = ongridInverters.find(i => i.powerKw >= actualKwp * 0.8) || ongridInverters[ongridInverters.length - 1];
-  const ongridQty = Math.max(1, Math.ceil(actualKwp / (ongridInverter.powerKw * 1.5)));
+  const ongridQty = Math.max(1, Math.ceil(actualKwp / (ongridInverter.powerKw * 1.2)));
     
   const ongridCombo = {
     id: `CUSTOM-ONGRID-${actualKwp}`,
@@ -224,13 +227,15 @@ export const getCustomCombos = (targetKwp) => {
     systemCapacityKwp: actualKwp,
     areaRequiredM2: Math.round(panelQty * 2.384 * 1.303),
     get basePriceVnd() { return calculateComboPrice('JA-720W', panelQty, ongridInverter.id, ongridQty, null, 0); },
-    description: 'Cấu hình tùy chỉnh theo công suất yêu cầu.'
+    description: actualKwp >= 30 
+      ? 'Hệ thống điện mặt trời hòa lưới thương mại & công nghiệp (C&I) công suất lớn, tối ưu chi phí vận hành.' 
+      : 'Cấu hình tùy chỉnh theo công suất yêu cầu.'
   };
 
   const hybridInverters = INVERTERS.filter(i => i.systemType === 'hybrid')
     .sort((a, b) => a.powerKw - b.powerKw);
   const hybridInverter = hybridInverters.find(i => i.powerKw >= actualKwp * 0.8) || hybridInverters[hybridInverters.length - 1];
-  const hybridQty = Math.max(1, Math.ceil(actualKwp / (hybridInverter.powerKw * 1.5)));
+  const hybridQty = Math.max(1, Math.ceil(actualKwp / (hybridInverter.powerKw * 1.2)));
     
   let batteryId = 'DYNESS-DL5';
   if (actualKwp >= 12) batteryId = 'DYNESS-BRICK-SC';
@@ -253,7 +258,9 @@ export const getCustomCombos = (targetKwp) => {
     systemCapacityKwp: actualKwp,
     areaRequiredM2: Math.round(panelQty * 2.384 * 1.303),
     get basePriceVnd() { return calculateComboPrice('JA-720W', panelQty, hybridInverter.id, hybridQty, batteryId, batteryQty); },
-    description: 'Cấu hình lưu trữ tùy chỉnh theo công suất yêu cầu.'
+    description: actualKwp >= 30 
+      ? 'Hệ thống lưu trữ năng lượng thương mại (C&I BESS) đa cụm biến tần & pin, liên tục cấp nguồn 24/7.' 
+      : 'Cấu hình lưu trữ tùy chỉnh theo công suất yêu cầu.'
   };
 
   return { ongridCombo, hybridCombo };

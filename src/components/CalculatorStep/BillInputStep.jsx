@@ -9,6 +9,8 @@ const SatelliteRoofModal = lazy(() => import('../SatelliteRoofModal'));
 const BILL_STEPS = [2000000, 5000000, 10000000, 15000000, 20000000, 25000000, 30000000];
 const BILL_MIN = 2000000;
 const BILL_MAX = 30000000;
+const KWP_MIN = 3;
+const KWP_MAX = 200;
 
 const USAGE_PROFILES = [
   {
@@ -74,7 +76,8 @@ export default function BillInputStep({ onNext }) {
   };
 
   const handleNext = () => {
-    onNext({ inputType, customKwp, monthlyBill, province, usageProfile });
+    const validKwp = Math.min(KWP_MAX, Math.max(KWP_MIN, Number(customKwp) || 5));
+    onNext({ inputType, customKwp: validKwp, monthlyBill, province, usageProfile });
   };
 
   // Determine bill tier label
@@ -189,8 +192,31 @@ export default function BillInputStep({ onNext }) {
                   <Sun className="w-5 h-5 text-amber-400" />
                   <label className="text-teal-800 font-semibold">Công suất hệ thống (kWp)</label>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-black text-amber-400">{customKwp} kWp</div>
+                <div className="flex items-center gap-1.5 bg-white border border-emerald-300 rounded-xl px-3 py-1 shadow-sm focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/20">
+                  <input
+                    type="number"
+                    min={KWP_MIN}
+                    max={KWP_MAX}
+                    value={customKwp}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '') {
+                        setCustomKwp('');
+                      } else {
+                        const parsed = parseInt(val, 10);
+                        if (!isNaN(parsed)) {
+                          setCustomKwp(Math.min(KWP_MAX, Math.max(0, parsed)));
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      if (!customKwp || Number(customKwp) < KWP_MIN) setCustomKwp(KWP_MIN);
+                      else if (Number(customKwp) > KWP_MAX) setCustomKwp(KWP_MAX);
+                    }}
+                    className="w-16 text-right text-2xl font-black text-amber-500 bg-transparent focus:outline-none"
+                    aria-label="Nhập công suất kWp tùy chỉnh"
+                  />
+                  <span className="text-base font-bold text-teal-800">kWp</span>
                 </div>
               </div>
 
@@ -198,33 +224,43 @@ export default function BillInputStep({ onNext }) {
               <div className="relative mb-2">
                 <div
                   className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-amber-500 to-amber-400 pointer-events-none"
-                  style={{ width: `${((customKwp - 3) / (50 - 3)) * 100}%`, top: '50%', transform: 'translateY(-50%)', height: '8px' }}
+                  style={{
+                    width: `${Math.min(100, Math.max(0, (((Number(customKwp) || KWP_MIN) - KWP_MIN) / (KWP_MAX - KWP_MIN)) * 100))}%`,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    height: '8px'
+                  }}
                 />
                 <input
                   type="range"
-                  min={3}
-                  max={50}
+                  min={KWP_MIN}
+                  max={KWP_MAX}
                   step={1}
-                  value={customKwp}
+                  value={Number(customKwp) || KWP_MIN}
                   onChange={(e) => setCustomKwp(Number(e.target.value))}
-                  className="w-full relative z-10"
+                  className="w-full relative z-10 cursor-pointer"
+                  aria-label="Kéo thanh điều chỉnh công suất kWp"
                 />
               </div>
               <div className="flex justify-between text-xs text-emerald-600 mt-1">
                 <span>3 kWp</span>
-                <span>25 kWp</span>
                 <span>50 kWp</span>
+                <span>100 kWp</span>
+                <span>150 kWp</span>
+                <span>200 kWp</span>
               </div>
 
+              {/* Quick select chips */}
               <div className="mt-4 flex flex-wrap gap-2">
-                {[3, 5, 8, 10, 15, 20].map((val) => (
+                {[3, 5, 10, 15, 20, 30, 50, 100, 150, 200].map((val) => (
                   <button
                     key={val}
+                    type="button"
                     onClick={() => setCustomKwp(val)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-200 ${
-                      customKwp === val
-                        ? 'bg-amber-500 text-teal-800 border-amber-500'
-                        : 'bg-emerald-100/50 text-emerald-700 border-emerald-300 hover:border-amber-500/50 hover:text-amber-400'
+                      Number(customKwp) === val
+                        ? 'bg-amber-500 text-teal-800 border-amber-500 shadow-sm'
+                        : 'bg-emerald-100/50 text-emerald-700 border-emerald-300 hover:border-amber-500/50 hover:text-amber-500'
                     }`}
                   >
                     {val} kWp

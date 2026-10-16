@@ -81,6 +81,56 @@ export const INVERTERS = [
     description: 'Biến tần hòa lưới 3 pha 20kW Sungrow',
     priceVnd: 29500000
   },
+  {
+    id: 'SG-ONGRID-33K-3P',
+    brand: 'SUNGROW',
+    model: 'SG33CX',
+    systemType: 'ongrid', // Hòa lưới 3 pha công nghiệp
+    phase: 3,
+    powerKw: 33,
+    description: 'Biến tần hòa lưới 3 pha 33kW Sungrow',
+    priceVnd: 41500000
+  },
+  {
+    id: 'SG-ONGRID-50K-3P',
+    brand: 'SUNGROW',
+    model: 'SG50CX-P2',
+    systemType: 'ongrid', // Hòa lưới 3 pha công nghiệp
+    phase: 3,
+    powerKw: 50,
+    description: 'Biến tần hòa lưới 3 pha 50kW Sungrow C&I',
+    priceVnd: 49500000
+  },
+  {
+    id: 'SG-ONGRID-100K-3P',
+    brand: 'SUNGROW',
+    model: 'SG100CX-P2',
+    systemType: 'ongrid', // Hòa lưới 3 pha công nghiệp
+    phase: 3,
+    powerKw: 100,
+    description: 'Biến tần hòa lưới 3 pha 100kW Sungrow C&I',
+    priceVnd: 78500000
+  },
+  {
+    id: 'SG-ONGRID-110K-3P',
+    brand: 'SUNGROW',
+    model: 'SG110CX-P2',
+    systemType: 'ongrid', // Hòa lưới 3 pha công nghiệp
+    phase: 3,
+    powerKw: 110,
+    description: 'Biến tần hòa lưới 3 pha 110kW Sungrow C&I',
+    priceVnd: 85000000
+  },
+  {
+    id: 'SG-ONGRID-125K-3P',
+    brand: 'SUNGROW',
+    model: 'SG125CX-P2',
+    systemType: 'ongrid', // Hòa lưới 3 pha công nghiệp
+    phase: 3,
+    powerKw: 125,
+    description: 'Biến tần hòa lưới 3 pha 125kW Sungrow C&I',
+    priceVnd: 95000000
+  },
 
   // ==============================================================
   // NHÓM B: INVERTER HYBRID LƯU TRỮ (HYBRID) - SUNGROW MGRL & SOLIS S6
@@ -132,7 +182,9 @@ export const INVERTERS = [
   { id: 'SOLIS-HYBRID-3P-10K', brand: 'SOLIS', model: 'S6-EH3P10K02-NV-YD-L', systemType: 'hybrid', phase: 3, powerKw: 10, priceVnd: 43286667 },
   { id: 'SOLIS-HYBRID-3P-12K', brand: 'SOLIS', model: 'S6-EH3P12K02-NV-YD-L', systemType: 'hybrid', phase: 3, powerKw: 12, priceVnd: 48023333 },
   { id: 'SOLIS-HYBRID-3P-15K', brand: 'SOLIS', model: 'S6-EH3P15K02-NV-YD-L', systemType: 'hybrid', phase: 3, powerKw: 15, priceVnd: 54105556 },
-  { id: 'SOLIS-HYBRID-3P-18K', brand: 'SOLIS', model: 'S6-EH3P18K02-NV-YD-L', systemType: 'hybrid', phase: 3, powerKw: 18, priceVnd: 62631111 }
+  { id: 'SOLIS-HYBRID-3P-18K', brand: 'SOLIS', model: 'S6-EH3P18K02-NV-YD-L', systemType: 'hybrid', phase: 3, powerKw: 18, priceVnd: 62631111 },
+  { id: 'DEYE-HYBRID-3P-30K', brand: 'DEYE', model: 'SUN-30K-SG01HP3-EU-BM3', systemType: 'hybrid', phase: 3, powerKw: 30, priceVnd: 82000000, description: 'Biến tần lưu trữ 3 pha cao áp 30kW Deye' },
+  { id: 'DEYE-HYBRID-3P-50K', brand: 'DEYE', model: 'SUN-50K-SG01HP3-EU-BM4', systemType: 'hybrid', phase: 3, powerKw: 50, priceVnd: 108000000, description: 'Biến tần lưu trữ 3 pha cao áp 50kW Deye' }
 ];
 
 // 3. PIN LƯU TRỮ LITHIUM (BESS)
