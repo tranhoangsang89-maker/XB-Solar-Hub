@@ -218,9 +218,20 @@ export const getCustomCombos = (targetKwp) => {
   
   const ongridInverters = INVERTERS.filter(i => i.systemType === 'ongrid')
     .sort((a, b) => a.powerKw - b.powerKw);
-  // Chọn biến tần phù hợp với tỉ lệ DC/AC tối ưu (~1.1 - 1.25)
-  const ongridInverter = ongridInverters.find(i => i.powerKw >= actualKwp * 0.8) || ongridInverters[ongridInverters.length - 1];
-  const ongridQty = Math.max(1, Math.ceil(actualKwp / (ongridInverter.powerKw * 1.2)));
+  // Ưu tiên chọn 1 biến tần đơn nếu có biến tần chịu được dải DC/AC tối ưu (~1.05 - 1.25)
+  let ongridInverter = ongridInverters.find(i => (i.powerKw * 1.25 >= actualKwp) && (i.powerKw * 0.8 <= actualKwp));
+  let ongridQty = 1;
+  
+  if (!ongridInverter) {
+    if (actualKwp > 125 * 1.25) {
+      // Hệ thống quy mô rất lớn (>155kWp), ghép cụm biến tần 100kW hoặc 125kW
+      ongridInverter = ongridInverters[ongridInverters.length - 1]; // SG125CX-P2 (125kW)
+      ongridQty = Math.max(1, Math.ceil(actualKwp / (ongridInverter.powerKw * 1.2)));
+    } else {
+      ongridInverter = ongridInverters.find(i => i.powerKw >= actualKwp * 0.8) || ongridInverters[ongridInverters.length - 1];
+      ongridQty = Math.max(1, Math.ceil(actualKwp / (ongridInverter.powerKw * 1.2)));
+    }
+  }
     
   const ongridCombo = {
     id: `CUSTOM-ONGRID-${actualKwp}`,
@@ -241,8 +252,12 @@ export const getCustomCombos = (targetKwp) => {
 
   const hybridInverters = INVERTERS.filter(i => i.systemType === 'hybrid')
     .sort((a, b) => a.powerKw - b.powerKw);
-  const hybridInverter = hybridInverters.find(i => i.powerKw >= actualKwp * 0.8) || hybridInverters[hybridInverters.length - 1];
-  const hybridQty = Math.max(1, Math.ceil(actualKwp / (hybridInverter.powerKw * 1.2)));
+  let hybridInverter = hybridInverters.find(i => (i.powerKw * 1.25 >= actualKwp) && (i.powerKw * 0.8 <= actualKwp));
+  let hybridQty = 1;
+  if (!hybridInverter) {
+    hybridInverter = hybridInverters.find(i => i.powerKw >= actualKwp * 0.8) || hybridInverters[hybridInverters.length - 1];
+    hybridQty = Math.max(1, Math.ceil(actualKwp / (hybridInverter.powerKw * 1.2)));
+  }
     
   let batteryId = 'DYNESS-DL5';
   if (actualKwp >= 12) batteryId = 'DYNESS-BRICK-SC';
