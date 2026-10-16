@@ -489,17 +489,25 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
                 data={(() => {
                   const plan = result[selectedType];
                   const panelItem = bomItems.find(i => i.id === 'panel');
+                  const batteryItem = bomItems.find(i => i.id === 'battery');
+                  const hasBattery = Boolean(batteryItem && batteryItem.qty > 0);
+
+                  let finalKwp = plan.combo.systemCapacityKwp;
                   let finalGen = plan.monthlyGenKwh;
                   if (panelItem) {
                     const match = panelItem.name.match(/(\d+)W/);
                     const wattage = match ? parseInt(match[1]) : 720;
                     const currentKwp = (panelItem.qty * wattage) / 1000;
-                    if (Math.abs(currentKwp - plan.combo.systemCapacityKwp) > 0.1) {
-                      finalGen = currentKwp * (province?.psh || 4.6) * 30 * 0.8;
+                    if (Math.abs(currentKwp - plan.combo.systemCapacityKwp) > 0.05) {
+                      finalKwp = currentKwp;
+                      finalGen = finalKwp * (province?.psh || 4.6) * 30 * 0.8;
                     }
                   }
-                  const genRatio = finalGen / plan.monthlyGenKwh;
-                  const newSavings = Math.round(plan.finance.monthlySavings * genRatio);
+
+                  // Tỷ lệ tự dùng: nếu có Pin lưu trữ > 0 đạt 92%, nếu không có pin (hệ hòa lưới hoặc SL pin = 0) đạt 85%
+                  const selfConsumptionRate = hasBattery ? 0.92 : (inputType === 'kwp' || usageProfile === 'mixed_business' ? 0.85 : 0.80);
+                  const usableKwh = finalGen * selfConsumptionRate;
+                  const newSavings = Math.round(usableKwh * 3302 * 1.08);
                   const annualSavings = newSavings * 12;
                   
                   const chartData = [];

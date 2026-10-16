@@ -116,27 +116,34 @@ export function recommendCombos(inputType = 'bill', monthlyBill = 0, customKwp =
 
   // Tính toán chỉ số của On-grid
   const ongridMonthlyGen = ongridCombo.systemCapacityKwp * psh * 30 * 0.80;
-  const ongridEffectiveFactor = usageHabit === 'work_day' ? 0.45 : (usageHabit === 'mixed_business' ? 0.85 : 0.65);
-  const ongridUsableKwh = Math.min(ongridMonthlyGen * ongridEffectiveFactor, totalKwh * dayRatio);
+  let ongridEffectiveFactor = 0.80;
+  if (inputType === 'kwp' || usageHabit === 'mixed_business') ongridEffectiveFactor = 0.85;
+  else if (usageHabit === 'work_day') ongridEffectiveFactor = 0.65;
+  const ongridUsableKwh = ongridMonthlyGen * ongridEffectiveFactor;
   const ongridSavings = calculateSavingsFromKwh(totalKwh, ongridUsableKwh);
 
   // Tính toán chỉ số của Hybrid
   const hybridMonthlyGen = hybridCombo.systemCapacityKwp * psh * 30 * 0.80;
   
   // Trích xuất dung lượng pin từ chuỗi tên pin
-  const batMatch = hybridCombo.battery.match(/\(([\d.]+)\s*kWh\)/);
+  const batMatch = hybridCombo.battery ? hybridCombo.battery.match(/\(([\d.]+)\s*kWh\)/) : null;
   const singleBatCap = batMatch ? parseFloat(batMatch[1]) : 16;
   const totalBatteryKwh = singleBatCap * (hybridCombo.batteryQty || 1);
 
-  const dailyGen = hybridMonthlyGen / 30;
-  // Dùng trực tiếp ban ngày (tối đa bằng 60% sản lượng sinh ra hoặc tổng nhu cầu ban ngày)
-  const dailyDirectUse = Math.min(dailyGen * 0.6, dayConsumptionKwh);
-  // Điện dư dồn vào bình
-  const dailyExcess = Math.max(0, dailyGen - dailyDirectUse);
-  // Điện xả từ bình dùng ban đêm (bị giới hạn bởi lượng dư, dung lượng bình thực tế 90% DoD, và nhu cầu ban đêm)
-  const dailyBatteryUse = Math.min(dailyExcess * 0.95, totalBatteryKwh * 0.9, nightConsumptionKwh);
-  
-  const hybridUsableKwh = (dailyDirectUse + dailyBatteryUse) * 30;
+  let hybridUsableKwh;
+  if (inputType === 'kwp') {
+    // Với công suất tùy chỉnh, hệ thống lưu trữ hybrid tận dụng ~92% tổng sản lượng
+    hybridUsableKwh = hybridMonthlyGen * 0.92;
+  } else {
+    const dailyGen = hybridMonthlyGen / 30;
+    // Dùng trực tiếp ban ngày
+    const dailyDirectUse = Math.min(dailyGen * 0.65, dayConsumptionKwh);
+    // Điện dư dồn vào bình
+    const dailyExcess = Math.max(0, dailyGen - dailyDirectUse);
+    // Điện xả từ bình dùng ban đêm (bị giới hạn bởi lượng dư, dung lượng bình thực tế 90% DoD, và nhu cầu ban đêm)
+    const dailyBatteryUse = Math.min(dailyExcess * 0.95, totalBatteryKwh * 0.9, nightConsumptionKwh);
+    hybridUsableKwh = (dailyDirectUse + dailyBatteryUse) * 30;
+  }
   const hybridSavings = calculateSavingsFromKwh(totalKwh, hybridUsableKwh);
 
   // C. Tính chỉ số tài chính ROI & Hoàn vốn

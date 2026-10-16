@@ -124,6 +124,9 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
 
   const plan = result[selectedType || 'hybrid'];
   const panelItem = bomItems.find(i => i.id === 'panel');
+  const batteryItem = bomItems.find(i => i.id === 'battery');
+  const hasBattery = Boolean(batteryItem && batteryItem.qty > 0);
+
   let finalKwp = plan.combo.systemCapacityKwp;
   let finalGen = plan.monthlyGenKwh;
   let finalName = plan.combo.name;
@@ -134,7 +137,7 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
     const currentKwp = (panelItem.qty * wattage) / 1000;
     
     // Nếu có sự thay đổi (sai số do float)
-    if (Math.abs(currentKwp - plan.combo.systemCapacityKwp) > 0.1) {
+    if (Math.abs(currentKwp - plan.combo.systemCapacityKwp) > 0.05) {
       finalKwp = currentKwp;
       finalName = `Gói thiết kế tùy chỉnh ${finalKwp.toFixed(1)}kWp`;
       const pshVal = (plan.monthlyGenKwh && plan.combo.systemCapacityKwp) ? (plan.monthlyGenKwh / (plan.combo.systemCapacityKwp * 30 * 0.8)) : 4.6;
@@ -268,8 +271,9 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   const finance = plan.finance;
   
   // Tính toán lại tài chính dựa trên cấu hình vật tư (BOM) đã chỉnh sửa
-  const genRatio = finalGen / plan.monthlyGenKwh;
-  const estimatedNewSavings = Math.round(finance.monthlySavings * genRatio);
+  const selfConsumptionRate = hasBattery ? 0.92 : (monthlyBill === 'Nhu cầu tùy chỉnh' ? 0.85 : 0.80);
+  const usableKwh = finalGen * selfConsumptionRate;
+  const estimatedNewSavings = Math.round(usableKwh * 3302 * 1.08); // Bậc 6 cao nhất EVN đã gồm VAT
   const newPaybackYears = (totalPrice / (estimatedNewSavings * 12)).toFixed(1);
   const newTotalProfit = (estimatedNewSavings * 12 * 25) - totalPrice;
 
