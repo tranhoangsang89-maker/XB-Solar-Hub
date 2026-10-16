@@ -49,6 +49,22 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
     price: b.priceVnd
   }));
 
+  const tuDienOptions = [
+    { name: 'Tủ điện AC/DC Solar 1 Pha Chuyên Dụng (≤8kW)', price: 5500000 },
+    { name: 'Tủ điện AC/DC Solar 3 Pha Công Nghiệp (10-25kW)', price: 9500000 },
+    { name: 'Tủ điện AC/DC Solar 3 Pha C&I Phân Phối (30-50kW)', price: 18000000 },
+    { name: 'Tủ điện Hòa Lưới Tổng C&I 50-100kW (kèm Meter Zero Export)', price: 38000000 },
+    { name: 'Tủ Tổng MSB Solar Công Nghiệp 100-200kW (Smart Logger)', price: 65000000 },
+  ];
+
+  const getInitialTuDien = (kwp) => {
+    if (kwp > 100) return { name: 'Tủ Tổng MSB Solar Công Nghiệp 100-200kW (Smart Logger)', price: 65000000 };
+    if (kwp > 50) return { name: 'Tủ điện Hòa Lưới Tổng C&I 50-100kW (kèm Meter Zero Export)', price: 38000000 };
+    if (kwp > 25) return { name: 'Tủ điện AC/DC Solar 3 Pha C&I Phân Phối (30-50kW)', price: 18000000 };
+    if (kwp > 8) return { name: 'Tủ điện AC/DC Solar 3 Pha Công Nghiệp (10-25kW)', price: 9500000 };
+    return { name: 'Tủ điện AC/DC Solar 1 Pha Chuyên Dụng (≤8kW)', price: 5500000 };
+  };
+
   useEffect(() => {
     if (!isOpen || !result) return;
     const plan = result[selectedType || 'hybrid'];
@@ -100,11 +116,11 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
     const inverterPrice = getInverterPrice(combo.inverterId, combo.inverter);
     const batteryPrice = getBatteryPrice(combo.batteryId, combo.battery);
     
-    // Phụ trợ tính theo quy mô
-    const tuDienPrice = kwp <= 8 ? 4500000 : (kwp <= 25 ? 6500000 : 7500000);
-    const khunGiaPrice = combo.panelQty * 450000;
-    const dayDanPrice = Math.round(kwp * 650000);
-    const vanChuyenPrice = Math.round(kwp * 800000); // Nhân công & vận chuyển
+    // Phụ trợ tính theo quy mô chuẩn thị trường 8 - 10 triệu/kWp
+    const tuDienConfig = getInitialTuDien(kwp);
+    const khunGiaPrice = combo.panelQty * 650000;
+    const dayDanPrice = Math.round(kwp * 1250000);
+    const vanChuyenPrice = Math.round(kwp * 1300000); // Nhân công, vận chuyển, thí nghiệm & EVN
     const invQty = combo.inverterQty || 1;
 
     const initialItems = [
@@ -117,10 +133,10 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
     }
     
     initialItems.push(
-      { id: 'tuDien', name: 'Tủ điện AC/DC Solar Mersen', unit: 'Bộ', qty: invQty, price: tuDienPrice, total: invQty * tuDienPrice, editableQty: false, editableName: true, image: '/tu-dien.png' },
-      { id: 'vatTu', name: 'Hệ khung ray nhôm chuyên dụng', unit: 'Bộ', qty: 1, price: khunGiaPrice, total: khunGiaPrice, editableQty: false, editableName: true, image: '/he-khung-ray-nhom.jpg' },
-      { id: 'dayDan', name: 'Cáp điện DC & dây tiếp địa', unit: 'Hệ', qty: 1, price: dayDanPrice, total: dayDanPrice, editableQty: false, editableName: true, image: '/day-cap.jpg' },
-      { id: 'vanChuyen', name: 'Nhân công lắp đặt trọn gói', unit: 'Gói', qty: 1, price: vanChuyenPrice, total: vanChuyenPrice, editableQty: false, editableName: true, image: '/nhan-cong-lap-dat.jpg' }
+      { id: 'tuDien', name: tuDienConfig.name, unit: 'Bộ', qty: 1, price: tuDienConfig.price, total: tuDienConfig.price, editableQty: true, editableName: true, image: '/tu-dien.png' },
+      { id: 'vatTu', name: 'Hệ khung ray nhôm chuyên dụng & phụ kiện', unit: 'Bộ', qty: 1, price: khunGiaPrice, total: khunGiaPrice, editableQty: true, editableName: true, image: '/he-khung-ray-nhom.jpg' },
+      { id: 'dayDan', name: 'Cáp điện DC, cáp AC & tiếp địa chuyên dụng', unit: 'Hệ', qty: 1, price: dayDanPrice, total: dayDanPrice, editableQty: true, editableName: true, image: '/day-cap.jpg' },
+      { id: 'vanChuyen', name: 'Nhân công lắp đặt, thí nghiệm & nghiệm thu EVN', unit: 'Gói', qty: 1, price: vanChuyenPrice, total: vanChuyenPrice, editableQty: true, editableName: true, image: '/nhan-cong-lap-dat.jpg' }
     );
     
     setBomItems(initialItems);
@@ -152,10 +168,9 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
         return item;
       });
 
-      // Tự động tính toán lại vật tư phụ khi thay đổi Pin hoặc Inverter
-      if (id === 'panel' || id === 'inverter') {
+      // Tự động tính toán lại vật tư phụ khi thay đổi số lượng Pin (kWp thay đổi)
+      if (id === 'panel') {
         const panelItem = updatedItems.find(i => i.id === 'panel');
-        const inverterItem = updatedItems.find(i => i.id === 'inverter');
         
         if (panelItem) {
           const match = panelItem.name.match(/(\d+)W/);
@@ -163,23 +178,22 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
           const newKwp = (panelItem.qty * wattage) / 1000;
           
           updatedItems = updatedItems.map(item => {
-            if (item.id === 'vatTu' && id === 'panel') {
-              item.price = panelItem.qty * 450000;
+            if (item.id === 'vatTu') {
+              item.price = panelItem.qty * 650000;
               item.total = item.qty * item.price;
             }
-            if (item.id === 'dayDan' && id === 'panel') {
-              item.price = Math.round(newKwp * 650000);
+            if (item.id === 'dayDan') {
+              item.price = Math.round(newKwp * 1250000);
               item.total = item.qty * item.price;
             }
-            if (item.id === 'vanChuyen' && id === 'panel') {
-              item.price = Math.round(newKwp * 800000);
+            if (item.id === 'vanChuyen') {
+              item.price = Math.round(newKwp * 1300000);
               item.total = item.qty * item.price;
             }
             if (item.id === 'tuDien') {
-              if (inverterItem) item.qty = inverterItem.qty; // 1 inverter đi kèm 1 tủ điện
-              if (id === 'panel') {
-                item.price = newKwp <= 8 ? 4500000 : (newKwp <= 25 ? 6500000 : 7500000); // Tủ công suất lớn đắt hơn
-              }
+              const defaultTu = getInitialTuDien(newKwp);
+              item.price = defaultTu.price;
+              item.name = defaultTu.name;
               item.total = item.qty * item.price;
             }
             return item;
@@ -339,6 +353,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
                                         <input
                                           type="text"
                                           value={item.name}
+                                          title={item.name}
                                           onFocus={() => setActiveDropdown(item.id)}
                                           onBlur={() => setTimeout(() => setActiveDropdown(null), 200)}
                                           onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
@@ -350,9 +365,9 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
                                           </span>
                                         )}
                                       </div>
-                                      {activeDropdown === item.id && (item.id === 'panel' || item.id === 'inverter' || item.id === 'battery') && (
+                                      {activeDropdown === item.id && (item.id === 'panel' || item.id === 'inverter' || item.id === 'battery' || item.id === 'tuDien') && (
                                         <div className="absolute top-full left-0 mt-1 w-max min-w-full bg-white border border-emerald-300 rounded shadow-xl z-50 max-h-48 overflow-y-auto">
-                                          {(item.id === 'panel' ? panelOptions : item.id === 'inverter' ? inverterOptions : batteryOptions).map((opt, i) => (
+                                          {(item.id === 'panel' ? panelOptions : item.id === 'inverter' ? inverterOptions : item.id === 'battery' ? batteryOptions : tuDienOptions).map((opt, i) => (
                                             <div
                                               key={i}
                                               className="px-3 py-2 text-sm text-emerald-800 hover:bg-emerald-100 hover:text-teal-800 cursor-pointer transition-colors flex justify-between gap-4"

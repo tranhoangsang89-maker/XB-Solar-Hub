@@ -84,13 +84,20 @@ import { SOLAR_PANELS, INVERTERS, BATTERIES } from './bang-gia-thiet-bi';
 
 // Hàm tính chi phí vật tư phụ và nhân công (BOS)
 const calculateBOS = (systemCapacityKwp, panelQty, inverterQty = 1) => {
-  let tuDienPrice = systemCapacityKwp <= 8 ? 4500000 : 6500000;
-  if (inverterQty > 1 || systemCapacityKwp > 25) {
-    tuDienPrice = Math.max(1, inverterQty) * 6500000;
+  let tuDienPrice = 5500000;
+  if (systemCapacityKwp > 100) {
+    tuDienPrice = 65000000;
+  } else if (systemCapacityKwp > 50) {
+    tuDienPrice = 38000000;
+  } else if (systemCapacityKwp > 25) {
+    tuDienPrice = 18000000;
+  } else if (systemCapacityKwp > 8) {
+    tuDienPrice = 9500000;
   }
-  const khungRayPrice = panelQty * 450000;
-  const capDienPrice = systemCapacityKwp * 650000;
-  const nhanCongPrice = systemCapacityKwp * 800000;
+
+  const khungRayPrice = panelQty * 650000;
+  const capDienPrice = Math.round(systemCapacityKwp * 1250000);
+  const nhanCongPrice = Math.round(systemCapacityKwp * 1300000);
   return tuDienPrice + khungRayPrice + capDienPrice + nhanCongPrice;
 };
 

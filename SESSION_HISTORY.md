@@ -106,3 +106,15 @@ Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quy�
   - Bổ sung nút bấm icon Xóa (Thùng rác) / Khôi phục (Revert) trên từng dòng bảng vật tư.
   - Bổ sung huy hiệu (Badge) cảnh báo "Đã ẩn khỏi PDF" rõ ràng cho các dòng có số lượng = 0.
   - Thêm nút Toggle "Ẩn khỏi bảng / Hiện lại trên bảng" giúp giao diện gọn gàng tuyệt đối theo ý muốn của người dùng.
+
+## 14. Tách Độc Lập Tủ Điện & Cập Nhật Giá Thị Trường 8 - 10 Triệu/kWp (Ngày 16/10/2026)
+- **Khắc phục lỗi Tủ điện bị ép về 0 khi Inverter = 0:**
+  - Đã loại bỏ logic ràng buộc cưỡng ép `tuDien.qty = inverterItem.qty`. Khi khách hàng đã có Inverter và chỉnh số lượng Inverter = 0, dòng Tủ điện vẫn được giữ nguyên độc lập (mặc định SL = 1).
+  - Cho phép người dùng chỉnh sửa trực tiếp số lượng (`editableQty: true`) trên dòng Tủ điện (hoặc bấm Xóa/Khôi phục).
+  - Bổ sung Dropdown lựa chọn 5 cấp độ Tủ điện AC/DC từ dân dụng 1 pha đến C&I công nghiệp 200kW kèm Meter Zero Export / Smart Logger.
+- **Hiệu chỉnh Đơn giá Toàn diện theo Chuẩn Thị Trường (8 - 10 triệu / kWp):**
+  - Tủ điện phân phối & bảo vệ C&I: Cập nhật từ mức tượng trưng (7.5 triệu) lên mức thực tế công nghiệp (18 triệu - 65 triệu tuỳ quy mô 25kW - 200kW).
+  - Khung ray nhôm chuyên dụng & phụ kiện cơ khí cho pin 720W: Cập nhật lên 650.000 đ/tấm.
+  - Cáp điện DC Solar, cáp nguồn AC & tiếp địa: Cập nhật lên 1.250.000 đ/kWp.
+  - Nhân công lắp đặt, cẩu kéo, kiểm định an toàn điện & nghiệm thu EVN: Cập nhật lên 1.300.000 đ/kWp.
+  - Kết quả: Hệ 92kWp có tổng giá trị trọn gói ~767 triệu VNĐ (~8.33 triệu/kWp có Inverter, ~689 triệu VNĐ không Inverter), đạt chuẩn tuyệt đối dải thị trường 8 - 10 triệu/kWp.
