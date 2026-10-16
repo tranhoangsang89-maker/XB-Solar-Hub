@@ -1,6 +1,6 @@
 // src/components/QuoteModal.jsx
 import { useState, useEffect } from 'react';
-import { X, Download, User, Phone, Shield, Loader2, CheckCircle, FileText, Settings, Edit3 } from 'lucide-react';
+import { X, Download, User, Phone, Shield, Loader2, CheckCircle, FileText, Settings, Edit3, Trash2, Eye, EyeOff, RotateCcw } from 'lucide-react';
 import { exportQuotePDF } from '../utils/pdfExport';
 import * as htmlToImage from 'html-to-image';
 import { generate25YearCashflow } from '../utils/solarCalculator';
@@ -22,6 +22,7 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
   const [errors, setErrors] = useState({});
   const [bomItems, setBomItems] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [hideZeroRows, setHideZeroRows] = useState(false);
 
   const [showTerms, setShowTerms] = useState(false);
   const [pdfTerms, setPdfTerms] = useState({
@@ -283,9 +284,30 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Cột 1: BoM Table (chiếm 2 cột) */}
               <div className="lg:col-span-2 space-y-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Edit3 className="w-4 h-4 text-emerald-700" />
-                  <h3 className="text-emerald-800 font-bold text-sm">Danh Mục Vật Tư - Thiết Bị</h3>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Edit3 className="w-4 h-4 text-emerald-700" />
+                    <h3 className="text-emerald-800 font-bold text-sm">Danh Mục Vật Tư - Thiết Bị</h3>
+                  </div>
+                  {bomItems.some(i => i.qty === 0 || i.hidden) && (
+                    <button
+                      type="button"
+                      onClick={() => setHideZeroRows(!hideZeroRows)}
+                      className="text-xs font-semibold px-2.5 py-1 rounded-lg border border-emerald-300 bg-white/80 hover:bg-emerald-100 text-teal-800 flex items-center gap-1.5 transition-all shadow-sm"
+                    >
+                      {hideZeroRows ? (
+                        <>
+                          <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Hiện tất cả ({bomItems.length})</span>
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="w-3.5 h-3.5 text-slate-500" />
+                          <span>Ẩn các dòng SL = 0</span>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
                 
                 <div className="bg-white/50 rounded-xl overflow-x-auto border border-emerald-200/50">
@@ -296,88 +318,144 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
                         <th className="px-4 py-3 text-center">ĐVT</th>
                         <th className="px-4 py-3 text-center">SL</th>
                         <th className="px-4 py-3 text-right">Đơn giá (VNĐ)</th>
-                        <th className="px-4 py-3 text-right rounded-tr-xl">Thành tiền</th>
+                        <th className="px-4 py-3 text-right">Thành tiền</th>
+                        <th className="px-3 py-3 text-center rounded-tr-xl">Ẩn/Xóa</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-700/50">
-                      {bomItems.map((item, idx) => (
-                        <tr key={item.id} className="hover:bg-emerald-100/20 transition-colors">
-                          <td className="px-4 py-3 font-medium">
-                            <div className="flex items-center gap-3">
-                              {item.image && (
-                                <img src={item.image} alt={item.name} className="w-10 h-10 rounded object-cover border border-emerald-200 hidden sm:block" />
-                              )}
-                              <div className="relative flex-1">
-                                {item.editableName ? (
-                                  <>
-                                    <input
-                                      type="text"
-                                      value={item.name}
-                                      onFocus={() => setActiveDropdown(item.id)}
-                                      onBlur={() => setTimeout(() => setActiveDropdown(null), 200)}
-                                      onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
-                                      className="w-full bg-emerald-50 border border-emerald-300 rounded px-2 py-1.5 text-teal-800 focus:border-amber-500 focus:outline-none min-w-[150px]"
-                                    />
-                                    {activeDropdown === item.id && (item.id === 'panel' || item.id === 'inverter' || item.id === 'battery') && (
-                                      <div className="absolute top-full left-0 mt-1 w-max min-w-full bg-white border border-emerald-300 rounded shadow-xl z-50 max-h-48 overflow-y-auto">
-                                        {(item.id === 'panel' ? panelOptions : item.id === 'inverter' ? inverterOptions : batteryOptions).map((opt, i) => (
-                                          <div
-                                            key={i}
-                                            className="px-3 py-2 text-sm text-emerald-800 hover:bg-emerald-100 hover:text-teal-800 cursor-pointer transition-colors flex justify-between gap-4"
-                                            onClick={() => {
-                                              handleItemChange(item.id, 'full_update', opt);
-                                              setActiveDropdown(null);
-                                            }}
-                                          >
-                                            <span>{opt.name}</span>
-                                            <span className="font-semibold text-emerald-600">{formatVnd(opt.price)}đ</span>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </>
-                                ) : (
-                                  <span>{item.name}</span>
+                      {(hideZeroRows ? bomItems.filter(i => i.qty > 0 && !i.hidden) : bomItems).map((item) => {
+                        const isZero = item.qty === 0 || item.hidden;
+                        return (
+                          <tr key={item.id} className={`hover:bg-emerald-100/20 transition-colors ${isZero ? 'opacity-60 bg-slate-100/60' : ''}`}>
+                            <td className="px-4 py-3 font-medium">
+                              <div className="flex items-center gap-3">
+                                {item.image && (
+                                  <img src={item.image} alt={item.name} className={`w-10 h-10 rounded object-cover border border-emerald-200 hidden sm:block ${isZero ? 'grayscale' : ''}`} />
                                 )}
+                                <div className="relative flex-1">
+                                  {item.editableName ? (
+                                    <>
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="text"
+                                          value={item.name}
+                                          onFocus={() => setActiveDropdown(item.id)}
+                                          onBlur={() => setTimeout(() => setActiveDropdown(null), 200)}
+                                          onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                                          className="w-full bg-emerald-50 border border-emerald-300 rounded px-2 py-1.5 text-teal-800 focus:border-amber-500 focus:outline-none min-w-[150px]"
+                                        />
+                                        {isZero && (
+                                          <span className="text-[10px] whitespace-nowrap bg-rose-100 text-rose-700 border border-rose-200 px-1.5 py-0.5 rounded font-semibold">
+                                            Ẩn khỏi PDF
+                                          </span>
+                                        )}
+                                      </div>
+                                      {activeDropdown === item.id && (item.id === 'panel' || item.id === 'inverter' || item.id === 'battery') && (
+                                        <div className="absolute top-full left-0 mt-1 w-max min-w-full bg-white border border-emerald-300 rounded shadow-xl z-50 max-h-48 overflow-y-auto">
+                                          {(item.id === 'panel' ? panelOptions : item.id === 'inverter' ? inverterOptions : batteryOptions).map((opt, i) => (
+                                            <div
+                                              key={i}
+                                              className="px-3 py-2 text-sm text-emerald-800 hover:bg-emerald-100 hover:text-teal-800 cursor-pointer transition-colors flex justify-between gap-4"
+                                              onClick={() => {
+                                                handleItemChange(item.id, 'full_update', opt);
+                                                setActiveDropdown(null);
+                                              }}
+                                            >
+                                              <span>{opt.name}</span>
+                                              <span className="font-semibold text-emerald-600">{formatVnd(opt.price)}đ</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <div className="flex items-center gap-2">
+                                      <span>{item.name}</span>
+                                      {isZero && (
+                                        <span className="text-[10px] whitespace-nowrap bg-rose-100 text-rose-700 border border-rose-200 px-1.5 py-0.5 rounded font-semibold">
+                                          Ẩn khỏi PDF
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3 text-center text-emerald-700">{item.unit}</td>
-                          <td className="px-4 py-3 text-center">
-                            {item.editableQty ? (
+                            </td>
+                            <td className="px-4 py-3 text-center text-emerald-700">{item.unit}</td>
+                            <td className="px-4 py-3 text-center">
+                              {item.editableQty ? (
+                                <input 
+                                  type="number" 
+                                  min="0" 
+                                  value={item.qty} 
+                                  onChange={(e) => handleItemChange(item.id, 'qty', e.target.value)}
+                                  className="w-16 bg-emerald-50 border border-emerald-300 rounded px-2 py-1 text-center text-teal-800 focus:border-amber-500 focus:outline-none"
+                                />
+                              ) : (
+                                item.qty
+                              )}
+                            </td>
+                            <td className="px-4 py-3 text-right">
                               <input 
-                                type="number" 
-                                min="0" 
-                                value={item.qty} 
-                                onChange={(e) => handleItemChange(item.id, 'qty', e.target.value)}
-                                className="w-16 bg-emerald-50 border border-emerald-300 rounded px-2 py-1 text-center text-teal-800 focus:border-amber-500 focus:outline-none"
+                                type="text" 
+                                value={formatVnd(item.price)} 
+                                onChange={(e) => handleItemChange(item.id, 'price', e.target.value)}
+                                className="w-28 bg-emerald-50 border border-emerald-300 rounded px-2 py-1 text-right text-teal-800 focus:border-amber-500 focus:outline-none"
                               />
-                            ) : (
-                              item.qty
-                            )}
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <input 
-                              type="text" 
-                              value={formatVnd(item.price)} 
-                              onChange={(e) => handleItemChange(item.id, 'price', e.target.value)}
-                              className="w-28 bg-emerald-50 border border-emerald-300 rounded px-2 py-1 text-right text-teal-800 focus:border-amber-500 focus:outline-none"
-                            />
-                          </td>
-                          <td className="px-4 py-3 text-right font-semibold text-emerald-400">
-                            {formatVnd(item.total)}
-                          </td>
-                        </tr>
-                      ))}
+                            </td>
+                            <td className="px-4 py-3 text-right font-semibold text-emerald-400">
+                              {formatVnd(item.total)}
+                            </td>
+                            <td className="px-3 py-3 text-center">
+                              {item.qty > 0 ? (
+                                <button
+                                  type="button"
+                                  onClick={() => handleItemChange(item.id, 'qty', 0)}
+                                  title="Ẩn mục này (cho SL = 0)"
+                                  className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => handleItemChange(item.id, 'qty', 1)}
+                                  title="Khôi phục lại mục này (SL = 1)"
+                                  className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                                >
+                                  <RotateCcw className="w-4 h-4" />
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                     <tfoot className="bg-white font-bold">
                       <tr>
                         <td colSpan="4" className="px-4 py-3 text-right text-teal-800 rounded-bl-xl">TỔNG CỘNG (Chưa VAT):</td>
-                        <td className="px-4 py-3 text-right text-amber-400 text-base rounded-br-xl">{formatVnd(totalPrice)} đ</td>
+                        <td className="px-4 py-3 text-right text-amber-400 text-base">{formatVnd(totalPrice)} đ</td>
+                        <td className="rounded-br-xl"></td>
                       </tr>
                     </tfoot>
                   </table>
                 </div>
+
+                {bomItems.some(i => i.qty === 0 || i.hidden) && (
+                  <div className="flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-xl px-3.5 py-2 text-xs text-amber-900">
+                    <div className="flex items-center gap-2">
+                      <EyeOff className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                      <span>Các mục có <strong>SL = 0</strong> sẽ <strong>tự động ẩn hoàn toàn khỏi bản in PDF</strong>.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setHideZeroRows(!hideZeroRows)}
+                      className="font-bold text-amber-700 hover:text-amber-900 underline ml-2"
+                    >
+                      {hideZeroRows ? 'Hiện lại trên bảng' : 'Ẩn khỏi bảng'}
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Cột 2: Form & Submit (chiếm 1 cột) */}

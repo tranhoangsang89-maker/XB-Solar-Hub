@@ -95,3 +95,14 @@ Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quy�
   - Cập nhật hàm tính chi phí phụ trợ & thi công (`calculateBOS` và `tuDienPrice`) theo số lượng biến tần và quy mô công nghiệp.
   - Tự động mở rộng dải hiển thị trục Y của biểu đồ dòng tiền ROI (lên đơn vị tỷ VNĐ) mà không bị cắt chữ.
   - Đồng bộ thuật toán nội suy sản lượng theo PSH thực tế tại `pdfExport.js` và `QuoteModal.jsx`.
+
+## 13. Tự Động Ẩn Dòng Thiết Bị Khi Số Lượng Bằng 0 (Ngày 16/10/2026)
+- **Tình huống nghiệp vụ:** Khách hàng đã có sẵn thiết bị (ví dụ Inverter, Tủ điện hoặc Pin lưu trữ), nhân viên tư vấn chỉnh số lượng về 0 để không tính tiền.
+- **Tối ưu file PDF:** 
+  - Trong `pdfExport.js`, tự động lọc bỏ các hạng mục có `qty === 0` hoặc `hidden === true` (`activeBomItems`).
+  - Đánh số thứ tự (STT) tự động nối tiếp liền mạch từ 1..N (không bị đứt quãng hay thiếu số).
+  - Khắc phục triệt để việc căn chỉnh hình ảnh sản phẩm (`didDrawCell` mapping chuẩn xác theo `activeBomItems`).
+- **Nâng cấp giao diện QuoteModal:**
+  - Bổ sung nút bấm icon Xóa (Thùng rác) / Khôi phục (Revert) trên từng dòng bảng vật tư.
+  - Bổ sung huy hiệu (Badge) cảnh báo "Đã ẩn khỏi PDF" rõ ràng cho các dòng có số lượng = 0.
+  - Thêm nút Toggle "Ẩn khỏi bảng / Hiện lại trên bảng" giúp giao diện gọn gàng tuyệt đối theo ý muốn của người dùng.

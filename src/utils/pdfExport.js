@@ -164,9 +164,12 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
     y += 4.5;
   });
 
-  // Preload images as base64
+  // Lọc chỉ lấy các mục có số lượng > 0 và không bị ẩn để xuất vào bảng PDF
+  const activeBomItems = bomItems.filter(item => item.qty > 0 && !item.hidden);
+
+  // Preload images as base64 cho các mục hiển thị
   const loadedImages = {};
-  for (const item of bomItems) {
+  for (const item of activeBomItems) {
     if (item.image && !loadedImages[item.image]) {
        try {
          const res = await fetch(item.image);
@@ -194,7 +197,7 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
   doc.line(margin, y, W - margin, y);
   y += 5;
 
-  const tableData = bomItems.map((item, index) => [
+  const tableData = activeBomItems.map((item, index) => [
     index + 1,
     item.name,
     item.unit,
@@ -234,9 +237,9 @@ export async function exportQuotePDF({ customerName, customerPhone, result, sele
       5: { halign: 'right', fontStyle: 'bold', valign: 'middle' }
     },
     didDrawCell: function (data) {
-      // Draw image in column 1 for items
-      if (data.column.index === 1 && data.row.index < bomItems.length) {
-        const item = bomItems[data.row.index];
+      // Draw image in column 1 for active items
+      if (data.column.index === 1 && data.row.index < activeBomItems.length) {
+        const item = activeBomItems[data.row.index];
         if (item && item.image && loadedImages[item.image]) {
           const imgBase64 = loadedImages[item.image];
           const imgSize = 8;
