@@ -50,19 +50,25 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
   }));
 
   const tuDienOptions = [
-    { name: 'Tủ điện AC/DC Solar 1 Pha Chuyên Dụng (≤8kW)', price: 5500000 },
-    { name: 'Tủ điện AC/DC Solar 3 Pha Công Nghiệp (10-25kW)', price: 9500000 },
+    { name: 'Tủ điện AC/DC Solar 1 Pha Chuyên Dụng (≤8kW)', price: 4500000 },
+    { name: 'Tủ điện AC/DC Solar 3 Pha Công Nghiệp (10-25kW)', price: 7500000 },
     { name: 'Tủ điện AC/DC Solar 3 Pha C&I Phân Phối (30-50kW)', price: 18000000 },
-    { name: 'Tủ điện Hòa Lưới Tổng C&I 50-100kW (kèm Meter Zero Export)', price: 38000000 },
-    { name: 'Tủ Tổng MSB Solar Công Nghiệp 100-200kW (Smart Logger)', price: 65000000 },
+    { name: 'Tủ điện Hòa Lưới Tổng C&I 50-100kW (kèm Meter Zero Export)', price: 35000000 },
+    { name: 'Tủ Tổng MSB Solar Công Nghiệp 100-200kW (Smart Logger)', price: 55000000 },
   ];
 
   const getInitialTuDien = (kwp) => {
-    if (kwp > 100) return { name: 'Tủ Tổng MSB Solar Công Nghiệp 100-200kW (Smart Logger)', price: 65000000 };
-    if (kwp > 50) return { name: 'Tủ điện Hòa Lưới Tổng C&I 50-100kW (kèm Meter Zero Export)', price: 38000000 };
+    if (kwp > 100) return { name: 'Tủ Tổng MSB Solar Công Nghiệp 100-200kW (Smart Logger)', price: 55000000 };
+    if (kwp > 50) return { name: 'Tủ điện Hòa Lưới Tổng C&I 50-100kW (kèm Meter Zero Export)', price: 35000000 };
     if (kwp > 25) return { name: 'Tủ điện AC/DC Solar 3 Pha C&I Phân Phối (30-50kW)', price: 18000000 };
-    if (kwp > 8) return { name: 'Tủ điện AC/DC Solar 3 Pha Công Nghiệp (10-25kW)', price: 9500000 };
-    return { name: 'Tủ điện AC/DC Solar 1 Pha Chuyên Dụng (≤8kW)', price: 5500000 };
+    if (kwp > 8) return { name: 'Tủ điện AC/DC Solar 3 Pha Công Nghiệp (10-25kW)', price: 7500000 };
+    return { name: 'Tủ điện AC/DC Solar 1 Pha Chuyên Dụng (≤8kW)', price: 4500000 };
+  };
+
+  const getBOSRates = (kwp) => {
+    if (kwp >= 50) return { cap: 1450000, nhanCong: 1500000 };
+    if (kwp >= 20) return { cap: 1250000, nhanCong: 1250000 };
+    return { cap: 850000, nhanCong: 850000 };
   };
 
   useEffect(() => {
@@ -116,11 +122,12 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
     const inverterPrice = getInverterPrice(combo.inverterId, combo.inverter);
     const batteryPrice = getBatteryPrice(combo.batteryId, combo.battery);
     
-    // Phụ trợ tính theo quy mô chuẩn thị trường 8 - 10 triệu/kWp
+    // Phụ trợ tính theo quy mô chuẩn hóa 8.6 - 9.0 triệu/kWp
     const tuDienConfig = getInitialTuDien(kwp);
-    const khunGiaPrice = combo.panelQty * 650000;
-    const dayDanPrice = Math.round(kwp * 1250000);
-    const vanChuyenPrice = Math.round(kwp * 1300000); // Nhân công, vận chuyển, thí nghiệm & EVN
+    const bosRates = getBOSRates(kwp);
+    const khunGiaPrice = combo.panelQty * 700000;
+    const dayDanPrice = Math.round(kwp * bosRates.cap);
+    const vanChuyenPrice = Math.round(kwp * bosRates.nhanCong); // Nhân công, vận chuyển, thí nghiệm & EVN
     const invQty = combo.inverterQty || 1;
 
     const initialItems = [
@@ -176,18 +183,19 @@ export default function QuoteModal({ isOpen, onClose, result, selectedType, inpu
           const match = panelItem.name.match(/(\d+)W/);
           const wattage = match ? parseInt(match[1]) : 720;
           const newKwp = (panelItem.qty * wattage) / 1000;
+          const newRates = getBOSRates(newKwp);
           
           updatedItems = updatedItems.map(item => {
             if (item.id === 'vatTu') {
-              item.price = panelItem.qty * 650000;
+              item.price = panelItem.qty * 700000;
               item.total = item.qty * item.price;
             }
             if (item.id === 'dayDan') {
-              item.price = Math.round(newKwp * 1250000);
+              item.price = Math.round(newKwp * newRates.cap);
               item.total = item.qty * item.price;
             }
             if (item.id === 'vanChuyen') {
-              item.price = Math.round(newKwp * 1300000);
+              item.price = Math.round(newKwp * newRates.nhanCong);
               item.total = item.qty * item.price;
             }
             if (item.id === 'tuDien') {

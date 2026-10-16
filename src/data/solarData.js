@@ -82,22 +82,33 @@ export const PROVINCES_PSH = [
 
 import { SOLAR_PANELS, INVERTERS, BATTERIES } from './bang-gia-thiet-bi';
 
-// Hàm tính chi phí vật tư phụ và nhân công (BOS)
+// Hàm tính chi phí vật tư phụ và nhân công (BOS) chuẩn hóa 8.6 - 9.0 triệu/kWp hòa lưới
 const calculateBOS = (systemCapacityKwp, panelQty, inverterQty = 1) => {
-  let tuDienPrice = 5500000;
+  let tuDienPrice = 4500000;
   if (systemCapacityKwp > 100) {
-    tuDienPrice = 65000000;
+    tuDienPrice = 55000000;
   } else if (systemCapacityKwp > 50) {
-    tuDienPrice = 38000000;
+    tuDienPrice = 35000000;
   } else if (systemCapacityKwp > 25) {
     tuDienPrice = 18000000;
   } else if (systemCapacityKwp > 8) {
-    tuDienPrice = 9500000;
+    tuDienPrice = 7500000;
   }
 
-  const khungRayPrice = panelQty * 650000;
-  const capDienPrice = Math.round(systemCapacityKwp * 1250000);
-  const nhanCongPrice = Math.round(systemCapacityKwp * 1300000);
+  const khungRayPrice = panelQty * 700000;
+  
+  let capUnit = 850000;
+  let nhanCongUnit = 850000;
+  if (systemCapacityKwp >= 50) {
+    capUnit = 1450000;
+    nhanCongUnit = 1500000;
+  } else if (systemCapacityKwp >= 20) {
+    capUnit = 1250000;
+    nhanCongUnit = 1250000;
+  }
+
+  const capDienPrice = Math.round(systemCapacityKwp * capUnit);
+  const nhanCongPrice = Math.round(systemCapacityKwp * nhanCongUnit);
   return tuDienPrice + khungRayPrice + capDienPrice + nhanCongPrice;
 };
 
