@@ -118,3 +118,23 @@ Tệp này ghi lại toàn bộ các công việc đã thực hiện, các quy�
   - Cáp điện DC Solar, cáp nguồn AC & tiếp địa: 850.000 đ - 1.450.000 đ/kWp theo quy mô.
   - Nhân công lắp đặt, cẩu kéo, kiểm định an toàn điện & nghiệm thu EVN: 850.000 đ - 1.500.000 đ/kWp theo quy mô.
   - Kết quả: Toàn bộ dải công suất hòa lưới (từ 10kWp dân dụng đến 200kWp công nghiệp) đều nằm hoàn hảo trong mức **8.6 - 9.0 triệu / kWp** (Ví dụ: Hệ 10kWp đạt 8.99 tr/kWp, Hệ 50kWp đạt 8.85 tr/kWp, Hệ 92kWp đạt 8.76 tr/kWp, Hệ 120kWp đạt 8.69 tr/kWp, Hệ 200kWp đạt 8.65 tr/kWp).
+
+## 15. Hướng Dẫn & Bàn Giao Dành Cho AI Agent Tiếp Theo (16/10/2026)
+### A. Kiến Trúc & Luồng Dữ Liệu Cần Bảo Toàn Tuyệt Đối:
+1. **Module Tính Toán & Định Giá:**
+   - [solarCalculator.js](file:///d:/App%20EDIT/XB%20Solar%20Hub/src/utils/solarCalculator.js): Chịu trách nhiệm bóc tách bậc thang điện EVN 6 bậc (gồm 8% VAT), tính toán sản lượng điện hàng tháng theo PSH tỉnh thành, và tính số tiền tiết kiệm hàng tháng `monthlySavings`. Tuyệt đối không áp dụng hệ số nhân đôi (double penalty) làm méo mó sản lượng của hệ công suất lớn.
+   - [solarData.js](file:///d:/App%20EDIT/XB%20Solar%20Hub/src/data/solarData.js): Chứa `getCustomCombos(targetKwp)` phục vụ dải công suất 3 kWp - 200 kWp. Hàm này ưu tiên lựa chọn **1 biến tần đơn** có dải DC/AC tối ưu (~1.05 - 1.25) trước khi ghép cụm, giúp tối ưu chi phí và kỹ thuật (ví dụ 120kWp chọn 1 bộ Sungrow SG110CX-P2 110kW).
+   - [bang-gia-thiet-bi.js](file:///d:/App%20EDIT/XB%20Solar%20Hub/src/data/bang-gia-thiet-bi.js): Danh mục thiết bị chính thức (Tấm pin JA Solar 720W N-Type, Biến tần Sungrow C&I 3kW - 125kW, Biến tần Deye Hybrid 30kW - 50kW, Pin Dyness & Hithium).
+
+2. **Module Bảng Dự Toán & Xuất PDF:**
+   - [QuoteModal.jsx](file:///d:/App%20EDIT/XB%20Solar%20Hub/src/components/QuoteModal.jsx): Cho phép người dùng tùy chỉnh số lượng, đơn giá, dropdown thiết bị.
+     * **Quy tắc Tủ điện:** Tủ điện hoàn toàn độc lập với Inverter. Khi người dùng giảm SL Inverter về 0, dòng Tủ điện vẫn giữ nguyên (SL = 1). Không được khôi phục lại logic ép `tuDien.qty = inverterItem.qty`.
+     * **Xóa / Khôi phục:** Nút icon Thùng rác đưa SL về 0; nút icon Xoay tròn khôi phục về 1. Các dòng có SL = 0 có huy hiệu đỏ "Ẩn khỏi PDF" và có nút Toggle ẩn/hiện trên màn hình.
+   - [pdfExport.js](file:///d:/App%20EDIT/XB%20Solar%20Hub/src/utils/pdfExport.js): Bộ xuất PDF chuẩn A4 1 trang duy nhất.
+     * **Quy tắc lọc dữ liệu:** Luôn sử dụng `const activeBomItems = bomItems.filter(item => item.qty > 0 && !item.hidden)` cho cả bảng dữ liệu, STT (1..N) và sự kiện `didDrawCell` vẽ ảnh. Tuyệt đối không dùng trực tiếp `bomItems` trong `didDrawCell` vì sẽ gây lệch ảnh khi có dòng bị ẩn.
+
+3. **Quy Tắc Đơn Giá Chuẩn Thị Trường:**
+   - Toàn bộ hệ thống hòa lưới đã được hiệu chuẩn trong biên độ **8.6 - 9.0 triệu VNĐ / kWp**. Bất kỳ tinh chỉnh BOS nào sau này cần duy trì sự cân bằng này.
+
+4. **Trạng Thái Git & Triển Khai:**
+   - Toàn bộ mã nguồn sạch, chạy lệnh `npm run build` không lỗi, đã được push lên branch `main` tại: `https://github.com/tranhoangsang89-maker/XB-Solar-Hub.git`.
